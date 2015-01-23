@@ -9,6 +9,7 @@ public class ObjectMenu {
     private final int items = 1;
     private final Item[] objects = new Item[items];
     private final int scale, angle;
+    private int X0 = 0, y0 = 0;
 
     public ObjectMenu(int scaleG, int angleG) {
         scale = scaleG;

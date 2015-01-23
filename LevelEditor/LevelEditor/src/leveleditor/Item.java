@@ -34,17 +34,17 @@ public class Item implements Comparable, Cloneable {
         int height = (int) (angle / 90.0 * scale);
         int depth = scale - height;
         g.setColor(Color.white);
-        g.drawRect((x * scale) + minX, (y * height) + minY, scale, height);
-        g.drawRect((x * scale) + minX, (y * height) + minY + height, scale, depth);
+        g.drawRect((x * scale) + minX, (y * height) + minY, scale - 1, height - 1);
+        g.drawRect((x * scale) + minX, (y * height) + minY + height, scale - 1, depth - 1);
         if (filled) {
             g.setColor(Color.green);
-            g.fillRect((x * scale) + minX + 1, (y * height) + minY + 1, scale - 1, height - 1);
+            g.fillRect((x * scale) + minX + 1, (y * height) + minY + 1, scale - 1 - 1, height - 1 - 1);
             g.setColor(Color.blue);
-            g.fillRect((x * scale) + minX + 1, (y * height) + minY + height + 1, scale - 1, depth - 1);
+            g.fillRect((x * scale) + minX + 1, (y * height) + minY + height + 1, scale - 1 - 1, depth - 1 - 1);
         } else {
             g.setColor(Color.gray);
-            g.drawRect((x * scale) + minX + 1, (y * height) + minY + 1, scale - 1, height - 1);
-            g.drawRect((x * scale) + minX + 1, (y * height) + minY + height + 1, scale - 1, depth - 1);
+            g.drawRect((x * scale) + minX + 1, (y * height) + minY + 1, scale - 1 - 1, height - 1 - 1);
+            g.drawRect((x * scale) + minX + 1, (y * height) + minY + height + 1, scale - 1 - 1, depth - 1 - 1);
         }
     }
 

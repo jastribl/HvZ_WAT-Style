@@ -110,6 +110,15 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
 
     @Override
     public void mouseClicked(MouseEvent me) {
+        for (int j = 0; j < 18; j++) {
+            for (int i = 0; i < 17; i++) {
+//                if (j % 2 == i % 2) {
+                if (j % 2 == 0 && i % 2 == 1) {
+                    world.get(0).addItem(i, j, new Item(scale, angle));
+                }
+            }
+        }
+        drawGame();
     }
 
     @Override
