@@ -6,8 +6,9 @@
 #include <memory>
 #include "Bullet.h"
 #include "Obstacle.h"
+#include "Character.h"
 # define M_PI 3.14159265358979323846
-const sf::Vector2f getVector(float xfinal, float yfinal, float xstart, float ystart,float scale=1.0f)
+const sf::Vector2f getVector(float xfinal, float yfinal, float xstart, float ystart, float scale = 1.0f)
 {
 	float xdir = xfinal - xstart;
 	float ydir = yfinal - ystart;
@@ -17,7 +18,7 @@ const sf::Vector2f getVector(float xfinal, float yfinal, float xstart, float yst
 int main()
 {
 	//Create window
-	
+
 	sf::RenderWindow* window(new sf::RenderWindow(sf::VideoMode(1280, 720), "SFML works!"));
 	const float speed = 0.2f;
 	//Load textures
@@ -37,16 +38,14 @@ int main()
 		std::cerr << "Could not load box" << std::endl;
 	}
 	//Character
-	sf::Sprite spriteChar;
-	spriteChar.setTexture(charac);
-	spriteChar.setOrigin(charac.getSize().x / 2, charac.getSize().y / 2);
+	Character spriteChar(charac);
 	//Bullets
-	std::vector<Bullet>bullets;
-	bullets.reserve(99999);
+	std::vector<Bullet*>bullets;
+	bullets.reserve(99);
 	//Obstacles
-	std::vector<Obstacle>obstacles;
-	obstacles.reserve(99999);
-	obstacles.push_back(Obstacle(obstacle, 500, 500));
+	std::vector<Obstacle*>obstacles;
+	obstacles.reserve(1);
+	obstacles.push_back(new Obstacle(obstacle, 500, 500));
 	//Remember where you clicked
 	sf::Vector2i localPosition = sf::Mouse::getPosition(*window);
 	//Set up time
@@ -58,7 +57,7 @@ int main()
 	{
 		float frame = (1.0f / elapsed.asSeconds());
 		//std::cout << frame << std::endl;
-		std::cout << bullets.size() << std::endl;
+		//std::cout << bullets.size() << std::endl;
 		sf::Event event;
 		while (window->pollEvent(event))
 		{
@@ -69,7 +68,7 @@ int main()
 				if (event.mouseButton.button == sf::Mouse::Right)
 				{
 					sf::Vector2i pressed = sf::Mouse::getPosition(*window);
-					bullets.push_back(Bullet(getVector(pressed.x, pressed.y, spriteChar.getPosition().x, spriteChar.getPosition().y,20), box, spriteChar.getPosition()));
+					bullets.push_back(new Bullet(getVector(pressed.x, pressed.y, spriteChar.getPosition().x, spriteChar.getPosition().y, 20), box, spriteChar.getPosition()));
 				}
 			}
 		}
@@ -83,7 +82,7 @@ int main()
 			sf::Vector2i pressed = sf::Mouse::getPosition(*window);
 			bullets.push_back(Bullet(getVector(pressed.x, pressed.y, spriteChar.getPosition().x, spriteChar.getPosition().y), box, spriteChar.getPosition()));
 			*/
-			
+
 		}
 		sf::Vector2f spritePosition = spriteChar.getPosition();
 		sf::Vector2i mousePosition = sf::Mouse::getPosition(*window);
@@ -91,7 +90,15 @@ int main()
 		float len = sqrtf((powf(localPosition.x - spritePosition.x, 2.0) + powf(localPosition.y - spritePosition.y, 2.0)));
 		if (len > 1)
 		{
-			spriteChar.move(getVector(localPosition.x, localPosition.y, spritePosition.x, spritePosition.y));
+			if (!spriteChar.getGlobalBounds().intersects(obstacles[0]->getGlobalBounds()))
+			{
+				spriteChar.move(getVector(localPosition.x, localPosition.y, spritePosition.x, spritePosition.y));
+			}
+			else
+			{
+				localPosition = sf::Vector2i(spritePosition.x, spritePosition.y);
+				spriteChar.stop();
+			}
 		}
 		else
 		{
@@ -101,33 +108,28 @@ int main()
 		window->draw(spriteChar);
 		for (int x = 0; x < bullets.size(); x++)
 		{
-			if (bullets[x].getPosition().x > 1500)
+			if (bullets[x]->getDone())
 			{
-				
+				Bullet* temp = bullets[x];
+				bullets.erase(bullets.begin() + x);
 			}
 			else
 			{
-				if (bullets[x].getDone())
+				bullets[x]->fly();
+				if (bullets[x]->getGlobalBounds().intersects(obstacles[0]->getGlobalBounds()))
 				{
-					bullets.erase(bullets.begin() + x);
+					bullets[x]->setDone(true);
 				}
-				else
-				{
-					bullets[x].fly();
-					if (bullets[x].getGlobalBounds().intersects(obstacles[0].getGlobalBounds()))
-					{
-						bullets[x].setDone(true);
-					}
-					window->draw(bullets[x]);
-				}
+				window->draw(*bullets[x]);
 			}
 		}
 		//velocity.x = localPosition - s;
 		//sprite.move(velocity);
-		window->draw(obstacles[0]);
+		window->draw(*obstacles[0]);
 		window->display();
 		elapsed = clock.restart();
 	}
+	delete obstacles[0];
 	delete window;
 	return 0;
 }

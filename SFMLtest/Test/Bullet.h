@@ -36,6 +36,10 @@ public:
 		if (x + originx < 0 || x - originx>WINDOW_X || y + originx < 0 || y - originx>WINDOW_Y)
 			done = true;
 	}
+	void stop()
+	{
+		velocity = sf::Vector2f(0.0f, 0.0f);
+	}
 	void setDone(bool d)
 	{
 		done = d;
