@@ -70,7 +70,6 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
     public final void drawGame() {
         if (canDraw) {
             memoryGraphics.setColor(Color.black);
-
             memoryGraphics.fillRect(screenWidth / 5, 0, screenWidth - screenWidth / 5, screenHeight);
             for (Level level : world) {
                 for (Item item : level) {

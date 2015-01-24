@@ -2,14 +2,10 @@ package leveleditor;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 
-public class Level extends ArrayList {
+public class Level extends ArrayList<Item> {
 
-    public Level() {
-    }
-
-    public void addObject(LevelObject o) {
+    public void addObject(Item o) {
         add(o);
         sort();
     }
@@ -20,15 +16,6 @@ public class Level extends ArrayList {
     }
 
     public final void sort() {
-        Collections.sort(this, new Comparator<LevelObject>() {
-            @Override
-            public int compare(LevelObject o1, LevelObject o2) {
-                if (o1.getY() == o2.getY()) {
-                    return 0;
-                } else {
-                    return o1.getY() > o2.getY() ? 1 : -1;
-                }
-            }
-        });
+        Collections.sort(this);
     }
 }

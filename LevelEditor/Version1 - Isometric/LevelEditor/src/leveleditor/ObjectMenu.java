@@ -1,51 +1,59 @@
 package leveleditor;
 
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
+import javax.swing.ImageIcon;
 
 public class ObjectMenu {
 
-    private final int floors = 3, walls = 3;
-    private final LevelObject[] floorObjects = new LevelObject[floors];
-    private final LevelObject[] wallObjects = new LevelObject[walls];
+    private final Item[] items = new Item[6];
+    private final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
     public ObjectMenu() {
-        for (int i = 0; i < floors; i++) {
-            floorObjects[i] = new LevelObject(65 * (i + 1), 70, 0, i);
+        int maxWidth = 0, maxHeight = 0;
+        ImageIcon image;
+        for (int i = 0; i < items.length; i++) {
+            image = new ImageIcon(getClass().getResource("/media/" + i + ".png"));
+            if (image.getIconWidth() > maxWidth) {
+                maxWidth = image.getIconWidth();
+            }
+            if (image.getIconHeight() > maxHeight) {
+                maxHeight = image.getIconHeight();
+            }
         }
-        for (int i = 0; i < walls; i++) {
-            wallObjects[i] = new LevelObject(65 * (i + 1), 200, 1, i);
+        for (int i = 0; i < items.length; i++) {
+            items[i] = new Item(maxWidth * ((i % 3) + 1), maxHeight * ((i / 3) + 1), i);
         }
     }
 
-    public LevelObject getSelectedMenuItem(Point testLocation) throws CloneNotSupportedException {
-        LevelObject testObject;
-        for (int i = 0; i < floors; i++) {
-            testObject = floorObjects[i];
+    public Item getSelectedMenuItem(Point testLocation) throws CloneNotSupportedException {
+        Item testObject;
+        for (int i = 0; i < items.length; i++) {
+            testObject = items[i];
             Rectangle rectangle = new Rectangle(testObject.getX(), testObject.getY(), testObject.getWidth(), testObject.getHeight());
             if (rectangle.contains(testLocation)) {
-                return (LevelObject) testObject.clone();
-            }
-        }
-        for (int i = 0; i < walls; i++) {
-            testObject = wallObjects[i];
-            Rectangle rectangle = new Rectangle(testObject.getX(), testObject.getY(), testObject.getWidth(), testObject.getHeight());
-            if (rectangle.contains(testLocation)) {
-                return (LevelObject) testObject.clone();
+                return (Item) testObject.clone();
             }
         }
         return null;
     }
 
-    public final void draw(Graphics g) {
-        g.drawString("Floors", 10, 20);
-        for (int i = 0; i < floors; i++) {
-            floorObjects[i].draw(g);
+    public final void scroll(int amount) {
+        int move = amount * 15;
+        if (items[0].getY() - move < 0 && items[items.length - 1].getY() - move < screenSize.getHeight() || items[items.length - 1].getY() - move + items[items.length - 1].getHeight() > screenSize.getHeight() && items[0].getY() - move > 0) {
+            return;
         }
-        g.drawString("Walls", 10, 150);
-        for (int i = 0; i < walls; i++) {
-            wallObjects[i].draw(g);
+        for (Item item : items) {
+            item.setY(item.getY() - move);
+        }
+    }
+
+    public final void draw(Graphics g) {
+        for (Item item : items) {
+            item.draw(g);
         }
     }
 }
