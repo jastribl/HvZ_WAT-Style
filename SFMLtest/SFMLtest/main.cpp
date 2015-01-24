@@ -57,7 +57,8 @@ int main()
 	for (int x = 0; x < 10; x++)
 	{
 		int y = rand() % 100;
-		grid[y] = new Obstacle(obstacle, (float)(64.0 * (y / 10.0)), float(64.0 * (y % 10)), false);
+		if (!grid[y])
+			grid[y] = new Obstacle(obstacle, (float)(64.0 * (y / 10.0)), float(64.0 * (y % 10)), false);
 	}
 	//Remember where you clicked
 	sf::Vector2i localPosition = sf::Mouse::getPosition(*window);
@@ -166,6 +167,8 @@ int main()
 	delete spriteChar;
 	for (size_t x = 0, xlen = grid.size(); x < xlen; x++)
 		delete grid[x];
+	for (size_t x = 0, xlen = bullets.size(); x < xlen; x++)
+		delete bullets[x];
 	delete window;
 	return 0;
 }
