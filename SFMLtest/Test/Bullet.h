@@ -1,11 +1,9 @@
 #ifndef BULLET_H
 #define BULLET_H
-
+#include "Constants.h"
 class Bullet : public sf::Sprite
 {
 private:
-	int WINDOW_X = 1280;
-	int WINDOW_Y = 720;
 	sf::Vector2f velocity;
 	bool done=false;
 	int originx;

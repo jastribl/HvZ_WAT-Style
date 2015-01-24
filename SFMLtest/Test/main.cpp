@@ -3,10 +3,11 @@
 #include <iostream>
 #include <cmath>
 #include <vector>
-#include <memory>
+#include <stdlib.h>
 #include "Bullet.h"
 #include "Obstacle.h"
 #include "Character.h"
+#include "Constants.h"
 # define M_PI 3.14159265358979323846
 const sf::Vector2f getVector(float xfinal, float yfinal, float xstart, float ystart, float scale = 1.0f)
 {
@@ -19,24 +20,26 @@ int main()
 {
 	//Create window
 
-	sf::RenderWindow* window(new sf::RenderWindow(sf::VideoMode(1280, 720), "SFML works!"));
-	const float speed = 0.2f;
+	sf::RenderWindow* window(new sf::RenderWindow(sf::VideoMode(WINDOW_X, WINDOW_Y), "SFML works!"));
 	//Load textures
 	sf::Texture charac;
 	sf::Texture box;
 	sf::Texture obstacle;
-	if (!charac.loadFromFile("char.png"))
+	if (!charac.loadFromFile("Images/charSq.png"))
 	{
 		std::cerr << "Could not load char" << std::endl;
 	}
-	if (!box.loadFromFile("box.png"))
+	if (!box.loadFromFile("Images/box.png"))
 	{
 		std::cerr << "Could not load box" << std::endl;
 	}
-	if (!obstacle.loadFromFile("obstacle.png"))
+	if (!obstacle.loadFromFile("Images/obstacle.png"))
 	{
 		std::cerr << "Could not load box" << std::endl;
 	}
+	//Grid
+	std::vector<sf::Transformable*> grid;
+	grid.resize(100);
 	//Character
 	Character spriteChar(charac);
 	//Bullets
@@ -44,14 +47,18 @@ int main()
 	bullets.reserve(99);
 	//Obstacles
 	std::vector<Obstacle*>obstacles;
-	obstacles.reserve(1);
-	obstacles.push_back(new Obstacle(obstacle, 500, 500));
+	obstacles.reserve(10);
+	for (int x = 0; x < 10; x++)
+	{
+		int y = rand() % 100+1;
+		grid[y-1] = new Obstacle(obstacle, , 500);
+	}
 	//Remember where you clicked
 	sf::Vector2i localPosition = sf::Mouse::getPosition(*window);
 	//Set up time
 	sf::Clock clock;
 	sf::Time elapsed;
-	window->setFramerateLimit(200);
+	window->setFramerateLimit(FRAMERATE_LIMIT);
 	//Main loop
 	while (window->isOpen())
 	{
@@ -90,15 +97,14 @@ int main()
 		float len = sqrtf((powf(localPosition.x - spritePosition.x, 2.0) + powf(localPosition.y - spritePosition.y, 2.0)));
 		if (len > 1)
 		{
-			if (!spriteChar.getGlobalBounds().intersects(obstacles[0]->getGlobalBounds()))
-			{
+
 				spriteChar.move(getVector(localPosition.x, localPosition.y, spritePosition.x, spritePosition.y));
-			}
-			else
-			{
-				localPosition = sf::Vector2i(spritePosition.x, spritePosition.y);
-				spriteChar.stop();
-			}
+				if (spriteChar.getGlobalBounds().intersects(obstacles[0]->getGlobalBounds()))
+				{
+					spriteChar.move(getVector(localPosition.x, localPosition.y, spritePosition.x, spritePosition.y, -1.0));
+					localPosition = sf::Vector2i(spritePosition.x, spritePosition.y);
+					spriteChar.stop();
+				}
 		}
 		else
 		{
@@ -111,16 +117,26 @@ int main()
 			if (bullets[x]->getDone())
 			{
 				Bullet* temp = bullets[x];
-				bullets.erase(bullets.begin() + x);
+				if (bullets.size()-1!=x)
+					bullets[x] = std::move(bullets.back());
+				bullets.pop_back();
+				delete temp;
 			}
 			else
 			{
 				bullets[x]->fly();
-				if (bullets[x]->getGlobalBounds().intersects(obstacles[0]->getGlobalBounds()))
+				for (int x = 0; x < 10; x++)
 				{
-					bullets[x]->setDone(true);
+					for (int y = 0; y < 10; y++)
+					{
+						if (grid[x][y][0]&&bullets[x]->getGlobalBounds().intersects(obstacles[0]->getGlobalBounds()))
+						{
+							bullets[x]->setDone(true);
+						}
+					}
 				}
-				window->draw(*bullets[x]);
+				if (!bullets[x]->getDone())
+					window->draw(*bullets[x]);
 			}
 		}
 		//velocity.x = localPosition - s;
@@ -129,7 +145,8 @@ int main()
 		window->display();
 		elapsed = clock.restart();
 	}
-	delete obstacles[0];
+	for (int x = 0; x < grid.size(); x++)
+		delete grid[x];
 	delete window;
 	return 0;
 }

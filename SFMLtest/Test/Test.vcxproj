@@ -17,6 +17,7 @@
   <ItemGroup>
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="Character.h" />
+    <ClInclude Include="Constants.h" />
     <ClInclude Include="Obstacle.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
