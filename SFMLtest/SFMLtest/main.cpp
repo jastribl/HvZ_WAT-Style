@@ -106,7 +106,7 @@ int main()
 {
 	srand((size_t)(time(NULL)));
 	//Create window
-	sf::RenderWindow* window(new sf::RenderWindow(sf::VideoMode(WINDOW_X, WINDOW_Y), "SFML works!"));
+	sf::RenderWindow* window(new sf::RenderWindow(sf::VideoMode(WINDOW_X, WINDOW_Y), "HvZ: Wat-Style"));
 	//Load textures and Fonts
 	sf::Font font;
 	if (!font.loadFromFile("arial.ttf"))
