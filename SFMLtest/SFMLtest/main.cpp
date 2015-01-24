@@ -8,19 +8,12 @@
 #include "Obstacle.h"
 #include "Character.h"
 #include "Constants.h"
-# define M_PI 3.14159265358979323846
-const sf::Vector2f getVector(float xfinal, float yfinal, float xstart, float ystart, float scale = 1.0f)
-{
-	float xdir = xfinal - xstart;
-	float ydir = yfinal - ystart;
-	float len = sqrtf((powf(xdir, 2.0) + powf(ydir, 2.0)));
-	return sf::Vector2f(xdir*scale / len, ydir*scale / len);
-}
+#include "Algorithms.h"
 //Grid
 std::vector<sf::Sprite*> grid;
 bool collision(const sf::Sprite& object)
 {
-	for (int x = 0; x < grid.size(); x++)
+	for (size_t x = 0, xlen = grid.size(); x < xlen; x++)
 	{
 		if (grid[x])
 		{
@@ -34,18 +27,18 @@ bool collision(const sf::Sprite& object)
 }
 int main()
 {
+	srand((size_t)(time(NULL)));
 	//Create window
-
 	sf::RenderWindow* window(new sf::RenderWindow(sf::VideoMode(WINDOW_X, WINDOW_Y), "SFML works!"));
 	//Load textures
 	sf::Texture charac;
-	sf::Texture box;
+	sf::Texture bullet;
 	sf::Texture obstacle;
 	if (!charac.loadFromFile("Images/charSq.png"))
 	{
 		std::cerr << "Could not load char" << std::endl;
 	}
-	if (!box.loadFromFile("Images/box.png"))
+	if (!bullet.loadFromFile("Images/bullet.png"))
 	{
 		std::cerr << "Could not load box" << std::endl;
 	}
@@ -56,17 +49,15 @@ int main()
 	//Grid
 	grid.resize(100);
 	//Character
-	Character spriteChar(charac);
+	Character* spriteChar = new Character(sf::Vector2f(0.0f, 0.0f), charac, 1000, 300);
 	//Bullets
 	std::vector<Bullet*>bullets;
 	bullets.reserve(99);
 	//Obstacles
-	std::vector<Obstacle*>obstacles;
-	obstacles.reserve(10);
 	for (int x = 0; x < 10; x++)
 	{
 		int y = rand() % 100;
-		grid[y] = new Obstacle(obstacle,64*(y/10),64*(y%10),false);
+		grid[y] = new Obstacle(obstacle, (float)(64.0 * (y / 10.0)), float(64.0 * (y % 10)), false);
 	}
 	//Remember where you clicked
 	sf::Vector2i localPosition = sf::Mouse::getPosition(*window);
@@ -90,74 +81,81 @@ int main()
 				if (event.mouseButton.button == sf::Mouse::Right)
 				{
 					sf::Vector2i pressed = sf::Mouse::getPosition(*window);
-					bullets.push_back(new Bullet(getVector(pressed.x, pressed.y, spriteChar.getPosition().x, spriteChar.getPosition().y, 20), box, spriteChar.getPosition()));
+					bullets.push_back(new Bullet(getDirectionVector((float)pressed.x, (float)pressed.y, spriteChar->getPosition().x, spriteChar->getPosition().y, 20.0), bullet, spriteChar->getPosition(), spriteChar->getRotation()));
 				}
 			}
 		}
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
 		{
 			localPosition = sf::Mouse::getPosition(*window);
+			sf::Vector2f spritePosition = spriteChar->getPosition();
+			spriteChar->setVelocity(getDirectionVector((float)localPosition.x, (float)localPosition.y, spritePosition.x, spritePosition.y, 5.0));
 		}
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
 		{
-			/*
 			sf::Vector2i pressed = sf::Mouse::getPosition(*window);
-			bullets.push_back(Bullet(getVector(pressed.x, pressed.y, spriteChar.getPosition().x, spriteChar.getPosition().y), box, spriteChar.getPosition()));
-			*/
-
+			bullets.push_back(new Bullet(getDirectionVector((float)pressed.x, (float)pressed.y, spriteChar->getPosition().x, spriteChar->getPosition().y, 20.0), bullet, spriteChar->getPosition(), spriteChar->getRotation()));
+			
 		}
-		sf::Vector2f spritePosition = spriteChar.getPosition();
-		std::cout << spritePosition.x / 64 << " " << spritePosition.y / 64 << std::endl;
+		sf::Vector2f spritePosition = spriteChar->getPosition();
 		sf::Vector2i mousePosition = sf::Mouse::getPosition(*window);
-		spriteChar.setRotation(atan2(mousePosition.y - spritePosition.y, mousePosition.x - spritePosition.x) * 180 / M_PI);
-		float len = sqrtf((powf(localPosition.x - spritePosition.x, 2.0) + powf(localPosition.y - spritePosition.y, 2.0)));
-		if (len > 1)
+		float preangle = spriteChar->getRotation();
+		float angle = getDirectionAngle((float)mousePosition.x, (float)mousePosition.y, spritePosition.x, spritePosition.y);
+		spriteChar->setRotation(angle);
+		if (collision(*spriteChar))
 		{
-
-				spriteChar.move(getVector(localPosition.x, localPosition.y, spritePosition.x, spritePosition.y));
-				if (collision(spriteChar))
-				{
-					spriteChar.move(getVector(localPosition.x, localPosition.y, spritePosition.x, spritePosition.y, -1.0));
-					localPosition = sf::Vector2i(spritePosition.x, spritePosition.y);
-					spriteChar.stop();
-				}
+			spriteChar->setRotation(preangle);
 		}
-		else
+		if (spriteChar->getVelocity() != sf::Vector2f(0.0f, 0.0f))
 		{
-			spriteChar.setPosition(localPosition.x, localPosition.y);
+			float len = getDistance((float)localPosition.x, (float)localPosition.y, spritePosition.x, spritePosition.y);
+			if (len > 3.0)
+			{
+				//std::cout << "stutter" << std::endl;
+				spriteChar->fly();
+				if (collision(*spriteChar))
+				{
+					spriteChar->move(spriteChar->getVelocity()*-1.0f);
+					localPosition = sf::Vector2i((int)spritePosition.x, (int)spritePosition.y);
+					spriteChar->stop();
+				}
+			}
+			else
+			{
+				localPosition = sf::Vector2i((int)spriteChar->getPosition().x, (int)spriteChar->getPosition().y);
+				spriteChar->stop();
+
+			}
 		}
 		window->clear();
-		window->draw(spriteChar);/*
-		for (int x = 0; x < bullets.size(); x++)
+		window->draw(*spriteChar);
+		for (size_t x = 0, xlen = bullets.size(); x < xlen; x++)
 		{
 			if (bullets[x]->getDone())
 			{
 				Bullet* temp = bullets[x];
-				if (bullets.size()-1!=x)
+				if (bullets.size() - 1 != x)
+				{
 					bullets[x] = std::move(bullets.back());
+					x--;
+				}
+				xlen--;
 				bullets.pop_back();
 				delete temp;
+				
 			}
 			else
 			{
 				bullets[x]->fly();
-				for (int x = 0; x < 10; x++)
-				{
-					for (int y = 0; y < 10; y++)
-					{
-						if (grid[x][y][0]&&bullets[x]->getGlobalBounds().intersects(obstacles[0]->getGlobalBounds()))
-						{
-							bullets[x]->setDone(true);
-						}
-					}
-				}
-				if (!bullets[x]->getDone())
+				if (collision(*bullets[x]))
+					bullets[x]->setDone(true);
+				//if (!bullets[x]->getDone())
 					window->draw(*bullets[x]);
 			}
-		}*/
+		}
 		//velocity.x = localPosition - s;
 		//sprite.move(velocity);
-		for (int x = 0; x < grid.size(); x++)
+		for (size_t x = 0, xlen = grid.size(); x < xlen; x++)
 		{
 			if (grid[x])
 				window->draw(*grid[x]);
@@ -165,7 +163,8 @@ int main()
 		window->display();
 		elapsed = clock.restart();
 	}
-	for (int x = 0; x < grid.size(); x++)
+	delete spriteChar;
+	for (size_t x = 0, xlen = grid.size(); x < xlen; x++)
 		delete grid[x];
 	delete window;
 	return 0;

@@ -1,21 +1,14 @@
 #ifndef OBSTACLE_H
 #define OBSTACLE_H
-class Obstacle : public sf::Sprite
+#include "Object.h"
+class Obstacle : public Object
 {
 public:
-	Obstacle(const sf::Texture& tex, const sf::Vector2f pos, bool centre)
+	Obstacle(const sf::Texture& tex, const sf::Vector2f& pos, bool centre) :Object(tex,pos,centre)
 	{
-		setTexture(tex);
-		setPosition(pos);
-		if (centre)
-			setOrigin(tex.getSize().x / 2, tex.getSize().y / 2);
 	}
-	Obstacle(const sf::Texture& tex, float x, float y, bool centre)
+	Obstacle(const sf::Texture& tex, float x, float y, bool centre) :Object(tex,x,y,centre)
 	{
-		setTexture(tex);
-		if (centre)
-			setOrigin(tex.getSize().x / 2, tex.getSize().y / 2);
-		setPosition(sf::Vector2f(x, y));
 	}
 };
 #endif
