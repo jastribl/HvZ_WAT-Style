@@ -110,7 +110,7 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
         System.out.println(me.getY() / 32 - (me.getX() / 32) / 32);
         if (currentLevelObject != null) {
             Point location = me.getLocationOnScreen();
-            currentLevelObject.setLocation(fixLocation(location.x, location.y, 60));
+            currentLevelObject.setLocation(fixLocation(location.x, location.y, 15));
             drawGame();
         }
     }
