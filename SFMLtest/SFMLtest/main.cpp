@@ -10,6 +10,7 @@
 #include "Character.h"
 #include "Constants.h"
 #include "Algorithms.h"
+#include "Point.h"
 //Grid
 std::vector<sf::Sprite*> grid;
 bool collision(const sf::Sprite& object, bool check)
@@ -123,7 +124,7 @@ int main()
 	sf::Texture charac;
 	sf::Texture bullet;
 	sf::Texture obstacle;
-	if (!charac.loadFromFile("Images/charSmall.png"))
+	if (!charac.loadFromFile("Images/tallChar.png"))
 	{
 		std::cerr << "Could not load char" << std::endl;
 	}
@@ -151,11 +152,8 @@ int main()
 		{
 			int x = (ran / GRID_X);
 			int y = (ran % GRID_Y);
-			std::cout << ran<<" "<<x << " " << y << std::endl;
-			float isox = x - y;
-			float isoy = x + y;
-			std::cout << isox << " " << isoy << std::endl;
-			grid[ran] = new Obstacle(obstacle, (float)(isox*TILE_X + WINDOW_X_HALF), (float)(isoy*TILE_Y), false);
+			Point iso=iso2car(Point{ x, y });
+			grid[ran] = new Obstacle(obstacle, iso.x, iso.y, false);
 			//grid[y] = new Obstacle(obstacle, (float)(64.0 * (y / 10.0)), float(64.0 * (y % 10)), false);
 		}
 	}
@@ -176,12 +174,11 @@ int main()
 		sf::Vector2f spritePosition = spriteChar->getPosition();
 		sf::Vector2i mousePosition = sf::Mouse::getPosition(*window);
 		std::ostringstream ss; //string buffer to convert numbers to string
-		int isox = (((mousePosition.x - WINDOW_X_HALF - TILE_X) / TILE_X + mousePosition.y / TILE_Y) / 2.0);
-		int isoy = ((mousePosition.y / TILE_Y - (mousePosition.x - WINDOW_X_HALF - TILE_X) / TILE_X) / 2.0);
-		float carx = isox - isoy;
-		float cary = isox + isoy;
 		//ss << (((mousePosition.x - WINDOW_X_HALF - TILE_X) / TILE_X + mousePosition.y / TILE_Y) / 2.0) << " " << ((mousePosition.y / TILE_Y - (mousePosition.x - WINDOW_X_HALF - TILE_X) / TILE_X) / 2.0);// put float into string buffer
-		ss << isox << " " << isoy;// put float into string buffer
+		Point iso = car2iso(Point{mousePosition.x,mousePosition.y});
+		iso.x = (int)iso.x;
+		iso.y = (int)iso.y;
+		ss << iso.x << " " << iso.y;
 		text.setString(ss.str());
 		while (window->pollEvent(event))
 		{
@@ -191,11 +188,14 @@ int main()
 			{
 				if (event.mouseButton.button == sf::Mouse::Left)
 				{
-					spriteChar->setPosition((float)(carx*TILE_X + WINDOW_X_HALF+17.0), (float)(cary*TILE_Y));
+					if (!(iso.x >= GRID_X || iso.x < 0 || iso.y >= GRID_Y || iso.y < 0))
+					{
+						Point car = iso2car(Point{ iso.x, iso.y });
+						spriteChar->setPosition(car.x,car.y-CHAR_Y+TILE_Y);
+					}
 				}
 			}
 		}
-
 		window->clear();
 		for (size_t x = 0, xlen = grid.size(); x < xlen; x++)
 		{

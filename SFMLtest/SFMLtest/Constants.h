@@ -10,4 +10,6 @@ const int GRID_X = 20;
 const int GRID_Y = 20;
 const float TILE_X = 32.0; //Half of tile width
 const float TILE_Y = 17.0; //Half of tile height
+const float CHAR_X = 64.0;
+const float CHAR_Y = 109.0;
 #endif
