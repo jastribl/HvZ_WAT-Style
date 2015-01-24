@@ -8,7 +8,7 @@ float getDirectionAngle(float xfinal, float yfinal, float xstart, float ystart)
 }
 float getDistance(float xdelta, float ydelta)
 {
-	return sqrtf((powf(xdelta, 2.0) + powf(ydelta, 2.0)));
+	return sqrtf((xdelta*xdelta +ydelta*ydelta));
 }
 float getDistance(float xfinal, float yfinal, float xstart, float ystart)
 {
