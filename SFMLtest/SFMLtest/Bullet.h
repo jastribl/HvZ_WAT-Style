@@ -4,18 +4,18 @@
 class Bullet : public MovingObject
 {
 public:
-	Bullet(const sf::Vector2f& velo, const sf::Texture& tex, float x, float y,float angle) :MovingObject(velo, tex, x, y)
+	Bullet(const sf::Vector2f& velo, const sf::Texture& tex, float x, float y, float angle, bool centre) :MovingObject(velo, tex, x, y,centre)
 	{
 		setRotation(angle);
 	}
-	Bullet(const sf::Vector2f& velo, const sf::Texture& tex, const sf::Vector2f& pos, float angle) :MovingObject(velo, tex,pos)
+	Bullet(const sf::Vector2f& velo, const sf::Texture& tex, const sf::Vector2f& pos, float angle, bool centre) :MovingObject(velo, tex, pos, centre)
 	{
 		setRotation(angle);
 	}
-	Bullet(const sf::Vector2f& velo, const sf::Texture& tex, float x, float y) :MovingObject(velo,tex, x, y)
+	Bullet(const sf::Vector2f& velo, const sf::Texture& tex, float x, float y, bool centre) :MovingObject(velo, tex, x, y, centre)
 	{
 	}
-	Bullet(const sf::Vector2f& velo, const sf::Texture& tex, const sf::Vector2f& pos) :MovingObject(velo, tex, pos)
+	Bullet(const sf::Vector2f& velo, const sf::Texture& tex, const sf::Vector2f& pos, bool centre) :MovingObject(velo, tex, pos, centre)
 	{
 	}
 	void fly()

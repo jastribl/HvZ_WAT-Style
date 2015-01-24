@@ -4,10 +4,10 @@
 class Character : public MovingObject
 {
 public:
-	Character(const sf::Vector2f& velo, const sf::Texture& tex, float x, float y) :MovingObject(velo, tex, x, y)
+	Character(const sf::Vector2f& velo, const sf::Texture& tex, float x, float y,bool centre) :MovingObject(velo, tex, x, y,centre)
 	{
 	}
-	Character(const sf::Vector2f& velo, const sf::Texture& tex, const sf::Vector2f& pos) :MovingObject(velo, tex, pos)
+	Character(const sf::Vector2f& velo, const sf::Texture& tex, const sf::Vector2f& pos, bool centre) :MovingObject(velo, tex, pos,centre)
 	{
 	}
 };
