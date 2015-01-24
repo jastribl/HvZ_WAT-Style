@@ -3,17 +3,19 @@
 class Obstacle : public sf::Sprite
 {
 public:
-	Obstacle(const sf::Texture& tex, const sf::Vector2f pos)
+	Obstacle(const sf::Texture& tex, const sf::Vector2f pos, bool centre)
 	{
 		setTexture(tex);
-		setOrigin(tex.getSize().x / 2, tex.getSize().y / 2);
 		setPosition(pos);
+		if (centre)
+			setOrigin(tex.getSize().x / 2, tex.getSize().y / 2);
 	}
-	Obstacle(const sf::Texture& tex, float x,float y)
+	Obstacle(const sf::Texture& tex, float x, float y, bool centre)
 	{
 		setTexture(tex);
-		setOrigin(tex.getSize().x / 2, tex.getSize().y / 2);
-		setPosition(sf::Vector2f(x,y));
+		if (centre)
+			setOrigin(tex.getSize().x / 2, tex.getSize().y / 2);
+		setPosition(sf::Vector2f(x, y));
 	}
 };
 #endif

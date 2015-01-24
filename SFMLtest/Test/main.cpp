@@ -16,6 +16,12 @@ const sf::Vector2f getVector(float xfinal, float yfinal, float xstart, float yst
 	float len = sqrtf((powf(xdir, 2.0) + powf(ydir, 2.0)));
 	return sf::Vector2f(xdir*scale / len, ydir*scale / len);
 }
+//Grid
+std::vector<sf::Drawable*> grid;
+bool collision(int x,int y)
+{
+
+}
 int main()
 {
 	//Create window
@@ -33,12 +39,11 @@ int main()
 	{
 		std::cerr << "Could not load box" << std::endl;
 	}
-	if (!obstacle.loadFromFile("Images/obstacle.png"))
+	if (!obstacle.loadFromFile("Images/full.png"))
 	{
 		std::cerr << "Could not load box" << std::endl;
 	}
 	//Grid
-	std::vector<sf::Transformable*> grid;
 	grid.resize(100);
 	//Character
 	Character spriteChar(charac);
@@ -50,8 +55,8 @@ int main()
 	obstacles.reserve(10);
 	for (int x = 0; x < 10; x++)
 	{
-		int y = rand() % 100+1;
-		grid[y-1] = new Obstacle(obstacle, , 500);
+		int y = rand() % 100;
+		grid[y] = new Obstacle(obstacle,64*(y/10),64*(y%10),false);
 	}
 	//Remember where you clicked
 	sf::Vector2i localPosition = sf::Mouse::getPosition(*window);
@@ -92,6 +97,7 @@ int main()
 
 		}
 		sf::Vector2f spritePosition = spriteChar.getPosition();
+		std::cout << spritePosition.x / 64 << " " << spritePosition.y / 64 << std::endl;
 		sf::Vector2i mousePosition = sf::Mouse::getPosition(*window);
 		spriteChar.setRotation(atan2(mousePosition.y - spritePosition.y, mousePosition.x - spritePosition.x) * 180 / M_PI);
 		float len = sqrtf((powf(localPosition.x - spritePosition.x, 2.0) + powf(localPosition.y - spritePosition.y, 2.0)));
@@ -99,19 +105,20 @@ int main()
 		{
 
 				spriteChar.move(getVector(localPosition.x, localPosition.y, spritePosition.x, spritePosition.y));
+				/*
 				if (spriteChar.getGlobalBounds().intersects(obstacles[0]->getGlobalBounds()))
 				{
 					spriteChar.move(getVector(localPosition.x, localPosition.y, spritePosition.x, spritePosition.y, -1.0));
 					localPosition = sf::Vector2i(spritePosition.x, spritePosition.y);
 					spriteChar.stop();
-				}
+				}*/
 		}
 		else
 		{
 			spriteChar.setPosition(localPosition.x, localPosition.y);
 		}
 		window->clear();
-		window->draw(spriteChar);
+		window->draw(spriteChar);/*
 		for (int x = 0; x < bullets.size(); x++)
 		{
 			if (bullets[x]->getDone())
@@ -138,10 +145,14 @@ int main()
 				if (!bullets[x]->getDone())
 					window->draw(*bullets[x]);
 			}
-		}
+		}*/
 		//velocity.x = localPosition - s;
 		//sprite.move(velocity);
-		window->draw(*obstacles[0]);
+		for (int x = 0; x < grid.size(); x++)
+		{
+			if (grid[x])
+				window->draw(*grid[x]);
+		}
 		window->display();
 		elapsed = clock.restart();
 	}
