@@ -15,11 +15,11 @@
 std::vector<Object*> grid;
 bool collision(Object& object)
 {
-	Point temp = car2iso(Point{ object.getPosition().x, object.getPosition().y});
-	std::cout << temp.x<<" "<<temp.y << std::endl;
+	Point temp = object.getPos();
+	//std::cout << temp.x<<" "<<temp.y << std::endl;
 	if (temp.x >= 0 && temp.x < GRID_X&&temp.y >= 0 && temp.y < GRID_Y)
 	{
-		std::cout << grid[(int)(temp.x)*GRID_Y + (int)(temp.y)]->getID() << std::endl;
+		//std::cout << grid[(int)(temp.x)*GRID_Y + (int)(temp.y)]->getID() << std::endl;
 		if (grid[(int)(temp.x)*GRID_Y + (int)(temp.y)]->getID() == 2)
 			return true;
 	}
@@ -65,7 +65,7 @@ void updateCharOld()
 	}
 	}
 
-	
+
 	*/
 }
 int main()
@@ -122,8 +122,8 @@ int main()
 		{
 			int x = (ran / GRID_Y);
 			int y = (ran % GRID_Y);
-			Point iso = iso2car(Point{ x, y });
-			if (rand() % 2 == 0)
+			Point iso = iso2car(Point{ x, y }, true);
+			if (rand() % 3 == 0)
 				grid[ran] = new Obstacle(2, obstacle, iso.x, iso.y, false);
 			else
 				grid[ran] = new Obstacle(3, grass, iso.x, iso.y, false);
@@ -149,7 +149,7 @@ int main()
 		sf::Vector2i mousePosition = sf::Mouse::getPosition(*window);
 		std::ostringstream ss; //string buffer to convert numbers to string
 		//ss << (((mousePosition.x - WINDOW_X_HALF - TILE_X) / TILE_X + mousePosition.y / TILE_Y) / 2.0) << " " << ((mousePosition.y / TILE_Y - (mousePosition.x - WINDOW_X_HALF - TILE_X) / TILE_X) / 2.0);// put float into string buffer
-		Point iso = car2iso(Point{ mousePosition.x, mousePosition.y });
+		Point iso = car2iso(Point{ mousePosition.x, mousePosition.y }, true);
 		iso.x = (int)iso.x;
 		iso.y = (int)iso.y;
 		ss << iso.x << " " << iso.y << " ";
@@ -208,30 +208,11 @@ int main()
 				if (event.mouseButton.button == sf::Mouse::Right)
 				{
 					sf::Vector2i pressed = sf::Mouse::getPosition(*window);
-					Point temp = iso2car(spriteChar->getPos());
+					Point temp = iso2car(spriteChar->getPos(), false);
 					bullets.push_back(new Bullet(4, getDirectionVector((float)pressed.x, (float)pressed.y, (int)temp.x + TILE_X, (int)temp.y + 2 * TILE_Y, 1.0), bullet, (int)temp.x + TILE_X, (int)temp.y + 2 * TILE_Y, spriteChar->getRotation(), true));
 				}
 			}
 		}
-		window->clear(sf::Color(255,255,255));
-		bool drawChar = false;
-		Point car = iso2car(spriteChar->getPos());
-		spriteChar->setPosition(car.x, car.y - CHAR_Y + 3 * TILE_Y);
-		for (size_t x = 0, xlen = grid.size(); x < xlen; x++)
-		{
-			if (grid[x])
-			{
-				window->draw(*grid[x]);
-				if (!drawChar && (grid[x]->getPos().x == spriteChar->getPos().x) && (grid[x]->getPos().y == spriteChar->getPos().y))
-				{
-					window->draw(*spriteChar);
-					drawChar = true;
-				}
-			}
-		}
-		if (!drawChar)
-			window->draw(*spriteChar);
-		window->draw(text);
 		for (size_t x = 0, xlen = bullets.size(); x < xlen; x++)
 		{
 			if (bullets[x]->getDone())
@@ -249,12 +230,56 @@ int main()
 			else
 			{
 				bullets[x]->fly();
+				bullets[x]->setPos(car2iso(Point{ bullets[x]->getPosition().x, bullets[x]->getPosition().y }, true));
 				if (collision(*bullets[x]))
 					bullets[x]->setDone(true);
-				if (!bullets[x]->getDone())
-					window->draw(*bullets[x]);
 			}
 		}
+		window->clear(sf::Color(255, 255, 255));
+		spriteChar->setDrawn(false);
+		for (size_t x = 0, xlen = bullets.size(); x < xlen; x++)
+		{
+			bullets[x]->setDrawn(false);
+		}
+		Point car = iso2car(spriteChar->getPos(), true);
+		spriteChar->setPosition(car.x, car.y - CHAR_Y + 3 * TILE_Y);
+		for (size_t x = 0, xlen = grid.size(); x < xlen; x++)
+		{
+			if (grid[x])
+			{
+				window->draw(*grid[x]);
+				if (!(spriteChar->getDrawn()) && (grid[x]->getPos() == spriteChar->getPos()))
+				{
+					window->draw(*spriteChar);
+					spriteChar->setDrawn(true);
+				}
+				for (size_t y = 0, ylen = bullets.size(); y < ylen; y++)
+				{
+					Point temp = bullets[y]->getPos();
+					
+					if (!bullets[y]->getDone() && !bullets[y]->getDrawn())
+					{
+						if ((temp.x*GRID_Y + temp.y == x) && (grid[x]->getID() != 2))
+						{
+							window->draw(*bullets[y]);
+							bullets[y]->setDrawn(true);
+						}
+					}
+				}
+			}
+		}
+		for (size_t x = 0, xlen = bullets.size(); x < xlen; x++)
+		{
+			if (!bullets[x]->getDone() && !bullets[x]->getDrawn())
+			{
+				//std::cout << "drawing out" << std::endl;
+				window->draw(*bullets[x]);
+				bullets[x]->setDrawn(true);
+			}
+		}
+		if (!spriteChar->getDrawn())
+			window->draw(*spriteChar);
+		window->draw(text);
 		window->display();
 		elapsed = clock.restart();
 	}

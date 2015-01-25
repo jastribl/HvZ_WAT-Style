@@ -9,6 +9,7 @@ protected:
 	bool done = false;
 	Point isopos;
 	int id;
+	bool drawn = false;
 public:
 	Object(int newid,const sf::Texture& tex, const sf::Vector2f& pos, bool centre)
 	{
@@ -42,6 +43,14 @@ public:
 	void setID(int newid)
 	{
 		id = newid;
+	}
+	void setDrawn(bool newDrawn)
+	{
+		drawn = newDrawn;
+	}
+	bool getDrawn()
+	{
+		return drawn;
 	}
 	int getID()
 	{
