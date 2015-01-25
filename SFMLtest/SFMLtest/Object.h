@@ -1,18 +1,14 @@
 #ifndef OBJECT_H
 #define OBJECT_H
-#include "Point.h"
 class Object :public sf::Sprite
 {
 protected:
 	int originx;
 	int originy;
 	bool done = false;
-	Point isopos;
-	int id;
 public:
-	Object(int newid,const sf::Texture& tex, const sf::Vector2f& pos, bool centre)
+	Object(const sf::Texture& tex, const sf::Vector2f& pos, bool centre)
 	{
-		id = newid;
 		setTexture(tex);
 		setPosition(pos);
 		if (centre)
@@ -20,7 +16,7 @@ public:
 		originx=tex.getSize().x / 2;
 		originy=tex.getSize().y / 2;
 	}
-	Object(int id, const sf::Texture& tex, float x, float y, bool centre) :Object(id, tex, sf::Vector2f(x, y), centre)
+	Object(const sf::Texture& tex, float x, float y, bool centre) :Object(tex, sf::Vector2f(x, y), centre)
 	{
 	}
 	void setDone(bool d)
@@ -30,22 +26,6 @@ public:
 	bool getDone()
 	{
 		return done;
-	}
-	void setPos(Point position)
-	{
-		isopos = position;
-	}
-	Point getPos()
-	{
-		return isopos;
-	}
-	void setID(int newid)
-	{
-		id = newid;
-	}
-	int getID()
-	{
-		return id;
 	}
 };
 #endif

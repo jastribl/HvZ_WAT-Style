@@ -23,10 +23,10 @@ sf::Vector2f getDirectionVector(float xfinal, float yfinal, float xstart, float 
 }
 Point iso2car(Point poi)
 {
-	return Point{ (int)((poi.x - poi.y)*TILE_X + WINDOW_X_HALF), (int)((poi.x + poi.y)*TILE_Y) };
+	return Point{ (poi.x - poi.y)*TILE_X + WINDOW_X_HALF, (poi.x + poi.y)*TILE_Y };
 }
 Point car2iso(Point poi)
 {
-	return Point{(int)( ((poi.x - WINDOW_X_HALF - TILE_X) / TILE_X + (poi.y - TILE_Z) / TILE_Y) / 2.0),(int)( ((poi.y - TILE_Z) / TILE_Y - (poi.x - WINDOW_X_HALF - TILE_X) / TILE_X) / 2.0 )};
+	return Point{ ((poi.x - WINDOW_X_HALF - TILE_X) / TILE_X + poi.y / TILE_Y) / 2.0, (poi.y / TILE_Y - (poi.x - WINDOW_X_HALF - TILE_X) / TILE_X) / 2.0 };
 }
 #endif

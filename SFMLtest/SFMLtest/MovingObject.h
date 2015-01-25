@@ -7,11 +7,11 @@ class MovingObject :public Object
 protected:
 	sf::Vector2f velocity;
 public:
-	MovingObject(int id, const sf::Vector2f& velo, const sf::Texture& tex, const sf::Vector2f& pos, bool centre) :Object(id,tex, pos, centre)
+	MovingObject(const sf::Vector2f& velo, const sf::Texture& tex, const sf::Vector2f& pos, bool centre) :Object(tex, pos, centre)
 	{
 		velocity = velo;
 	}
-	MovingObject(int id, const sf::Vector2f& velo, const sf::Texture& tex, float x, float y, bool centre) :Object(id,tex, x, y, centre)
+	MovingObject(const sf::Vector2f& velo, const sf::Texture& tex, float x, float y, bool centre) :Object(tex, x, y, centre)
 	{
 		velocity = velo;
 	}
