@@ -128,7 +128,7 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
         boolean foundOne = false;
         Point location = me.getLocationOnScreen();
         if (location.x > screenWidth / 5) {
-            for (int i = 0; i < levels.get(currentLevel).size(); i++) {
+            for (int i = levels.get(currentLevel).size() - 1; i >= 0; i--) {
                 Item object = levels.get(currentLevel).get(i);
                 Rectangle rectangle = new Rectangle(object.getX(), object.getY(), object.getWidth(), object.getHeight());
                 if (rectangle.contains(location)) {
