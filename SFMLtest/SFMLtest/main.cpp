@@ -13,27 +13,15 @@
 #include "Point.h"
 //Grid
 std::vector<Object*> grid;
-bool collision(const sf::Sprite& object, bool check)
+bool collision(Object& object)
 {
-	for (size_t x = 0, xlen = grid.size(); x < xlen; x++)
+	Point temp = car2iso(Point{ object.getPosition().x, object.getPosition().y});
+	std::cout << temp.x<<" "<<temp.y << std::endl;
+	if (temp.x >= 0 && temp.x < GRID_X&&temp.y >= 0 && temp.y < GRID_Y)
 	{
-		if (grid[x])
-		{
-			if (check)
-			{
-				if (object.getGlobalBounds().intersects(grid[x]->getGlobalBounds()))
-				{
-					return true;
-				}
-			}
-			else
-			{
-				if (grid[x]->getGlobalBounds().contains(object.getPosition()))
-				{
-					return true;
-				}
-			}
-		}
+		std::cout << grid[(int)(temp.x)*GRID_Y + (int)(temp.y)]->getID() << std::endl;
+		if (grid[(int)(temp.x)*GRID_Y + (int)(temp.y)]->getID() == 2)
+			return true;
 	}
 	return false;
 }
@@ -54,53 +42,30 @@ void updateCharOld()
 	spriteChar->setRotation(angle);
 	if (collision(*spriteChar, true))
 	{
-		spriteChar->setRotation(preangle);
+	spriteChar->setRotation(preangle);
 	}
 	if (spriteChar->getVelocity() != sf::Vector2f(0.0f, 0.0f))
 	{
-		float len = getDistance((float)localPosition.x, (float)localPosition.y, spritePosition.x, spritePosition.y);
-		if (len > 3.0)
-		{
-			spriteChar->fly();
-			if (collision(*spriteChar, true))
-			{
-				spriteChar->move(spriteChar->getVelocity()*-1.0f);
-				localPosition = sf::Vector2i((int)spritePosition.x, (int)spritePosition.y);
-				spriteChar->stop();
-			}
-		}
-		else
-		{
-			localPosition = sf::Vector2i((int)spriteChar->getPosition().x, (int)spriteChar->getPosition().y);
-			spriteChar->stop();
-
-		}
+	float len = getDistance((float)localPosition.x, (float)localPosition.y, spritePosition.x, spritePosition.y);
+	if (len > 3.0)
+	{
+	spriteChar->fly();
+	if (collision(*spriteChar, true))
+	{
+	spriteChar->move(spriteChar->getVelocity()*-1.0f);
+	localPosition = sf::Vector2i((int)spritePosition.x, (int)spritePosition.y);
+	spriteChar->stop();
 	}
-
-	for (size_t x = 0, xlen = bullets.size(); x < xlen; x++)
-	{
-	if (bullets[x]->getDone())
-	{
-	Bullet* temp = bullets[x];
-	if (bullets.size() - 1 != x)
-	{
-	bullets[x] = std::move(bullets.back());
-	x--;
-	}
-	xlen--;
-	bullets.pop_back();
-	delete temp;
-
 	}
 	else
 	{
-	bullets[x]->fly();
-	if (collision(*bullets[x], false))
-	bullets[x]->setDone(true);
-	if (!bullets[x]->getDone())
-	window->draw(*bullets[x]);
+	localPosition = sf::Vector2i((int)spriteChar->getPosition().x, (int)spriteChar->getPosition().y);
+	spriteChar->stop();
+
 	}
 	}
+
+	
 	*/
 }
 int main()
@@ -129,7 +94,7 @@ int main()
 	{
 		std::cerr << "Could not load char" << std::endl;
 	}
-	if (!bullet.loadFromFile("Images/bullet.png"))
+	if (!bullet.loadFromFile("Images/bulletSmall.png"))
 	{
 		std::cerr << "Could not load bullet" << std::endl;
 	}
@@ -144,7 +109,7 @@ int main()
 	//Grid
 	grid.resize(GRID_X*GRID_Y);
 	//Character
-	Character* spriteChar = new Character(1,sf::Vector2f(0.0f, 0.0f), charac, 0, 0,false);
+	Character* spriteChar = new Character(1, sf::Vector2f(0.0f, 0.0f), charac, 0, 0, false);
 	//Bullets
 	std::vector<Bullet*>bullets;
 	bullets.reserve(99);
@@ -157,12 +122,12 @@ int main()
 		{
 			int x = (ran / GRID_Y);
 			int y = (ran % GRID_Y);
-			Point iso=iso2car(Point{ x, y });
-			if (rand() % 2==0)
-				grid[ran] = new Obstacle(2,obstacle, iso.x, iso.y, false);
+			Point iso = iso2car(Point{ x, y });
+			if (rand() % 2 == 0)
+				grid[ran] = new Obstacle(2, obstacle, iso.x, iso.y, false);
 			else
-				grid[ran] = new Obstacle(3,grass, iso.x, iso.y, false);
-			grid[ran]->setPos(Point{x,y});
+				grid[ran] = new Obstacle(3, grass, iso.x, iso.y, false);
+			grid[ran]->setPos(Point{ x, y });
 			//grid[y] = new Obstacle(obstacle, (float)(64.0 * (y / 10.0)), float(64.0 * (y % 10)), false);
 		}
 	}
@@ -184,11 +149,11 @@ int main()
 		sf::Vector2i mousePosition = sf::Mouse::getPosition(*window);
 		std::ostringstream ss; //string buffer to convert numbers to string
 		//ss << (((mousePosition.x - WINDOW_X_HALF - TILE_X) / TILE_X + mousePosition.y / TILE_Y) / 2.0) << " " << ((mousePosition.y / TILE_Y - (mousePosition.x - WINDOW_X_HALF - TILE_X) / TILE_X) / 2.0);// put float into string buffer
-		Point iso = car2iso(Point{mousePosition.x,mousePosition.y});
+		Point iso = car2iso(Point{ mousePosition.x, mousePosition.y });
 		iso.x = (int)iso.x;
 		iso.y = (int)iso.y;
-		ss << iso.x << " " << iso.y<<" ";
-		if (iso.x >= 0 && iso.x < GRID_X && iso.y>= 0 && iso.y < GRID_Y)
+		ss << iso.x << " " << iso.y << " ";
+		if (iso.x >= 0 && iso.x < GRID_X && iso.y >= 0 && iso.y < GRID_Y)
 			ss << iso.x*GRID_Y + iso.y << " " << grid[iso.x*GRID_Y + iso.y]->getID();
 		text.setString(ss.str());
 		while (window->pollEvent(event))
@@ -200,7 +165,7 @@ int main()
 				if (event.mouseButton.button == sf::Mouse::Left)
 				{
 					//std::cout << iso.x*GRID_Y + iso.y << " " << grid[iso.x*GRID_Y + iso.y]->getID()<<std::endl;
-					if (!(iso.x >= GRID_X || iso.x < 0 || iso.y >= GRID_Y || iso.y < 0)&&grid[iso.x*GRID_Y+iso.y]->getID()!=2)
+					if (!(iso.x >= GRID_X || iso.x < 0 || iso.y >= GRID_Y || iso.y < 0) && grid[iso.x*GRID_Y + iso.y]->getID() != 2)
 					{
 						spriteChar->setPos(iso);
 					}
@@ -213,33 +178,42 @@ int main()
 				{
 					if ((temp.x != 0) && (grid[(temp.x - 1)*GRID_Y + temp.y]->getID() != 2))
 					{
-						spriteChar->setPos(Point{temp.x-1,temp.y});
+						spriteChar->setPos(Point{ temp.x - 1.0, temp.y });
 					}
 				}
 				else if (event.key.code == sf::Keyboard::Down)
 				{
 					if ((temp.x != GRID_X - 1) && (grid[(temp.x + 1)*GRID_Y + temp.y]->getID() != 2))
 					{
-						spriteChar->setPos(Point{ temp.x + 1, temp.y });
+						spriteChar->setPos(Point{ temp.x + 1.0, temp.y });
 					}
 				}
 				else if (event.key.code == sf::Keyboard::Left)
 				{
 					if ((temp.y != GRID_Y - 1) && (grid[temp.x*GRID_Y + temp.y + 1]->getID() != 2))
 					{
-						spriteChar->setPos(Point{ temp.x, temp.y+1 });
+						spriteChar->setPos(Point{ temp.x, temp.y + 1.0 });
 					}
 				}
 				else if (event.key.code == sf::Keyboard::Right)
 				{
 					if ((temp.y != 0) && (grid[temp.x*GRID_Y + temp.y - 1]->getID() != 2))
 					{
-						spriteChar->setPos(Point{ temp.x, temp.y -1});
+						spriteChar->setPos(Point{ temp.x, temp.y - 1.0 });
 					}
 				}
 			}
+			if (event.type == sf::Event::MouseButtonPressed)
+			{
+				if (event.mouseButton.button == sf::Mouse::Right)
+				{
+					sf::Vector2i pressed = sf::Mouse::getPosition(*window);
+					Point temp = iso2car(spriteChar->getPos());
+					bullets.push_back(new Bullet(4, getDirectionVector((float)pressed.x, (float)pressed.y, (int)temp.x + TILE_X, (int)temp.y + 2 * TILE_Y, 1.0), bullet, (int)temp.x + TILE_X, (int)temp.y + 2 * TILE_Y, spriteChar->getRotation(), true));
+				}
+			}
 		}
-		window->clear();
+		window->clear(sf::Color(255,255,255));
 		bool drawChar = false;
 		Point car = iso2car(spriteChar->getPos());
 		spriteChar->setPosition(car.x, car.y - CHAR_Y + 3 * TILE_Y);
@@ -258,6 +232,29 @@ int main()
 		if (!drawChar)
 			window->draw(*spriteChar);
 		window->draw(text);
+		for (size_t x = 0, xlen = bullets.size(); x < xlen; x++)
+		{
+			if (bullets[x]->getDone())
+			{
+				Bullet* temp = bullets[x];
+				if (bullets.size() - 1 != x)
+				{
+					bullets[x] = std::move(bullets.back());
+					x--;
+				}
+				xlen--;
+				bullets.pop_back();
+				delete temp;
+			}
+			else
+			{
+				bullets[x]->fly();
+				if (collision(*bullets[x]))
+					bullets[x]->setDone(true);
+				if (!bullets[x]->getDone())
+					window->draw(*bullets[x]);
+			}
+		}
 		window->display();
 		elapsed = clock.restart();
 	}

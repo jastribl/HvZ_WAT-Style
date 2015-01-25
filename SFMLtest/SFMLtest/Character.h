@@ -4,6 +4,8 @@
 #include "Point.h"
 class Character : public MovingObject
 {
+private:
+	float angle;
 public:
 	Character(int id, const sf::Vector2f& velo, const sf::Texture& tex, float x, float y, bool centre) :MovingObject(id,velo, tex, x, y, centre)
 	{
@@ -11,6 +13,9 @@ public:
 	Character(int id, const sf::Vector2f& velo, const sf::Texture& tex, const sf::Vector2f& pos, bool centre) :MovingObject(id,velo, tex, pos, centre)
 	{
 	}
-
+	void setRotate(float newangle)
+	{
+		angle = newangle;
+	}
 };
 #endif
