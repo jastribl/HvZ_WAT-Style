@@ -27,7 +27,7 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
     private final ObjectMenu menu = new ObjectMenu();
     private int currentLevel = 0;
     private boolean levelUpKeyIsDown = false, levelDownKeyIsDown = false;
-    private int itemWidth = 64, itemHeight = 16;//, itemDepth = itemWidth - itemHeight;
+    private int itemWidth = 64, itemTopHeight = 16;
 
     LevelEditor() {
         setTitle("LevelUpGame - 2015 - Justin Stribling");
@@ -63,7 +63,7 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
     }
 
     public final void drawGame() {
-        memoryGraphics.setColor(Color.black);
+        memoryGraphics.setColor(Color.gray);
         memoryGraphics.fillRect(screenWidth / 5, 0, screenWidth - screenWidth / 5, screenHeight);
         boolean printedLive = false;
         for (int i = 0; i < levels.size(); i++) {
@@ -99,10 +99,10 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
     }
 
     private Point fixLocation(int xG, int yG) {
-        if ((yG / itemHeight) % 2 == 0) {
-            return new Point(((xG + 32) / itemWidth * itemWidth), yG / itemHeight * itemHeight);
+        if ((yG / itemTopHeight) % 2 == 0) {
+            return new Point(((xG + 32) / itemWidth * itemWidth), yG / itemTopHeight * itemTopHeight + 8);
         } else {
-            return new Point((xG / itemWidth * itemWidth) + 32, yG / itemHeight * itemHeight);
+            return new Point((xG / itemWidth * itemWidth) + 32, yG / itemTopHeight * itemTopHeight + 8);
         }
     }
 
@@ -199,7 +199,7 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
     }
 
     private void moveAll(int x, int y) {
-        int xShift = itemWidth, yShift = itemHeight * 2;
+        int xShift = itemWidth, yShift = 34;
         for (Level level : levels) {
             for (Item object : level) {
                 object.setX(object.getX() + (x * xShift));
