@@ -27,6 +27,7 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
     private final ObjectMenu menu = new ObjectMenu();
     private int currentLevel = 0;
     private boolean levelUpKeyIsDown = false, levelDownKeyIsDown = false;
+    private int itemWidth = 64, itemHeight = 16;//, itemDepth = itemWidth - itemHeight;
 
     LevelEditor() {
         setTitle("LevelUpGame - 2015 - Justin Stribling");
@@ -97,20 +98,19 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
         getGraphics().dispose();
     }
 
-    private Point fixLocation(int a, int b, int mod) {
-        int xx, yy;
-        xx = Math.round(b / mod - a / mod);
-        yy = Math.round(b / mod + a / mod);
-        return new Point((yy - xx) / 2 * mod, (yy + xx) / 2 * mod);
+    private Point fixLocation(int xG, int yG) {
+        if ((yG / itemHeight) % 2 == 0) {
+            return new Point(((xG + 32) / itemWidth * itemWidth), yG / itemHeight * itemHeight);
+        } else {
+            return new Point((xG / itemWidth * itemWidth) + 32, yG / itemHeight * itemHeight);
+        }
     }
 
     @Override
     public void mouseDragged(MouseEvent me) {
-        System.out.println((me.getX() / 32 + me.getY() / 32) / 2);
-        System.out.println(me.getY() / 32 - (me.getX() / 32) / 32);
         if (currentLevelObject != null) {
             Point location = me.getLocationOnScreen();
-            currentLevelObject.setLocation(fixLocation(location.x, location.y, 15));
+            currentLevelObject.setLocation(fixLocation(location.x, location.y));
             drawGame();
         }
     }
@@ -199,7 +199,7 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
     }
 
     private void moveAll(int x, int y) {
-        int xShift = 60, yShift = 30;
+        int xShift = itemWidth, yShift = itemHeight * 2;
         for (Level level : levels) {
             for (Item object : level) {
                 object.setX(object.getX() + (x * xShift));
@@ -222,10 +222,6 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
         } else if (key == 109 && levelDownKeyIsDown) {
             levelDownKeyIsDown = false;
             if (currentLevel > 0) {
-//                if (levels.get(currentLevel).size() == 0) {
-//                    levels.remove(currentLevel);
-//                    System.out.println("deleated");
-//                }
                 currentLevel--;
             }
             drawGame();
