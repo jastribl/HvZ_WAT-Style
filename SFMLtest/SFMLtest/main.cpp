@@ -12,7 +12,7 @@
 #include "Algorithms.h"
 #include "Point.h"
 //Grid
-std::vector<sf::Sprite*> grid;
+std::vector<Object*> grid;
 bool collision(const sf::Sprite& object, bool check)
 {
 	for (size_t x = 0, xlen = grid.size(); x < xlen; x++)
@@ -124,6 +124,7 @@ int main()
 	sf::Texture charac;
 	sf::Texture bullet;
 	sf::Texture obstacle;
+	sf::Texture grass;
 	if (!charac.loadFromFile("Images/tallChar.png"))
 	{
 		std::cerr << "Could not load char" << std::endl;
@@ -136,10 +137,14 @@ int main()
 	{
 		std::cerr << "Could not load box" << std::endl;
 	}
+	if (!grass.loadFromFile("Images/grass.png"))
+	{
+		std::cerr << "Could not load box" << std::endl;
+	}
 	//Grid
 	grid.resize(GRID_X*GRID_Y);
 	//Character
-	Character* spriteChar = new Character(sf::Vector2f(0.0f, 0.0f), charac, 0, 0,false);
+	Character* spriteChar = new Character(1,sf::Vector2f(0.0f, 0.0f), charac, 0, 0,false);
 	//Bullets
 	std::vector<Bullet*>bullets;
 	bullets.reserve(99);
@@ -150,10 +155,14 @@ int main()
 		int ran = num;
 		if (!grid[ran])
 		{
-			int x = (ran / GRID_X);
+			int x = (ran / GRID_Y);
 			int y = (ran % GRID_Y);
 			Point iso=iso2car(Point{ x, y });
-			grid[ran] = new Obstacle(obstacle, iso.x, iso.y, false);
+			if (rand() % 2==0)
+				grid[ran] = new Obstacle(2,obstacle, iso.x, iso.y, false);
+			else
+				grid[ran] = new Obstacle(3,grass, iso.x, iso.y, false);
+			grid[ran]->setPos(Point{x,y});
 			//grid[y] = new Obstacle(obstacle, (float)(64.0 * (y / 10.0)), float(64.0 * (y % 10)), false);
 		}
 	}
@@ -178,7 +187,9 @@ int main()
 		Point iso = car2iso(Point{mousePosition.x,mousePosition.y});
 		iso.x = (int)iso.x;
 		iso.y = (int)iso.y;
-		ss << iso.x << " " << iso.y;
+		ss << iso.x << " " << iso.y<<" ";
+		if (iso.x >= 0 && iso.x < GRID_X && iso.y>= 0 && iso.y < GRID_Y)
+			ss << iso.x*GRID_Y + iso.y << " " << grid[iso.x*GRID_Y + iso.y]->getID();
 		text.setString(ss.str());
 		while (window->pollEvent(event))
 		{
@@ -188,21 +199,64 @@ int main()
 			{
 				if (event.mouseButton.button == sf::Mouse::Left)
 				{
-					if (!(iso.x >= GRID_X || iso.x < 0 || iso.y >= GRID_Y || iso.y < 0))
+					//std::cout << iso.x*GRID_Y + iso.y << " " << grid[iso.x*GRID_Y + iso.y]->getID()<<std::endl;
+					if (!(iso.x >= GRID_X || iso.x < 0 || iso.y >= GRID_Y || iso.y < 0)&&grid[iso.x*GRID_Y+iso.y]->getID()!=2)
 					{
-						Point car = iso2car(Point{ iso.x, iso.y });
-						spriteChar->setPosition(car.x,car.y-CHAR_Y+TILE_Y);
+						spriteChar->setPos(iso);
+					}
+				}
+			}
+			if (event.type == sf::Event::KeyPressed)
+			{
+				Point temp = spriteChar->getPos();
+				if (event.key.code == sf::Keyboard::Up)
+				{
+					if ((temp.x != 0) && (grid[(temp.x - 1)*GRID_Y + temp.y]->getID() != 2))
+					{
+						spriteChar->setPos(Point{temp.x-1,temp.y});
+					}
+				}
+				else if (event.key.code == sf::Keyboard::Down)
+				{
+					if ((temp.x != GRID_X - 1) && (grid[(temp.x + 1)*GRID_Y + temp.y]->getID() != 2))
+					{
+						spriteChar->setPos(Point{ temp.x + 1, temp.y });
+					}
+				}
+				else if (event.key.code == sf::Keyboard::Left)
+				{
+					if ((temp.y != GRID_Y - 1) && (grid[temp.x*GRID_Y + temp.y + 1]->getID() != 2))
+					{
+						spriteChar->setPos(Point{ temp.x, temp.y+1 });
+					}
+				}
+				else if (event.key.code == sf::Keyboard::Right)
+				{
+					if ((temp.y != 0) && (grid[temp.x*GRID_Y + temp.y - 1]->getID() != 2))
+					{
+						spriteChar->setPos(Point{ temp.x, temp.y -1});
 					}
 				}
 			}
 		}
 		window->clear();
+		bool drawChar = false;
+		Point car = iso2car(spriteChar->getPos());
+		spriteChar->setPosition(car.x, car.y - CHAR_Y + 3 * TILE_Y);
 		for (size_t x = 0, xlen = grid.size(); x < xlen; x++)
 		{
 			if (grid[x])
+			{
 				window->draw(*grid[x]);
+				if (!drawChar && (grid[x]->getPos().x == spriteChar->getPos().x) && (grid[x]->getPos().y == spriteChar->getPos().y))
+				{
+					window->draw(*spriteChar);
+					drawChar = true;
+				}
+			}
 		}
-		window->draw(*spriteChar);
+		if (!drawChar)
+			window->draw(*spriteChar);
 		window->draw(text);
 		window->display();
 		elapsed = clock.restart();
