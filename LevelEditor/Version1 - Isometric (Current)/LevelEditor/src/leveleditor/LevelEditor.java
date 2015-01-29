@@ -63,7 +63,7 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
     }
 
     public final void drawGame() {
-        memoryGraphics.setColor(Color.gray);
+        memoryGraphics.setColor(Color.black);
         memoryGraphics.fillRect(screenWidth / 5, 0, screenWidth - screenWidth / 5, screenHeight);
         boolean printedLive = false;
         for (int i = 0; i < levels.size(); i++) {
