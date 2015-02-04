@@ -30,7 +30,7 @@ Point iso2car(Point poi,bool cut)
 Point car2iso(Point poi, bool cut)
 {
 	if (cut)
-		return Point{(int)( ((poi.x - WINDOW_X_HALF - TILE_X) / TILE_X + (poi.y - TILE_Z) / TILE_Y) / 2.0),(int)( ((poi.y - TILE_Z) / TILE_Y - (poi.x - WINDOW_X_HALF - TILE_X) / TILE_X) / 2.0) };
+		return Point{round( ((poi.x - WINDOW_X_HALF - TILE_X) / TILE_X + (poi.y - TILE_Z) / TILE_Y) / 2.0),round( ((poi.y - TILE_Z) / TILE_Y - (poi.x - WINDOW_X_HALF - TILE_X) / TILE_X) / 2.0) };
 	return Point{ ((poi.x - WINDOW_X_HALF - TILE_X) / TILE_X + (poi.y - TILE_Z) / TILE_Y) / 2.0,((poi.y - TILE_Z) / TILE_Y - (poi.x - WINDOW_X_HALF - TILE_X) / TILE_X) / 2.0 };
 }
 #endif

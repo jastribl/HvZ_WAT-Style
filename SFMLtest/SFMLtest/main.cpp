@@ -68,6 +68,10 @@ void updateCharOld()
 
 	*/
 }
+bool bulletCompare(Object* a, Object* b)
+{
+	return (a->getPos().x)*GRID_Y + (a->getPos().y) < (b->getPos().x)*GRID_Y + (b->getPos().y);
+}
 int main()
 {
 	srand((size_t)(time(NULL)));
@@ -123,7 +127,7 @@ int main()
 			int x = (ran / GRID_Y);
 			int y = (ran % GRID_Y);
 			Point iso = iso2car(Point{ x, y }, true);
-			if (rand() % 3 == 0)
+			if (rand() % 10 == 0)
 				grid[ran] = new Obstacle(2, obstacle, iso.x, iso.y, false);
 			else
 				grid[ran] = new Obstacle(3, grass, iso.x, iso.y, false);
@@ -213,6 +217,15 @@ int main()
 				}
 			}
 		}
+		
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
+		{
+			sf::Vector2i pressed = sf::Mouse::getPosition(*window);
+			Point temp = iso2car(spriteChar->getPos(), false);
+			bullets.push_back(new Bullet(4, getDirectionVector((float)pressed.x, (float)pressed.y, (int)temp.x + TILE_X, (int)temp.y + 2 * TILE_Y, 1.0), bullet, (int)temp.x + TILE_X, (int)temp.y + 2 * TILE_Y, spriteChar->getRotation(), true));
+
+		}
+
 		for (size_t x = 0, xlen = bullets.size(); x < xlen; x++)
 		{
 			if (bullets[x]->getDone())
@@ -235,6 +248,12 @@ int main()
 					bullets[x]->setDone(true);
 			}
 		}
+		std::sort(bullets.begin(), bullets.end(), bulletCompare);
+		/*for (size_t x = 0, xlen = bullets.size(); x < xlen; x++)
+		{
+		std::cout << bullets[x]->getPos().x << " ";
+		}
+		std::cout << std::endl;*/
 		window->clear(sf::Color(255, 255, 255));
 		spriteChar->setDrawn(false);
 		for (size_t x = 0, xlen = bullets.size(); x < xlen; x++)
@@ -243,6 +262,8 @@ int main()
 		}
 		Point car = iso2car(spriteChar->getPos(), true);
 		spriteChar->setPosition(car.x, car.y - CHAR_Y + 3 * TILE_Y);
+		int count = 0;
+		int loc = 0;
 		for (size_t x = 0, xlen = grid.size(); x < xlen; x++)
 		{
 			if (grid[x])
@@ -253,22 +274,33 @@ int main()
 					window->draw(*spriteChar);
 					spriteChar->setDrawn(true);
 				}
-				for (size_t y = 0, ylen = bullets.size(); y < ylen; y++)
+				while (count<bullets.size() && !(loc>x)&&(grid[x]->getID() != 2))
 				{
-					Point temp = bullets[y]->getPos();
-					
-					if (!bullets[y]->getDone() && !bullets[y]->getDrawn())
+					Point temp = bullets[count]->getPos();
+					if (!bullets[count]->getDone() && !bullets[count]->getDrawn())
 					{
-						if ((temp.x*GRID_Y + temp.y == x) && (grid[x]->getID() != 2))
+						loc = temp.x*GRID_Y + temp.y;
+						//std::cout << loc <<" " <<x<<std::endl;
+						if (loc <= x)
 						{
-							window->draw(*bullets[y]);
-							bullets[y]->setDrawn(true);
+							//std::cout << "DRAW" << std::endl;
+							window->draw(*bullets[count]);
+							bullets[count]->setDrawn(true);
+							count++;
 						}
+						else
+						{
+							break;
+						}
+					}
+					else
+					{
+						count++;
 					}
 				}
 			}
 		}
-		for (size_t x = 0, xlen = bullets.size(); x < xlen; x++)
+		for (size_t x = count, xlen = bullets.size(); x < xlen; x++)
 		{
 			if (!bullets[x]->getDone() && !bullets[x]->getDrawn())
 			{
