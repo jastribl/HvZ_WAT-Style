@@ -25,9 +25,8 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
     private final ArrayList<Level> levels;
     private Item currentLevelObject;
     private final ObjectMenu menu = new ObjectMenu();
-    private int currentLevel = 0;
-    private boolean levelUpKeyIsDown = false, levelDownKeyIsDown = false;
-    private int itemWidth = 64, itemTopHeight = 16;
+    private int currentLevel = 0, itemWidth = 64, itemTopHeight = 16;
+    private boolean levelUpKeyIsDown = false, levelDownKeyIsDown = false, shiftKeyIsDown = false;
 
     LevelEditor() {
         setTitle("LevelUpGame - 2015 - Justin Stribling");
@@ -64,7 +63,7 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
 
     public final void drawGame() {
         memoryGraphics.setColor(Color.black);
-        memoryGraphics.fillRect(screenWidth / 5, 0, screenWidth - screenWidth / 5, screenHeight);
+        memoryGraphics.fillRect(273, 0, screenWidth - 273, screenHeight);
         boolean printedLive = false;
         for (int i = 0; i < levels.size(); i++) {
             if (currentLevelObject != null && !printedLive && levels.get(i).size() == 0) {
@@ -89,9 +88,9 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
             }
         }
         memoryGraphics.setColor(Color.gray);
-        memoryGraphics.fillRect(0, 0, screenWidth / 5, screenHeight);
+        memoryGraphics.fillRect(0, 0, 273, screenHeight);
         memoryGraphics.setColor(Color.white);
-        memoryGraphics.drawLine(screenWidth / 5, 0, screenWidth / 5, screenHeight);
+        memoryGraphics.drawLine(273, 0, 273, screenHeight);
         menu.draw(memoryGraphics);
         memoryGraphics.drawString("Level: " + String.valueOf(currentLevel), screenWidth - 60, screenHeight - 10);
         getGraphics().drawImage(memoryImage, 0, 0, this);
@@ -127,7 +126,7 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
     public void mousePressed(MouseEvent me) {
         boolean foundOne = false;
         Point location = me.getLocationOnScreen();
-        if (location.x > screenWidth / 5) {
+        if (location.x > 273) {
             for (int i = levels.get(currentLevel).size() - 1; i >= 0; i--) {
                 Item object = levels.get(currentLevel).get(i);
                 Rectangle rectangle = new Rectangle(object.getX(), object.getY(), object.getWidth(), object.getHeight());
@@ -159,9 +158,8 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
     public void mouseReleased(MouseEvent me) {
         Point location = me.getLocationOnScreen();
         if (currentLevelObject != null) {
-            if (location.x > screenWidth / 5) {
+            if (location.x > 273) {
                 levels.get(currentLevel).addObject(currentLevelObject);
-                levels.get(currentLevel).sort();
             }
             currentLevelObject = null;
             drawGame();
@@ -195,6 +193,8 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
             moveAll(0, 1);
         } else if (key == KeyEvent.VK_LEFT) {
             moveAll(-1, 0);
+        } else if (key == 16) {
+            shiftKeyIsDown = true;
         }
     }
 
@@ -225,12 +225,15 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
                 currentLevel--;
             }
             drawGame();
+        } else if (key == 16) {
+            shiftKeyIsDown = false;
+
         }
     }
 
     @Override
     public void mouseWheelMoved(MouseWheelEvent mwe) {
-        if (mwe.getX() < screenWidth / 5) {
+        if (mwe.getX() < 273) {
             menu.scroll(mwe.getWheelRotation());
             drawGame();
         }

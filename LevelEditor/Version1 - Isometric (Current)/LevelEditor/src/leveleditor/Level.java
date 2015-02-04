@@ -12,7 +12,6 @@ public class Level extends ArrayList<Item> {
 
     public void removeObject(int i) {
         remove(i);
-        sort();
     }
 
     public final void sort() {
