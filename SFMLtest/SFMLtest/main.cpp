@@ -126,7 +126,7 @@ int main()
 		{
 			int x = (ran / GRID_Y);
 			int y = (ran % GRID_Y);
-			Point iso = iso2car(Point{ x, y }, true);
+			Point iso = iso2car(Point{ x, y }, 1);
 			if (rand() % 10 == 0)
 				grid[ran] = new Obstacle(2, obstacle, iso.x, iso.y, false);
 			else
@@ -153,7 +153,7 @@ int main()
 		sf::Vector2i mousePosition = sf::Mouse::getPosition(*window);
 		std::ostringstream ss; //string buffer to convert numbers to string
 		//ss << (((mousePosition.x - WINDOW_X_HALF - TILE_X) / TILE_X + mousePosition.y / TILE_Y) / 2.0) << " " << ((mousePosition.y / TILE_Y - (mousePosition.x - WINDOW_X_HALF - TILE_X) / TILE_X) / 2.0);// put float into string buffer
-		Point iso = car2iso(Point{ mousePosition.x, mousePosition.y }, true);
+		Point iso = car2iso(Point{ mousePosition.x, mousePosition.y }, 1);
 		iso.x = (int)iso.x;
 		iso.y = (int)iso.y;
 		ss << iso.x << " " << iso.y << " ";
@@ -212,8 +212,8 @@ int main()
 				if (event.mouseButton.button == sf::Mouse::Right)
 				{
 					sf::Vector2i pressed = sf::Mouse::getPosition(*window);
-					Point temp = iso2car(spriteChar->getPos(), false);
-					bullets.push_back(new Bullet(4, getDirectionVector((float)pressed.x, (float)pressed.y, (int)temp.x + TILE_X, (int)temp.y + 2 * TILE_Y, 1.0), bullet, (int)temp.x + TILE_X, (int)temp.y + 2 * TILE_Y, spriteChar->getRotation(), true));
+					Point temp = iso2car(spriteChar->getPos(), 0);
+					bullets.push_back(new Bullet(4, getDirectionVector((float)pressed.x, (float)pressed.y, (int)temp.x + TILE_X, (int)temp.y + 2 * TILE_Y, 10.0), bullet, (int)temp.x + TILE_X, (int)temp.y + 2 * TILE_Y, spriteChar->getRotation(), true));
 				}
 			}
 		}
@@ -221,8 +221,8 @@ int main()
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
 		{
 			sf::Vector2i pressed = sf::Mouse::getPosition(*window);
-			Point temp = iso2car(spriteChar->getPos(), false);
-			bullets.push_back(new Bullet(4, getDirectionVector((float)pressed.x, (float)pressed.y, (int)temp.x + TILE_X, (int)temp.y + 2 * TILE_Y, 1.0), bullet, (int)temp.x + TILE_X, (int)temp.y + 2 * TILE_Y, spriteChar->getRotation(), true));
+			Point temp = iso2car(spriteChar->getPos(), 0);
+			bullets.push_back(new Bullet(4, getDirectionVector((float)pressed.x, (float)pressed.y, (int)temp.x + TILE_X, (int)temp.y + 2 * TILE_Y, 10.0), bullet, (int)temp.x + TILE_X, (int)temp.y + 2 * TILE_Y, spriteChar->getRotation(), true));
 
 		}
 
@@ -243,7 +243,7 @@ int main()
 			else
 			{
 				bullets[x]->fly();
-				bullets[x]->setPos(car2iso(Point{ bullets[x]->getPosition().x, bullets[x]->getPosition().y }, true));
+				bullets[x]->setPos(car2iso(Point{ bullets[x]->getPosition().x, bullets[x]->getPosition().y }, 2));
 				if (collision(*bullets[x]))
 					bullets[x]->setDone(true);
 			}
@@ -260,7 +260,7 @@ int main()
 		{
 			bullets[x]->setDrawn(false);
 		}
-		Point car = iso2car(spriteChar->getPos(), true);
+		Point car = iso2car(spriteChar->getPos(), 1);
 		spriteChar->setPosition(car.x, car.y - CHAR_Y + 3 * TILE_Y);
 		int count = 0;
 		int loc = 0;
