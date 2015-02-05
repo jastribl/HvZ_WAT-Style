@@ -25,7 +25,7 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
     private final ArrayList<Level> levels;
     private Item currentLevelObject;
     private final ObjectMenu menu = new ObjectMenu();
-    private int currentLevel = 0, itemWidth = 64, itemTopHeight = 16;
+    private int currentItemType = 0, currentLevel = 0, itemWidth = 64, itemTopHeight = 16;
     private boolean levelUpKeyIsDown = false, levelDownKeyIsDown = false, shiftKeyIsDown = false;
 
     LevelEditor() {
@@ -120,6 +120,10 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
 
     @Override
     public void mouseClicked(MouseEvent me) {
+        int temp = menu.getSelectedMenuType(me.getLocationOnScreen());
+        if (temp >= 0) {
+            currentItemType = temp;
+        }
     }
 
     @Override
@@ -139,7 +143,8 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
                 }
             }
             if (!foundOne) {
-                currentLevelObject = null;
+                Point temp = fixLocation(location.x, location.y);
+                currentLevelObject = new Item(temp.x, temp.y, currentItemType);
             }
         } else {
             try {
@@ -199,7 +204,7 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
     }
 
     private void moveAll(int x, int y) {
-        int xShift = itemWidth, yShift = 34;
+        int xShift = itemWidth, yShift = 32;
         for (Level level : levels) {
             for (Item object : level) {
                 object.setX(object.getX() + (x * xShift));

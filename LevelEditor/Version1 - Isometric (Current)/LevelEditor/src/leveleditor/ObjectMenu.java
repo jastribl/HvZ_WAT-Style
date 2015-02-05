@@ -41,6 +41,18 @@ public class ObjectMenu {
         return null;
     }
 
+    public int getSelectedMenuType(Point testLocation) {
+        Item testObject;
+        for (int i = 0; i < items.length; i++) {
+            testObject = items[i];
+            Rectangle rectangle = new Rectangle(testObject.getX(), testObject.getY(), testObject.getWidth(), testObject.getHeight());
+            if (rectangle.contains(testLocation)) {
+                return testObject.getType();
+            }
+        }
+        return -1;
+    }
+
     public final void scroll(int amount) {
         int move = amount * 15;
         if (items[0].getY() - move < 0 && items[items.length - 1].getY() - move < screenSize.getHeight() || items[items.length - 1].getY() - move + items[items.length - 1].getHeight() > screenSize.getHeight() && items[0].getY() - move > 0) {

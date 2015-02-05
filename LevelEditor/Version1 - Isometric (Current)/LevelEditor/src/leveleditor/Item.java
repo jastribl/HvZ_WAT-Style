@@ -58,6 +58,10 @@ public class Item implements Comparable, Cloneable {
     public int getHeight() {
         return height;
     }
+    
+    public int getType(){
+        return type;
+    }
 
     public final void setX(int xG) {
         location.x = xG;
