@@ -25,8 +25,12 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
     private final ArrayList<Level> levels;
     private Item currentLevelObject;
     private final ObjectMenu menu = new ObjectMenu();
-    private int currentItemType = 0, currentLevel = 0, itemWidth = 64, itemTopHeight = 16;
-    private boolean levelUpKeyIsDown = false, levelDownKeyIsDown = false, shiftKeyIsDown = false;
+    private int currentItemType = 0, currentLevel = 0;
+    private final int itemWidth = 64, itemTopHeight = 16;
+    private boolean levelUpKeyIsDown = false, levelDownKeyIsDown = false;
+
+    private boolean shiftKeyIsDown = false, dragging = false;
+    private Point startDragLocation, endDragLocation;
 
     LevelEditor() {
         setTitle("LevelUpGame - 2015 - Justin Stribling");
@@ -43,7 +47,7 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
         addMouseListener(this);
         addKeyListener(this);
         addMouseWheelListener(this);
-        currentLevelObject = new Item(0, 0, 0);
+        currentLevelObject = null;
         levels = new ArrayList();
         levels.add(new Level());
         setVisible(true);
@@ -86,6 +90,11 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
                 currentLevelObject.draw(memoryGraphics);
                 printedLive = true;
             }
+            memoryGraphics.setColor(Color.red);
+            if (shiftKeyIsDown && dragging) {
+                memoryGraphics.fillOval(startDragLocation.x - 5, startDragLocation.y - 5, 10, 10);
+                memoryGraphics.fillOval(endDragLocation.x - 5, endDragLocation.y - 5, 10, 10);
+            }
         }
         memoryGraphics.setColor(Color.gray);
         memoryGraphics.fillRect(0, 0, 273, screenHeight);
@@ -97,11 +106,12 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
         getGraphics().dispose();
     }
 
-    private Point fixLocation(int xG, int yG) {
-        if ((yG / itemTopHeight) % 2 == 0) {
-            return new Point(((xG + 32) / itemWidth * itemWidth), yG / itemTopHeight * itemTopHeight + 8);
+    private Point fixLocation(Point p) {
+        int x = p.x, y = p.y;
+        if ((y / itemTopHeight) % 2 == 0) {
+            return new Point(((x + 32) / itemWidth * itemWidth), y / itemTopHeight * itemTopHeight + 8);
         } else {
-            return new Point((xG / itemWidth * itemWidth) + 32, yG / itemTopHeight * itemTopHeight + 8);
+            return new Point((x / itemWidth * itemWidth) + 32, y / itemTopHeight * itemTopHeight + 8);
         }
     }
 
@@ -109,8 +119,11 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
     public void mouseDragged(MouseEvent me) {
         if (currentLevelObject != null) {
             Point location = me.getLocationOnScreen();
-            currentLevelObject.setLocation(fixLocation(location.x, location.y));
+            currentLevelObject.setLocation(fixLocation(location));
             drawGame();
+            if (shiftKeyIsDown) {
+                endDragLocation = fixLocation(location);
+            }
         }
     }
 
@@ -120,17 +133,18 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
 
     @Override
     public void mouseClicked(MouseEvent me) {
-        int temp = menu.getSelectedMenuType(me.getLocationOnScreen());
-        if (temp >= 0) {
-            currentItemType = temp;
-        }
     }
 
     @Override
     public void mousePressed(MouseEvent me) {
+        dragging = true;
         boolean foundOne = false;
         Point location = me.getLocationOnScreen();
         if (location.x > 273) {
+            if (shiftKeyIsDown) {
+                startDragLocation = fixLocation(location);
+                endDragLocation = fixLocation(location);
+            }
             for (int i = levels.get(currentLevel).size() - 1; i >= 0; i--) {
                 Item object = levels.get(currentLevel).get(i);
                 Rectangle rectangle = new Rectangle(object.getX(), object.getY(), object.getWidth(), object.getHeight());
@@ -143,27 +157,26 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
                 }
             }
             if (!foundOne) {
-                Point temp = fixLocation(location.x, location.y);
+                Point temp = fixLocation(location);
                 currentLevelObject = new Item(temp.x, temp.y, currentItemType);
             }
         } else {
-            try {
-                Item temp = menu.getSelectedMenuItem(location);
-                if (temp != null) {
-                    currentLevelObject = temp;
-                    currentLevelObject.setLocation(location);
-                    drawGame();
-                }
-            } catch (CloneNotSupportedException ex) {
+            int type = menu.getSelectedMenuType(location);
+            if (type >= 0) {
+                currentItemType = type;
+                Item item = new Item(location.x, location.y, type);
+                currentLevelObject = item;
+                currentLevelObject.setLocation(location);
+                drawGame();
             }
         }
     }
 
     @Override
     public void mouseReleased(MouseEvent me) {
-        Point location = me.getLocationOnScreen();
+        dragging = false;
         if (currentLevelObject != null) {
-            if (location.x > 273) {
+            if (me.getLocationOnScreen().x > 273) {
                 levels.get(currentLevel).addObject(currentLevelObject);
             }
             currentLevelObject = null;
@@ -198,9 +211,10 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
             moveAll(0, 1);
         } else if (key == KeyEvent.VK_LEFT) {
             moveAll(-1, 0);
-        } else if (key == 16) {
+        } else if (key == 16 && !dragging) {
             shiftKeyIsDown = true;
         }
+        drawGame();
     }
 
     private void moveAll(int x, int y) {
@@ -232,8 +246,8 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
             drawGame();
         } else if (key == 16) {
             shiftKeyIsDown = false;
-
         }
+        drawGame();
     }
 
     @Override
