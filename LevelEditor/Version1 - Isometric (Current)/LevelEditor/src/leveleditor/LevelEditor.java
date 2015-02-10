@@ -14,6 +14,10 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import javax.swing.JFrame;
 
@@ -28,9 +32,9 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
     private Item currentLevelObject;
     private int currentItemType = 0, currentLevel = 0;
     private boolean levelUpKeyIsDown = false, levelDownKeyIsDown = false;
-
     private boolean shiftKeyIsDown = false, dragging = false;
     private Point startDragLocation, endDragLocation;
+    private boolean saveIsDown = false;
 
     LevelEditor() {
         setTitle("LevelUpGame - 2015 - Justin Stribling");
@@ -57,6 +61,32 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
 
     public static void main(String[] args) {
         LevelEditor levelEditor = new LevelEditor();
+    }
+
+    private void saveLevel() {
+        int minX = 999999, minY = 999999;
+        for (Level layer : levels) {
+            for (Item item : layer) {
+                if (item.getX() < minX) {
+                    minX = item.getX();
+                }
+                if (item.getY() < minY) {
+                    minY = item.getY();
+                }
+            }
+        }
+        String levelText = String.valueOf(levels.size()) + "\n";
+        for (Level level : levels) {
+            levelText += String.valueOf(level.size()) + "\n";
+            for (Item item : level) {
+                levelText += String.valueOf(item.getX() - minX) + " " + String.valueOf(item.getY() - minY) + " " + String.valueOf(item.getType()) + "\n";
+            }
+        }
+        File file = new File("level.txt");
+        try (BufferedWriter output = new BufferedWriter(new FileWriter(file))) {
+            output.write(levelText);
+        } catch (IOException ex) {
+        }
     }
 
     @Override
@@ -211,8 +241,10 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
             moveAll(0, 1);
         } else if (key == KeyEvent.VK_LEFT) {
             moveAll(-1, 0);
-        } else if (key == 16 && !dragging) {
+        } else if (key == KeyEvent.VK_SHIFT && !dragging) {
             shiftKeyIsDown = true;
+        } else if (key == KeyEvent.VK_S && ke.isControlDown()) {
+            saveIsDown = true;
         }
         drawGame();
     }
@@ -242,8 +274,11 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
                 currentLevel--;
             }
             drawGame();
-        } else if (key == 16) {
+        } else if (key == KeyEvent.VK_SHIFT) {
             shiftKeyIsDown = false;
+        } else if (key == KeyEvent.VK_S && ke.isControlDown() && saveIsDown == true) {
+            saveIsDown = false;
+            saveLevel();
         }
         drawGame();
     }
