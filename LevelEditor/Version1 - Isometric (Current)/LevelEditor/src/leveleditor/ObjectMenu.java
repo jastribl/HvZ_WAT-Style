@@ -5,34 +5,22 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
-import javax.swing.ImageIcon;
 
 public class ObjectMenu {
 
-    private final Item[] items = new Item[6];
+    private final Item[] menuItems = new Item[6];
     private final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
-    public ObjectMenu() {
-        int maxWidth = 0, maxHeight = 0;
-        ImageIcon image;
-        for (int i = 0; i < items.length; i++) {
-            image = new ImageIcon(getClass().getResource("/media/" + i + ".png"));
-            if (image.getIconWidth() > maxWidth) {
-                maxWidth = image.getIconWidth();
-            }
-            if (image.getIconHeight() > maxHeight) {
-                maxHeight = image.getIconHeight();
-            }
-        }
-        for (int i = 0; i < items.length; i++) {
-            items[i] = new Item(maxWidth * ((i % 3) + 1), maxHeight * ((i / 3) + 1), i);
+    public ObjectMenu(int width, int height) {
+        for (int i = 0; i < menuItems.length; i++) {
+            menuItems[i] = new Item(width * ((i % 3) + 1), height * ((i / 3) + 1), width, height, i);
         }
     }
 
     public Item getSelectedMenuItem(Point testLocation) throws CloneNotSupportedException {
         Item testObject;
-        for (int i = 0; i < items.length; i++) {
-            testObject = items[i];
+        for (int i = 0; i < menuItems.length; i++) {
+            testObject = menuItems[i];
             Rectangle rectangle = new Rectangle(testObject.getX(), testObject.getY(), testObject.getWidth(), testObject.getHeight());
             if (rectangle.contains(testLocation)) {
                 return (Item) testObject.clone();
@@ -43,8 +31,8 @@ public class ObjectMenu {
 
     public int getSelectedMenuType(Point testLocation) {
         Item testObject;
-        for (int i = 0; i < items.length; i++) {
-            testObject = items[i];
+        for (int i = 0; i < menuItems.length; i++) {
+            testObject = menuItems[i];
             Rectangle rectangle = new Rectangle(testObject.getX(), testObject.getY(), testObject.getWidth(), testObject.getHeight());
             if (rectangle.contains(testLocation)) {
                 return testObject.getType();
@@ -55,16 +43,16 @@ public class ObjectMenu {
 
     public final void scroll(int amount) {
         int move = amount * 15;
-        if (items[0].getY() - move < 0 && items[items.length - 1].getY() - move < screenSize.getHeight() || items[items.length - 1].getY() - move + items[items.length - 1].getHeight() > screenSize.getHeight() && items[0].getY() - move > 0) {
+        if (menuItems[0].getY() - move < 0 && menuItems[menuItems.length - 1].getY() - move < screenSize.getHeight() || menuItems[menuItems.length - 1].getY() - move + menuItems[menuItems.length - 1].getHeight() > screenSize.getHeight() && menuItems[0].getY() - move > 0) {
             return;
         }
-        for (Item item : items) {
-            item.setY(item.getY() - move);
+        for (Item item : menuItems) {
+            item.shiftY(-move);
         }
     }
 
     public final void draw(Graphics g) {
-        for (Item item : items) {
+        for (Item item : menuItems) {
             item.draw(g);
         }
     }

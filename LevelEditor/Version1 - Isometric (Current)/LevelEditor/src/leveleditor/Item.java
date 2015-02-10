@@ -8,16 +8,17 @@ import javax.swing.ImageIcon;
 public class Item implements Comparable, Cloneable {
 
     private Point location;
-    private final int type, height, width;
+    private final int type;
+    private final int width, height;
     private final Image normalImage, faddedImage;
 
-    public Item(int xG, int yG, int typeG) {
-        type = typeG;
-        normalImage = new ImageIcon(getClass().getResource("/media/" + type + ".png")).getImage();
-        faddedImage = new ImageIcon(getClass().getResource("/media/" + type + "f.png")).getImage();
-        height = normalImage.getHeight(null);
-        width = normalImage.getWidth(null);
-        location = new Point(xG, yG);
+    public Item(int x, int y, int widthGiven, int heightGiven, int typeGiven) {
+        type = typeGiven;
+        width = widthGiven;
+        height = heightGiven;
+        normalImage = new ImageIcon(getClass().getResource("/media/" + type + ".png")).getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
+        faddedImage = new ImageIcon(getClass().getResource("/media/" + type + "f.png")).getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
+        location = new Point(x, y);
         fixLocation();
     }
 
@@ -27,16 +28,8 @@ public class Item implements Comparable, Cloneable {
     }
 
     private void fixLocation() {
-        fixXLocation();
-        fixYLocation();
-    }
-
-    private void fixXLocation() {
-        location.x -= normalImage.getWidth(null) / 2;
-    }
-
-    private void fixYLocation() {
-        location.y -= normalImage.getHeight(null) / 2;
+        location.x -= width / 2;
+        location.y -= height / 2;
     }
 
     public final Point getLocation() {
@@ -58,22 +51,27 @@ public class Item implements Comparable, Cloneable {
     public int getHeight() {
         return height;
     }
-    
-    public int getType(){
+
+    public int getType() {
         return type;
     }
 
-    public final void setX(int xG) {
-        location.x = xG;
+    public void shiftX(int xShift) {
+        location.x += xShift;
     }
 
-    public final void setY(int yG) {
-        location.y = yG;
+    public void shiftY(int yShift) {
+        location.y += yShift;
     }
 
-    public final void setLocation(Point locationG) {
+    public final void setLocationAndFix(Point locationG) {
         location = locationG;
         fixLocation();
+    }
+
+    public final void shiftLocation(int xShift, int yShift) {
+        location.x += xShift;
+        location.y += yShift;
     }
 
     public final void draw(Graphics g) {
@@ -82,7 +80,6 @@ public class Item implements Comparable, Cloneable {
 
     public final void drawFadded(Graphics g) {
         g.drawImage(faddedImage, getX(), getY(), null);
-
     }
 
     @Override
