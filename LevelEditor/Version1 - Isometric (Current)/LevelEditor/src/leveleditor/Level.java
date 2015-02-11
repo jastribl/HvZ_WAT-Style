@@ -6,6 +6,11 @@ import java.util.Collections;
 public class Level extends ArrayList<Item> {
 
     public void addObject(Item o) {
+        for (Item item : this) {
+            if (item.compareTo(o) == 0) {
+                return;
+            }
+        }
         add(o);
         sort();
     }

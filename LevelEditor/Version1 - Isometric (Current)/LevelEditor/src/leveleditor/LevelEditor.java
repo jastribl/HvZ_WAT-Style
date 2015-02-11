@@ -38,7 +38,7 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
     private Item currentLevelObject;
     private int currentItemType = 0, currentLevel = 0;
     private boolean levelUpKeyIsDown = false, levelDownKeyIsDown = false;
-    private boolean shiftKeyIsDown = false, dragging = false;
+    private boolean shiftKeyIsDown = false, mouseIsDown = false;
     private Point startDragLocation, endDragLocation;
     private boolean saveIsDown = false;
 
@@ -148,14 +148,14 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
     public final void drawGame() {
         memoryGraphics.setColor(Color.black);
         memoryGraphics.fillRect(menuWidth, 0, screenWidth - menuWidth, screenHeight);
-        boolean printedLive = false;
+        boolean printedLive = null == currentLevelObject;
         for (int i = 0; i < levels.size(); i++) {
-            if (currentLevelObject != null && !printedLive && levels.get(i).size() == 0) {
+            if (!printedLive && levels.get(i).size() == 0) {
                 currentLevelObject.draw(memoryGraphics);
                 printedLive = true;
             } else {
                 for (int j = 0; j < levels.get(i).size(); j++) {
-                    if (currentLevelObject != null && !printedLive && currentLevel == i && currentLevelObject.getY() < levels.get(i).get(j).getY()) {
+                    if (!printedLive && currentLevel == i && currentLevelObject.getY() < levels.get(i).get(j).getY()) {
                         currentLevelObject.draw(memoryGraphics);
                         printedLive = true;
                     }
@@ -166,12 +166,12 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
                     }
                 }
             }
-            if (currentLevelObject != null && !printedLive && currentLevel == i) {
+            if (!printedLive && currentLevel == i) {
                 currentLevelObject.draw(memoryGraphics);
                 printedLive = true;
             }
             memoryGraphics.setColor(Color.red);
-            if (shiftKeyIsDown && dragging) {
+            if (shiftKeyIsDown && mouseIsDown) {
                 memoryGraphics.fillOval(startDragLocation.x - 5, startDragLocation.y - 5, 10, 10);
                 memoryGraphics.fillOval(endDragLocation.x - 5, endDragLocation.y - 5, 10, 10);
             }
@@ -217,7 +217,7 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
 
     @Override
     public void mousePressed(MouseEvent me) {
-        dragging = true;
+        mouseIsDown = true;
         boolean foundOne = false;
         Point location = me.getLocationOnScreen();
         if (location.x > menuWidth) {
@@ -231,7 +231,6 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
                 if (rectangle.contains(location)) {
                     currentLevelObject = object;
                     levels.get(currentLevel).removeObject(i);
-                    drawGame();
                     foundOne = true;
                     break;
                 }
@@ -247,14 +246,14 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
                 Item item = new Item(location.x, location.y, imageWidth, imageHeight, type);
                 currentLevelObject = item;
                 currentLevelObject.setLocationAndFix(location);
-                drawGame();
             }
         }
+        drawGame();
     }
 
     @Override
     public void mouseReleased(MouseEvent me) {
-        dragging = false;
+        mouseIsDown = false;
         if (currentLevelObject != null) {
             if (me.getLocationOnScreen().x > menuWidth) {
                 levels.get(currentLevel).addObject(currentLevelObject);
@@ -291,7 +290,7 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
             moveAll(0, -1);
         } else if (key == KeyEvent.VK_LEFT) {
             moveAll(1, 0);
-        } else if (key == KeyEvent.VK_SHIFT && !dragging) {
+        } else if (key == KeyEvent.VK_SHIFT && !mouseIsDown) {
             shiftKeyIsDown = true;
         } else if (key == KeyEvent.VK_S && ke.isControlDown()) {
             saveIsDown = true;
