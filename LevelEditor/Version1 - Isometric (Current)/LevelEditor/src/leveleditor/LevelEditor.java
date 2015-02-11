@@ -128,13 +128,14 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
                 for (int j = 0; j < numberOfBlocks; j++) {
                     int type = reader.nextInt();
                     Point point = fixLocation(new Point(reader.nextInt(), reader.nextInt()));
-                    int trans = reader.nextInt();
+                    reader.nextInt();
                     levels.get(levels.size() - 1).addObject(new Item(point.x + menuWidth, point.y, imageWidth, imageHeight, type));
                 }
             }
         } catch (IOException ex) {
             levels.add(new Level());
         }
+        drawGame();
     }
 
     @Override
