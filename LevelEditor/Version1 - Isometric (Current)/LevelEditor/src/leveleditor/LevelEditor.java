@@ -96,10 +96,11 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
         for (int i = 0; i < levels.size(); i++) {
             levelText += String.valueOf(levels.get(i).size()) + "\n";
             for (Item item : levels.get(i)) {
-                int trans = 1;
-                if (i == 0) {
-                    trans = 0;
-                }
+//                int trans = 1;
+//                if (i == 0) {
+//                    trans = 0;
+//                }
+                int trans = 0;
                 levelText += String.valueOf(item.getType()) + " " + String.valueOf(item.getX() - minX) + " " + String.valueOf(item.getY() - minY) + " " + String.valueOf(trans) + "\n";
                 if (i == 1) {
                     saveGraphics.drawImage(itemImage, item.getX() - minX, item.getY() - minY, null);
