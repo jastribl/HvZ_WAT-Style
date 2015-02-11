@@ -14,28 +14,23 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Scanner;
-import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import java.awt.Graphics2D;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
 public class LevelEditor extends JFrame implements MouseMotionListener, MouseListener, MouseWheelListener, KeyListener {
-    
+
     private final Image memoryImage;
-    private final Graphics memoryGraphics;
+    private final Graphics2D memoryGraphics;
     private final int screenWidth, screenHeight;
     private final ArrayList<Level> levels;
     private final int imageWidth = 64, imageHeight = imageWidth, imageOffset = imageWidth / 4, menuWidth = imageWidth * 4;
@@ -47,7 +42,7 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
     private Point startDragLocation, endDragLocation;
     private boolean saveIsDown = false;
     private boolean showingAll = true;
-    
+
     LevelEditor() {
         setTitle("LevelUpGame - 2015 - Justin Stribling");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -67,14 +62,14 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
         levels = new ArrayList();
         setVisible(true);
         memoryImage = createImage(screenWidth, screenHeight);
-        memoryGraphics = memoryImage.getGraphics();
+        memoryGraphics = (Graphics2D) memoryImage.getGraphics();
         openLevel();
     }
-    
+
     public static void main(String[] args) {
         LevelEditor levelEditor = new LevelEditor();
     }
-    
+
     private void saveLevel() {
         int minX = 999999, minY = 999999, maxX = -999999, maxY = -999999;
         for (Level layer : levels) {
@@ -95,7 +90,7 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
         }
         String levelText = String.valueOf(levels.size()) + "\n";
         Image saveImage = createImage((maxX - minX) + imageWidth, (maxY - minY) + imageHeight);
-        final Image itemImage = new ImageIcon(getClass().getResource("/media/" + "boxBounding" + ".png")).getImage();//.getScaledInstance(imageWidth, imageHeight, Image.SCALE_SMOOTH);
+        final Image itemImage = new ImageIcon(getClass().getResource("/media/" + "boxBounding" + ".png")).getImage();
         Graphics saveGraphics = saveImage.getGraphics();
         saveGraphics.setColor(Color.white);
         saveGraphics.fillRect(0, 0, saveImage.getWidth(null), saveImage.getHeight(null));
@@ -123,7 +118,7 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
             System.out.println("error");
         }
     }
-    
+
     private void openLevel() {
         try {
             Scanner reader = new Scanner(Paths.get("level.txt"));
@@ -142,13 +137,13 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
             levels.add(new Level());
         }
     }
-    
+
     @Override
     public void paint(Graphics g) {
         super.paint(g);
         drawGame();
     }
-    
+
     public final void drawGame() {
         memoryGraphics.setColor(Color.black);
         memoryGraphics.fillRect(menuWidth, 0, screenWidth - menuWidth, screenHeight);
@@ -189,7 +184,7 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
         getGraphics().drawImage(memoryImage, 0, 0, this);
         getGraphics().dispose();
     }
-    
+
     private Point fixLocation(Point p) {
         int yy = p.y / imageOffset * imageOffset + imageWidth / (imageWidth / 2);
         if ((p.y / imageOffset) % 2 == 0) {
@@ -198,7 +193,7 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
             return new Point((p.x / imageWidth * imageWidth) + (imageWidth / 2), yy);
         }
     }
-    
+
     @Override
     public void mouseDragged(MouseEvent me) {
         if (currentLevelObject != null) {
@@ -210,15 +205,15 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
             }
         }
     }
-    
+
     @Override
     public void mouseMoved(MouseEvent me) {
     }
-    
+
     @Override
     public void mouseClicked(MouseEvent me) {
     }
-    
+
     @Override
     public void mousePressed(MouseEvent me) {
         dragging = true;
@@ -255,7 +250,7 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
             }
         }
     }
-    
+
     @Override
     public void mouseReleased(MouseEvent me) {
         dragging = false;
@@ -267,19 +262,19 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
             drawGame();
         }
     }
-    
+
     @Override
     public void mouseEntered(MouseEvent me) {
     }
-    
+
     @Override
     public void mouseExited(MouseEvent me) {
     }
-    
+
     @Override
     public void keyTyped(KeyEvent ke) {
     }
-    
+
     @Override
     public void keyPressed(KeyEvent ke) {
         int key = ke.getKeyCode();
@@ -302,7 +297,7 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
         }
         drawGame();
     }
-    
+
     private void moveAll(int x, int y) {
         for (Level level : levels) {
             for (Item object : level) {
@@ -311,7 +306,7 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
         }
         drawGame();
     }
-    
+
     @Override
     public void keyReleased(KeyEvent ke) {
         int key = ke.getKeyCode();
@@ -339,7 +334,7 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
         }
         drawGame();
     }
-    
+
     @Override
     public void mouseWheelMoved(MouseWheelEvent mwe) {
         if (mwe.getX() < menuWidth) {
