@@ -14,15 +14,26 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Scanner;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
 public class LevelEditor extends JFrame implements MouseMotionListener, MouseListener, MouseWheelListener, KeyListener {
-
+    
     private final Image memoryImage;
     private final Graphics memoryGraphics;
     private final int screenWidth, screenHeight;
@@ -35,7 +46,8 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
     private boolean shiftKeyIsDown = false, dragging = false;
     private Point startDragLocation, endDragLocation;
     private boolean saveIsDown = false;
-
+    private boolean showingAll = true;
+    
     LevelEditor() {
         setTitle("LevelUpGame - 2015 - Justin Stribling");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -53,33 +65,51 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
         addMouseWheelListener(this);
         currentLevelObject = null;
         levels = new ArrayList();
-        levels.add(new Level());
         setVisible(true);
         memoryImage = createImage(screenWidth, screenHeight);
         memoryGraphics = memoryImage.getGraphics();
+        openLevel();
     }
-
+    
     public static void main(String[] args) {
         LevelEditor levelEditor = new LevelEditor();
     }
-
+    
     private void saveLevel() {
-        int minX = 999999, minY = 999999;
+        int minX = 999999, minY = 999999, maxX = -999999, maxY = -999999;
         for (Level layer : levels) {
             for (Item item : layer) {
                 if (item.getX() < minX) {
                     minX = item.getX();
                 }
+                if (item.getX() > maxX) {
+                    maxX = item.getX();
+                }
                 if (item.getY() < minY) {
                     minY = item.getY();
+                }
+                if (item.getY() > maxY) {
+                    maxY = item.getY();
                 }
             }
         }
         String levelText = String.valueOf(levels.size()) + "\n";
-        for (Level level : levels) {
-            levelText += String.valueOf(level.size()) + "\n";
-            for (Item item : level) {
-                levelText += String.valueOf(item.getX() - minX) + " " + String.valueOf(item.getY() - minY) + " " + String.valueOf(item.getType()) + "\n";
+        Image saveImage = createImage((maxX - minX) + imageWidth, (maxY - minY) + imageHeight);
+        final Image itemImage = new ImageIcon(getClass().getResource("/media/" + "boxBounding" + ".png")).getImage();//.getScaledInstance(imageWidth, imageHeight, Image.SCALE_SMOOTH);
+        Graphics saveGraphics = saveImage.getGraphics();
+        saveGraphics.setColor(Color.white);
+        saveGraphics.fillRect(0, 0, saveImage.getWidth(null), saveImage.getHeight(null));
+        for (int i = 0; i < levels.size(); i++) {
+            levelText += String.valueOf(levels.get(i).size()) + "\n";
+            for (Item item : levels.get(i)) {
+                int trans = 1;
+                if (i == 0) {
+                    trans = 0;
+                }
+                levelText += String.valueOf(item.getType()) + " " + String.valueOf(item.getX() - minX) + " " + String.valueOf(item.getY() - minY) + " " + String.valueOf(trans) + "\n";
+                if (i == 1) {
+                    saveGraphics.drawImage(itemImage, item.getX() - minX, item.getY() - minY, null);
+                }
             }
         }
         File file = new File("level.txt");
@@ -87,14 +117,38 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
             output.write(levelText);
         } catch (IOException ex) {
         }
+        try {
+            ImageIO.write((RenderedImage) saveImage, "png", new File("test.png"));
+        } catch (IOException e) {
+            System.out.println("error");
+        }
     }
-
+    
+    private void openLevel() {
+        try {
+            Scanner reader = new Scanner(Paths.get("level.txt"));
+            int numberOfLevels = reader.nextInt();
+            for (int i = 0; i < numberOfLevels; i++) {
+                levels.add(new Level());
+                int numberOfBlocks = reader.nextInt();
+                for (int j = 0; j < numberOfBlocks; j++) {
+                    int type = reader.nextInt();
+                    Point point = fixLocation(new Point(reader.nextInt(), reader.nextInt()));
+                    int trans = reader.nextInt();
+                    levels.get(levels.size() - 1).addObject(new Item(point.x + menuWidth, point.y, imageWidth, imageHeight, type));
+                }
+            }
+        } catch (IOException ex) {
+            levels.add(new Level());
+        }
+    }
+    
     @Override
     public void paint(Graphics g) {
         super.paint(g);
         drawGame();
     }
-
+    
     public final void drawGame() {
         memoryGraphics.setColor(Color.black);
         memoryGraphics.fillRect(menuWidth, 0, screenWidth - menuWidth, screenHeight);
@@ -135,16 +189,16 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
         getGraphics().drawImage(memoryImage, 0, 0, this);
         getGraphics().dispose();
     }
-
+    
     private Point fixLocation(Point p) {
-        int yy = p.y / imageOffset * imageOffset + imageWidth / 8;
+        int yy = p.y / imageOffset * imageOffset + imageWidth / (imageWidth / 2);
         if ((p.y / imageOffset) % 2 == 0) {
             return new Point(((p.x + (imageWidth / 2)) / imageWidth * imageWidth), yy);
         } else {
             return new Point((p.x / imageWidth * imageWidth) + (imageWidth / 2), yy);
         }
     }
-
+    
     @Override
     public void mouseDragged(MouseEvent me) {
         if (currentLevelObject != null) {
@@ -156,15 +210,15 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
             }
         }
     }
-
+    
     @Override
     public void mouseMoved(MouseEvent me) {
     }
-
+    
     @Override
     public void mouseClicked(MouseEvent me) {
     }
-
+    
     @Override
     public void mousePressed(MouseEvent me) {
         dragging = true;
@@ -201,7 +255,7 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
             }
         }
     }
-
+    
     @Override
     public void mouseReleased(MouseEvent me) {
         dragging = false;
@@ -213,19 +267,19 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
             drawGame();
         }
     }
-
+    
     @Override
     public void mouseEntered(MouseEvent me) {
     }
-
+    
     @Override
     public void mouseExited(MouseEvent me) {
     }
-
+    
     @Override
     public void keyTyped(KeyEvent ke) {
     }
-
+    
     @Override
     public void keyPressed(KeyEvent ke) {
         int key = ke.getKeyCode();
@@ -234,13 +288,13 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
         } else if (key == 109) {
             levelDownKeyIsDown = true;
         } else if (key == KeyEvent.VK_UP) {
-            moveAll(0, -1);
-        } else if (key == KeyEvent.VK_RIGHT) {
-            moveAll(1, 0);
-        } else if (key == KeyEvent.VK_DOWN) {
             moveAll(0, 1);
-        } else if (key == KeyEvent.VK_LEFT) {
+        } else if (key == KeyEvent.VK_RIGHT) {
             moveAll(-1, 0);
+        } else if (key == KeyEvent.VK_DOWN) {
+            moveAll(0, -1);
+        } else if (key == KeyEvent.VK_LEFT) {
+            moveAll(1, 0);
         } else if (key == KeyEvent.VK_SHIFT && !dragging) {
             shiftKeyIsDown = true;
         } else if (key == KeyEvent.VK_S && ke.isControlDown()) {
@@ -248,7 +302,7 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
         }
         drawGame();
     }
-
+    
     private void moveAll(int x, int y) {
         for (Level level : levels) {
             for (Item object : level) {
@@ -257,7 +311,7 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
         }
         drawGame();
     }
-
+    
     @Override
     public void keyReleased(KeyEvent ke) {
         int key = ke.getKeyCode();
@@ -271,6 +325,9 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
         } else if (key == 109 && levelDownKeyIsDown) {
             levelDownKeyIsDown = false;
             if (currentLevel > 0) {
+                if (levels.get(currentLevel).size() == 0) {
+                    levels.remove(currentLevel);
+                }
                 currentLevel--;
             }
             drawGame();
@@ -282,7 +339,7 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
         }
         drawGame();
     }
-
+    
     @Override
     public void mouseWheelMoved(MouseWheelEvent mwe) {
         if (mwe.getX() < menuWidth) {
