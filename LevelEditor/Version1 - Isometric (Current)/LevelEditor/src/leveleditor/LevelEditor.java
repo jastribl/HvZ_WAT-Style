@@ -41,7 +41,6 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
     private boolean shiftKeyIsDown = false, dragging = false;
     private Point startDragLocation, endDragLocation;
     private boolean saveIsDown = false;
-    private boolean showingAll = true;
 
     LevelEditor() {
         setTitle("LevelUpGame - 2015 - Justin Stribling");
