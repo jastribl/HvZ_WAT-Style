@@ -8,10 +8,11 @@ import java.awt.Toolkit;
 
 public class ObjectMenu {
 
-    private final Item[] menuItems = new Item[9];
+    private final Item[] menuItems;
     private final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
-    public ObjectMenu(int width, int height) {
+    public ObjectMenu(int width, int height, int numberOfItems) {
+        menuItems = new Item[numberOfItems];
         for (int i = 0; i < menuItems.length; i++) {
             menuItems[i] = new Item(width * ((i % 3) + 1), height * ((i / 3) + 1), width, height, i);
         }

@@ -30,17 +30,14 @@ import javax.swing.JFrame;
 public class LevelEditor extends JFrame implements MouseMotionListener, MouseListener, MouseWheelListener, KeyListener {
 
     private final Image memoryImage;
-    private final Graphics2D memoryGraphics;
-    private final int screenWidth, screenHeight;
+    private final Graphics memoryGraphics;
+    private final int numberIfItems = 9, screenWidth, screenHeight, imageWidth = 64, imageHeight = imageWidth, imageOffset = imageWidth / 4, menuWidth = imageWidth * 4;
     private final ArrayList<Level> levels;
-    private final int imageWidth = 64, imageHeight = imageWidth, imageOffset = imageWidth / 4, menuWidth = imageWidth * 4;
-    private final ObjectMenu menu = new ObjectMenu(imageWidth, imageHeight);
+    private final ObjectMenu menu = new ObjectMenu(imageWidth, imageHeight, numberIfItems);
     private Item currentLevelObject;
     private int currentItemType = 0, currentLevel = 0;
-    private boolean levelUpKeyIsDown = false, levelDownKeyIsDown = false;
-    private boolean shiftKeyIsDown = false, mouseIsDown = false;
+    private boolean levelUpKeyIsDown = false, levelDownKeyIsDown = false, shiftKeyIsDown = false, mouseIsDown = false, saveIsDown = false;
     private Point startDragLocation, endDragLocation;
-    private boolean saveIsDown = false;
 
     LevelEditor() {
         setTitle("LevelUpGame - 2015 - Justin Stribling");
@@ -197,9 +194,20 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
 
     @Override
     public void mouseDragged(MouseEvent me) {
+//        if (currentLevelObject != null) {
+//            if (me.getLocationOnScreen().x > menuWidth) {
+//                levels.get(currentLevel).addObject(currentLevelObject);
+//            }
+//            currentLevelObject = null;
+//            drawGame();
+//        }
+
         if (currentLevelObject != null) {
             Point location = me.getLocationOnScreen();
             currentLevelObject.setLocationAndFix(fixLocation(location));
+            levels.get(currentLevel).addObject(currentLevelObject);
+            location = fixLocation(location);
+            currentLevelObject = new Item(location.x, location.y, imageWidth, imageHeight, currentItemType);
             drawGame();
             if (shiftKeyIsDown) {
                 endDragLocation = fixLocation(location);
