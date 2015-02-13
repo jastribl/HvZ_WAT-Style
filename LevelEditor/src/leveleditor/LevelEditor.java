@@ -36,8 +36,7 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
     private final ObjectMenu menu = new ObjectMenu(imageWidth, imageHeight, numberIfItems);
     private Item currentLevelObject;
     private int currentItemType = 0, currentLevel = 0;
-    private boolean levelUpKeyIsDown = false, levelDownKeyIsDown = false, shiftKeyIsDown = false, mouseIsDown = false, saveIsDown = false;
-    private Point startDragLocation, endDragLocation;
+    private boolean levelUpKeyIsDown = false, levelDownKeyIsDown = false, mouseIsDown = false, saveIsDown = false;
 
     LevelEditor() {
         setTitle("LevelUpGame - 2015 - Justin Stribling");
@@ -168,10 +167,6 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
                 printedLive = true;
             }
             memoryGraphics.setColor(Color.red);
-            if (shiftKeyIsDown && mouseIsDown) {
-                memoryGraphics.fillOval(startDragLocation.x - 5, startDragLocation.y - 5, 10, 10);
-                memoryGraphics.fillOval(endDragLocation.x - 5, endDragLocation.y - 5, 10, 10);
-            }
         }
         memoryGraphics.setColor(Color.gray);
         memoryGraphics.fillRect(0, 0, menuWidth, screenHeight);
@@ -209,9 +204,6 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
             location = fixLocation(location);
             currentLevelObject = new Item(location.x, location.y, imageWidth, imageHeight, currentItemType);
             drawGame();
-            if (shiftKeyIsDown) {
-                endDragLocation = fixLocation(location);
-            }
         }
     }
 
@@ -229,10 +221,6 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
         boolean foundOne = false;
         Point location = me.getLocationOnScreen();
         if (location.x > menuWidth) {
-            if (shiftKeyIsDown) {
-                startDragLocation = fixLocation(location);
-                endDragLocation = fixLocation(location);
-            }
             for (int i = levels.get(currentLevel).size() - 1; i >= 0; i--) {
                 Item object = levels.get(currentLevel).get(i);
                 Rectangle rectangle = new Rectangle(object.getX(), object.getY(), object.getWidth(), object.getHeight());
@@ -298,8 +286,6 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
             moveAll(0, -1);
         } else if (key == KeyEvent.VK_LEFT) {
             moveAll(1, 0);
-        } else if (key == KeyEvent.VK_SHIFT && !mouseIsDown) {
-            shiftKeyIsDown = true;
         } else if (key == KeyEvent.VK_S && ke.isControlDown()) {
             saveIsDown = true;
         }
@@ -334,8 +320,6 @@ public class LevelEditor extends JFrame implements MouseMotionListener, MouseLis
                 currentLevel--;
             }
             drawGame();
-        } else if (key == KeyEvent.VK_SHIFT) {
-            shiftKeyIsDown = false;
         } else if (key == KeyEvent.VK_S && ke.isControlDown() && saveIsDown == true) {
             saveIsDown = false;
             saveLevel();
