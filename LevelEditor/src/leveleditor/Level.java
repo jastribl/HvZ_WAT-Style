@@ -5,17 +5,18 @@ import java.util.Collections;
 
 public class Level extends ArrayList<Item> {
 
-    public void addObject(Item o) {
+    public boolean addItem(Item o) {
         for (Item item : this) {
             if (item.compareTo(o) == 0) {
-                return;
+                return false;
             }
         }
         add(o);
         sort();
+        return true;
     }
 
-    public void removeObject(int i) {
+    public void removeItem(int i) {
         remove(i);
     }
 

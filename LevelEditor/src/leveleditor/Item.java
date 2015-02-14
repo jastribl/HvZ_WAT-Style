@@ -1,25 +1,16 @@
 package leveleditor;
 
-import java.awt.AlphaComposite;
-import java.awt.Composite;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.Point;
-import javax.swing.ImageIcon;
 
 public class Item implements Comparable, Cloneable {
 
     private Point location;
-    private final int type;
-    private final int width, height;
-    private final Image itemImage;
+    private final int type, width, height;
 
     public Item(int x, int y, int widthGiven, int heightGiven, int typeGiven) {
         type = typeGiven;
         width = widthGiven;
         height = heightGiven;
-        itemImage = new ImageIcon(getClass().getResource("/media/" + type + ".png")).getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
         location = new Point(x, y);
         fixLocation();
     }
@@ -58,14 +49,6 @@ public class Item implements Comparable, Cloneable {
         return type;
     }
 
-    public void shiftX(int xShift) {
-        location.x += xShift;
-    }
-
-    public void shiftY(int yShift) {
-        location.y += yShift;
-    }
-
     public final void setLocationAndFix(Point locationG) {
         location = locationG;
         fixLocation();
@@ -74,17 +57,6 @@ public class Item implements Comparable, Cloneable {
     public final void shiftLocation(int xShift, int yShift) {
         location.x += xShift;
         location.y += yShift;
-    }
-
-    public final void draw(Graphics g) {
-        g.drawImage(itemImage, getX(), getY(), null);
-    }
-
-    public final void drawFadded(Graphics g) {
-        Composite savedComposite = ((Graphics2D) g).getComposite();
-        ((Graphics2D) g).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f));
-        ((Graphics2D) g).drawImage(itemImage, getX(), getY(), null);
-        ((Graphics2D) g).setComposite(savedComposite);
     }
 
     @Override
