@@ -12,7 +12,7 @@ public class Level extends ArrayList<Item> {
             }
         }
         add(o);
-        sort();
+//        sort();
         return true;
     }
 
@@ -20,7 +20,7 @@ public class Level extends ArrayList<Item> {
         remove(i);
     }
 
-    public final void sort() {
-        Collections.sort(this);
-    }
+//    public final void sort() {
+//        Collections.sort(this);
+//    }
 }
