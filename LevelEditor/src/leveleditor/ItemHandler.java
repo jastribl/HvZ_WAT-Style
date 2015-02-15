@@ -9,6 +9,7 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
+import java.util.ArrayList;
 import javax.swing.ImageIcon;
 
 public class ItemHandler {
@@ -17,13 +18,17 @@ public class ItemHandler {
     private final Image[] images;
     private final Item[] menuItems;
     private final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    private final int itemWidth, itemHeight;
+    ArrayList<ItemBackup> undoCache = new ArrayList(), redoCache = new ArrayList();
 
-    public ItemHandler(int itemWidth, int itemHeight, int numberOfItems) {
+    public ItemHandler(int itemWidthGiven, int itemHeightGiven, int numberOfItems) {
+        itemWidth = itemWidthGiven;
+        itemHeight = itemHeightGiven;
         world = new World();
         menuItems = new Item[numberOfItems];
         images = new Image[numberOfItems];
         for (int i = 0; i < numberOfItems; i++) {
-            menuItems[i] = new Item(itemWidth * ((i % 3) + 1), itemHeight * ((i / 3) + 1), itemWidth, itemHeight, i);
+            menuItems[i] = new Item(itemWidthGiven * ((i % 3) + 1), itemHeightGiven * ((i / 3) + 1), itemWidthGiven, itemHeightGiven, i);
             images[i] = new ImageIcon(getClass().getResource("/media/" + i + ".png")).getImage().getScaledInstance(itemWidth, itemHeight, Image.SCALE_SMOOTH);
         }
     }
@@ -32,28 +37,46 @@ public class ItemHandler {
         return world;
     }
 
-    public Item getSelectedMenuItem(Point testLocation) throws CloneNotSupportedException {
+    public final void addItem(int level, Item item, boolean setUndo, boolean wipeRedoCache) {
+        if (world.get(level).addItem(item) && setUndo) {
+            undoCache.add(new ItemBackup('a', level, item));
+        }
+        if (wipeRedoCache) {
+            redoCache.clear();
+        }
+    }
+
+    public final void removeItem(int level, int i, boolean setUndo, boolean wipeRedoCache) {
+        if (world.get(level).removeItem(i) && setUndo) {
+            undoCache.add(new ItemBackup('r', level, world.get(level).get(i)));
+        }
+        if (wipeRedoCache) {
+            redoCache.clear();
+        }
+    }
+
+    public final void removeItem(int level, Item item, boolean setUndo, boolean wipeRedoCache) {
+        if (world.get(level).removeItem(item) && setUndo) {
+            undoCache.add(new ItemBackup('r', level, item));
+        }
+        if (wipeRedoCache) {
+            redoCache.clear();
+        }
+    }
+
+    public Item getSelectedMenuItem(Point testLocation) {
         Item testObject;
         for (Item menuItem : menuItems) {
             testObject = menuItem;
             Rectangle rectangle = new Rectangle(testObject.getX(), testObject.getY(), testObject.getWidth(), testObject.getHeight());
             if (rectangle.contains(testLocation)) {
-                return (Item) testObject.clone();
+                try {
+                    return (Item) testObject.clone();
+                } catch (CloneNotSupportedException ex) {
+                }
             }
         }
         return null;
-    }
-
-    public int getSelectedMenuType(Point testLocation) {
-        Item testObject;
-        for (Item menuItem : menuItems) {
-            testObject = menuItem;
-            Rectangle rectangle = new Rectangle(testObject.getX(), testObject.getY(), testObject.getWidth(), testObject.getHeight());
-            if (rectangle.contains(testLocation)) {
-                return testObject.getType();
-            }
-        }
-        return -1;
     }
 
     public final void scroll(int amount) {
@@ -63,6 +86,17 @@ public class ItemHandler {
         }
         for (Item item : menuItems) {
             item.shiftLocation(0, -move);
+        }
+    }
+
+    public void moveItems(int x, int y) {
+        for (Level level : world) {
+            for (Item object : level) {
+                object.shiftLocation(x * itemWidth, y * itemHeight / 2);
+            }
+        }
+        for (ItemBackup item : undoCache) {
+            item.item.shiftLocation(x * itemWidth, y * itemHeight / 2);
         }
     }
 
@@ -81,5 +115,44 @@ public class ItemHandler {
         ((Graphics2D) g).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f));
         ((Graphics2D) g).drawImage(images[item.getType()], item.getX(), item.getY(), null);
         ((Graphics2D) g).setComposite(savedComposite);
+    }
+
+    public final void undo() {
+        if (undoCache.size() > 0) {
+            ItemBackup backup = undoCache.get(undoCache.size() - 1);
+            redoCache.add(backup);
+            undoCache.remove(undoCache.size() - 1);
+            if (backup.type == 'r') {
+                addItem(backup.level, backup.item, false, false);
+            } else if (backup.type == 'a') {
+                removeItem(backup.level, backup.item, false, false);
+            }
+        }
+    }
+
+    public final void redo() {
+        if (redoCache.size() > 0) {
+            ItemBackup backup = redoCache.get(redoCache.size() - 1);
+            undoCache.add(backup);
+            redoCache.remove(backup);
+            if (backup.type == 'a') {
+                addItem(backup.level, backup.item, false, false);
+            } else if (backup.type == 'r') {
+                removeItem(backup.level, backup.item, false, false);
+            }
+        }
+    }
+
+    private final class ItemBackup {
+
+        public char type;
+        public int level;
+        public Item item;
+
+        public ItemBackup(char typeGiven, int levelGiven, Item itemGiven) {
+            type = typeGiven;
+            level = levelGiven;
+            item = itemGiven;
+        }
     }
 }
