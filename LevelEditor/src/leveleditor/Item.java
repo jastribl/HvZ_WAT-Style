@@ -5,7 +5,7 @@ import java.awt.Point;
 public class Item implements Comparable, Cloneable {
 
     private Point location;
-    private final int type, width, height;
+    final int type, width, height;
 
     public Item(int x, int y, int widthGiven, int heightGiven, int typeGiven) {
         type = typeGiven;
@@ -13,6 +13,14 @@ public class Item implements Comparable, Cloneable {
         height = heightGiven;
         location = new Point(x, y);
         fixLocation();
+    }
+
+    //for use in undo/redo caches
+    public Item(int x, int y, int typeGiven) {
+        type = typeGiven;
+        width = 0;
+        height = 0;
+        location = new Point(x, y);
     }
 
     @Override
@@ -37,15 +45,7 @@ public class Item implements Comparable, Cloneable {
         return location.y;
     }
 
-    public int getWidth() {
-        return width;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public int getType() {
+    public final int getType() {
         return type;
     }
 

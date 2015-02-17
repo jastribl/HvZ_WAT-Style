@@ -17,44 +17,39 @@ public class Level extends ArrayList<Item> {
 
     public boolean addItem(Item i) {
         if (visible) {
+            int comp;
             for (Item item : this) {
-                if (item.compareTo(i) == 0) {
+                comp = item.compareTo(i);
+                if (comp > 0) {
+                    break;
+                } else if (comp == 0) {
                     return false;
                 }
             }
             add(i);
-            sort();
+            Collections.sort(this);
             return true;
         }
         return false;
     }
 
-    public final boolean removeItem(int i) {
+    public final Item removeItem(Item item) {
         if (visible) {
-            remove(i);
-            return true;
-        }
-        return false;
-    }
-
-    public final boolean removeItem(Item item) {
-        if (visible) {
-            int match;
+            int comp;
             for (int i = 0; i < size(); i++) {
-                match = get(i).compareTo(item);
-                if (match > 0) {
-                    return false;
-                } else if (match == 0) {
-                    remove(i);
-                    return true;
+                comp = get(i).compareTo(item);
+                if (comp > 0) {
+                    return null;
+                } else if (comp == 0) {
+                    try {
+                        Item toBeReturned = (Item) get(i).clone();
+                        remove(i);
+                        return toBeReturned;
+                    } catch (CloneNotSupportedException ex) {
+                    }
                 }
             }
         }
-        return false;
+        return null;
     }
-
-    private final void sort() {
-        Collections.sort(this);
-    }
-
 }
