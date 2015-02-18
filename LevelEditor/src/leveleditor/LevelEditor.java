@@ -14,7 +14,7 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
     private final int numberOfItems = 9, screenWidth = (int) screenSize.getWidth(), screenHeight = (int) screenSize.getHeight(), itemWidth = 64, itemHeight = itemWidth, levelOffset = itemWidth / 4, menuWidth = itemWidth * 4;
     private Item currentLevelObject = null;
     private int currentItemType = 0, currentLevel = 0;
-    private boolean levelUpKeyIsDown = false, levelDownKeyIsDown = false, saveIsDown = false, colouring = true;
+    private boolean levelUpKeyIsDown = false, levelDownKeyIsDown = false, saveKeyIsDown = false, hideKeyIsDown = false, colouring = true;
     private final World world;
     private final Image[] images;
     private final Item[] menuItems;
@@ -228,10 +228,14 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
             }
         }
         for (ItemBackup backup : redoCache) {
-            backup.shiftLocation(x * itemWidth, y * itemHeight / 2);
+            if (backup.backupType == 'a' || backup.backupType == 'r') {
+                backup.shiftLocation(x * itemWidth, y * itemHeight / 2);
+            }
         }
         for (ItemBackup backup : undoCache) {
-            backup.shiftLocation(x * itemWidth, y * itemHeight / 2);
+            if (backup.backupType == 'a' || backup.backupType == 'r') {
+                backup.shiftLocation(x * itemWidth, y * itemHeight / 2);
+            }
         }
     }
 
@@ -249,25 +253,37 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
     public final void undo() {
         if (undoCache.size() > 0) {
             ItemBackup backup = undoCache.get(undoCache.size() - 1);
-            while (backup.location.x < menuWidth + (itemWidth * 2)) {
-                moveItems(1, 0);
-            }
-            while (backup.location.x > screenWidth - (itemWidth * 2)) {
-                moveItems(-1, 0);
-            }
-            while (backup.location.y < itemHeight * 2) {
-                moveItems(0, 1);
-            }
-            while (backup.location.y > screenHeight - (itemHeight * 2)) {
-                moveItems(0, -1);
-            }
-            drawGame();
-            backup = undoCache.get(undoCache.size() - 1);
-            redoCache.add(new ItemBackup(backup.backupBype, backup.level, backup.type, backup.location));
-            if (backup.backupBype == 'r') {
-                addToLevelChecked(backup.level, new Item(backup.location.x, backup.location.y, backup.type), false, false);
-            } else if (backup.backupBype == 'a') {
-                removeFromLevelChecked(backup.level, new Item(backup.location.x, backup.location.y, backup.type), false, false);
+            if (backup.backupType == 'a' || backup.backupType == 'r') {
+                while (backup.location.x < menuWidth + (itemWidth * 2)) {
+                    moveItems(1, 0);
+                }
+                while (backup.location.x > screenWidth - (itemWidth * 2)) {
+                    moveItems(-1, 0);
+                }
+                while (backup.location.y < itemHeight * 2) {
+                    moveItems(0, 1);
+                }
+                while (backup.location.y > screenHeight - (itemHeight * 2)) {
+                    moveItems(0, -1);
+                }
+                drawGame();
+                backup = undoCache.get(undoCache.size() - 1);
+                redoCache.add(new ItemBackup(backup.backupType, backup.level, backup.type, backup.location));
+                if (backup.backupType == 'r') {
+                    addToLevelChecked(backup.level, new Item(backup.location.x, backup.location.y, backup.type), false, false);
+                } else if (backup.backupType == 'a') {
+                    removeFromLevelChecked(backup.level, new Item(backup.location.x, backup.location.y, backup.type), false, false);
+                }
+            } else if (backup.backupType == 'u' || backup.backupType == 'd') {
+                if (backup.backupType == 'u') {
+                    chengleLevel('d', false, false);
+                } else {
+                    chengleLevel('u', false, false);
+                }
+                redoCache.add(backup);
+            } else if (backup.backupType == 'h') {
+                world.get(currentLevel).switchVisibility();
+                redoCache.add(backup);
             }
             drawGame();
             undoCache.remove(undoCache.size() - 1);
@@ -277,25 +293,34 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
     public final void redo() {
         if (redoCache.size() > 0) {
             ItemBackup backup = redoCache.get(redoCache.size() - 1);
-            while (backup.location.x < menuWidth + itemWidth) {
-                moveItems(1, 0);
-            }
-            while (backup.location.x > screenWidth - itemWidth) {
-                moveItems(-1, 0);
-            }
-            while (backup.location.y < itemHeight) {
-                moveItems(0, 1);
-            }
-            while (backup.location.y > screenHeight - itemHeight) {
-                moveItems(0, -1);
-            }
-            drawGame();
-            backup = redoCache.get(redoCache.size() - 1);
-            undoCache.add(new ItemBackup(backup.backupBype, backup.level, backup.type, backup.location));
-            if (backup.backupBype == 'a') {
-                addToLevelChecked(backup.level, new Item(backup.location.x, backup.location.y, backup.type), false, false);
-            } else if (backup.backupBype == 'r') {
-                removeFromLevelChecked(backup.level, new Item(backup.location.x, backup.location.y, backup.type), false, false);
+            if (backup.backupType == 'a' || backup.backupType == 'r') {
+                while (backup.location.x < menuWidth + itemWidth) {
+                    moveItems(1, 0);
+                }
+                while (backup.location.x > screenWidth - itemWidth) {
+                    moveItems(-1, 0);
+                }
+                while (backup.location.y < itemHeight) {
+                    moveItems(0, 1);
+                }
+                while (backup.location.y > screenHeight - itemHeight) {
+                    moveItems(0, -1);
+                }
+                drawGame();
+                backup = redoCache.get(redoCache.size() - 1);
+                undoCache.add(new ItemBackup(backup.backupType, backup.level, backup.type, backup.location));
+                if (backup.backupType == 'a') {
+                    addToLevelChecked(backup.level, new Item(backup.location.x, backup.location.y, backup.type), false, false);
+                } else if (backup.backupType == 'r') {
+                    removeFromLevelChecked(backup.level, new Item(backup.location.x, backup.location.y, backup.type), false, false);
+                }
+            } else if (backup.backupType == 'u' || backup.backupType == 'd') {
+                chengleLevel(backup.backupType, false, false);
+                undoCache.add(backup);
+            } else if (backup.backupType == 'h') {
+                world.get(currentLevel).switchVisibility();
+                undoCache.add(backup);
+
             }
             drawGame();
             redoCache.remove(backup);
@@ -304,21 +329,55 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
 
     private final class ItemBackup {
 
-        public char backupBype;
+        public char backupType;
         public int type, level;
         public Point location;
 
         public ItemBackup(char backupTypeGiven, int levelGiven, int typeGiven, Point locationGiven) {
-            backupBype = backupTypeGiven;
+            backupType = backupTypeGiven;
             level = levelGiven;
             type = typeGiven;
             location = locationGiven;
+        }
+
+        public ItemBackup(char backupTypeGiven) {
+            backupType = backupTypeGiven;
+            level = 0;
+            type = 0;
+            location = null;
         }
 
         public final void shiftLocation(int xShift, int yShift) {
             location.x += xShift;
             location.y += yShift;
         }
+    }
+
+    private void chengleLevel(char direction, boolean setUndo, boolean wipeRedoCache) {
+        boolean moved = true;
+        if (direction == 'u') {
+            if (currentLevel + 1 == world.size()) {
+                world.add(new Level());
+            }
+            currentLevel++;
+        } else {
+            if (currentLevel > 0) {
+                if (world.get(currentLevel).size() == 0) {
+                    world.remove(currentLevel);
+                }
+                currentLevel--;
+                moved = true;
+            } else {
+                moved = false;
+            }
+        }
+        if (setUndo && moved) {
+            undoCache.add(new ItemBackup(direction));
+            if (wipeRedoCache) {
+                redoCache.clear();
+            }
+        }
+        drawGame();
     }
 
     @Override
@@ -420,11 +479,11 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
             moveItems(1, 0);
             drawGame();
         } else if (key == KeyEvent.VK_S && ke.isControlDown()) {
-            saveIsDown = true;
+            saveKeyIsDown = true;
         } else if (key == KeyEvent.VK_P) {
             colouring = !colouring;
         } else if (key == KeyEvent.VK_H) {
-            world.get(currentLevel).switchVisibility();
+            hideKeyIsDown = true;
         } else if (key == KeyEvent.VK_Z && ke.isControlDown()) {
             undo();
         } else if (key == KeyEvent.VK_Y && ke.isControlDown()) {
@@ -440,23 +499,18 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
         int key = ke.getKeyCode();
         if (key == 107 && levelUpKeyIsDown) {
             levelUpKeyIsDown = false;
-            if (currentLevel + 1 == world.size()) {
-                world.add(new Level());
-            }
-            currentLevel++;
-            drawGame();
+            chengleLevel('u', true, true);
         } else if (key == 109 && levelDownKeyIsDown) {
             levelDownKeyIsDown = false;
-            if (currentLevel > 0) {
-                if (world.get(currentLevel).size() == 0) {
-                    world.remove(currentLevel);
-                }
-                currentLevel--;
-            }
-            drawGame();
-        } else if (key == KeyEvent.VK_S && ke.isControlDown() && saveIsDown == true) {
-            saveIsDown = false;
+            chengleLevel('d', true, true);
+        } else if (key == KeyEvent.VK_S && ke.isControlDown() && saveKeyIsDown == true) {
+            saveKeyIsDown = false;
             saveLevel();
+        } else if (key == KeyEvent.VK_H && hideKeyIsDown) {
+            hideKeyIsDown = false;
+            world.get(currentLevel).switchVisibility();
+            undoCache.add(new ItemBackup('h'));
+            redoCache.clear();
         } else {
             return;
         }
