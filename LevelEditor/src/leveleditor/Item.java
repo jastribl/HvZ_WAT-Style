@@ -5,12 +5,11 @@ import java.awt.Point;
 public class Item implements Comparable, Cloneable {
 
     private Point location;
-    final int type, width, height;
+    final int type, size;
 
-    public Item(int x, int y, int widthGiven, int heightGiven, int typeGiven) {
+    public Item(int x, int y, int sizeGiven, int typeGiven) {
         type = typeGiven;
-        width = widthGiven;
-        height = heightGiven;
+        size = sizeGiven;
         location = new Point(x, y);
         fixLocation();
     }
@@ -18,8 +17,7 @@ public class Item implements Comparable, Cloneable {
     //for use in undo/redo caches
     public Item(int x, int y, int typeGiven) {
         type = typeGiven;
-        width = 0;
-        height = 0;
+        size = 0;
         location = new Point(x, y);
     }
 
@@ -29,8 +27,8 @@ public class Item implements Comparable, Cloneable {
     }
 
     private void fixLocation() {
-        location.x -= width / 2;
-        location.y -= height / 2;
+        location.x -= size / 2;
+        location.y -= size / 2;
     }
 
     public final Point getLocation() {
