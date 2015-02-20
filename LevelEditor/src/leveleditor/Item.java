@@ -15,6 +15,7 @@ public class Item implements Comparable, Cloneable {
     }
 
     //for use in undo/redo caches
+    //doesn't shift the position to allign with the mouse click
     public Item(int x, int y, int typeGiven) {
         type = typeGiven;
         size = 0;

@@ -14,7 +14,7 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
     private final int screenWidth = (int) screenSize.getWidth(), screenHeight = (int) screenSize.getHeight(), itemSize = 64, levelOffset = itemSize / 4, menuWidth = itemSize * 4, iconSize = 40;
     private Item currentLevelObject = null;
     private int currentItemType = 0, currentLevel = 0;
-    private boolean levelUpKeyIsDown = false, levelDownKeyIsDown = false, saveKeyIsDown = false, painting = true;
+    private boolean levelUpKeyIsDown = false, levelDownKeyIsDown = false, saveKeyIsDown = false, closeButtonIsDown = false, painting = true;
     private final World world;
     private final Image itemImages[], iconImages[];
     private final Item[] menuItems;
@@ -25,7 +25,7 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
         world = new World();
         menuItems = new Item[9];
         itemImages = new Image[menuItems.length];
-        iconImages = new Image[4];
+        iconImages = new Image[6];
         for (int i = 0; i < itemImages.length; i++) {
             menuItems[i] = new Item(itemSize * ((i % 3) + 1), itemSize * ((i / 3) + 1), itemSize, i);
             try {
@@ -53,7 +53,7 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
         setVisible(true);
         memoryImage = createImage(screenWidth, screenHeight);
         memoryGraphics = (Graphics2D) memoryImage.getGraphics();
-        openLevel();
+        load();
         canDraw = true;
         drawGame();
     }
@@ -62,7 +62,7 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
         LevelEditor levelEditor = new LevelEditor();
     }
 
-    private void saveLevel() {
+    private void save() {
         int minX = 999999, minY = 999999, maxX = -999999, maxY = -999999;
         for (Level layer : world) {
             for (Item item : layer) {
@@ -95,13 +95,12 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
         }
     }
 
-    private void openLevel() {
+    private void load() {
         Scanner reader;
         try {
             reader = new Scanner(new File("level.txt"));
         } catch (IOException ex) {
             world.add(new Level());
-            System.out.println("sadflgkj");
             return;
         }
         reader.nextInt();
@@ -116,7 +115,7 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
                 point = snapToLocation(point);
                 reader.nextInt();
                 //to open and save old levels
-//                    level.add(new Item(x, y, itemWidth, itemHeight, type));
+                //level.add(new Item(x, y, itemWidth, itemHeight, type));
                 level.add(new Item(point.x, point.y, itemSize, type));
             }
             world.add(level);
@@ -168,6 +167,7 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
             for (Item item : menuItems) {
                 drawItem(item);
             }
+            memoryGraphics.drawImage(iconImages[closeButtonIsDown ? 5 : 4], screenWidth - iconSize - 10, 10, this);
             memoryGraphics.drawString("Level: " + String.valueOf(currentLevel), screenWidth - 60, screenHeight - 10);
             memoryGraphics.drawImage(iconImages[world.get(currentLevel).isVisible() ? 0 : 1], menuWidth + 10, screenHeight - iconSize - (iconSize / 4), this);
             memoryGraphics.drawImage(iconImages[painting ? 2 : 3], menuWidth + iconSize + 20, screenHeight - iconSize - (iconSize / 4), this);
@@ -394,20 +394,23 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
 
     @Override
     public void mouseDragged(MouseEvent me) {
-        Point point = snapToLocation(me.getLocationOnScreen());;
+        Point point = me.getLocationOnScreen();
+        if ((point.x > screenWidth - iconSize - 10 || point.x > screenWidth - 10 && point.y < 10 && point.y > iconSize + 10) && closeButtonIsDown) {
+            closeButtonIsDown = false;
+            drawGame();
+            return;
+        }
+        point = snapToLocation(point);
         if (painting && me.getLocationOnScreen().x > menuWidth) {
             if (SwingUtilities.isRightMouseButton(me)) {
                 removeFromLevelChecked(currentLevel, new Item(point.x, point.y, itemSize, currentItemType), true, true);
             } else if (SwingUtilities.isLeftMouseButton(me)) {
                 addToLevelChecked(currentLevel, new Item(point.x, point.y, itemSize, currentItemType), true, true);
-            } else {
-                return;
             }
         } else {
             if (currentLevelObject != null && SwingUtilities.isLeftMouseButton(me)) {
                 currentLevelObject.setLocationAndFix(point);
-            } else {
-                return;
+                drawGame();
             }
         }
     }
@@ -424,19 +427,24 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
     public void mousePressed(MouseEvent me) {
         Point point = me.getLocationOnScreen();
         if (point.x > menuWidth) {
-            point = snapToLocation(point);
-            if (SwingUtilities.isRightMouseButton(me)) {
-                removeFromLevelChecked(currentLevel, new Item(point.x, point.y, itemSize, currentItemType), true, true);
-            } else if (SwingUtilities.isLeftMouseButton(me)) {
-                if (painting) {
-                    addToLevelChecked(currentLevel, new Item(point.x, point.y, itemSize, currentItemType), true, true);
-                } else {
-                    Item item = getFromLevelChecked(currentLevel, new Item(point.x, point.y, itemSize, currentItemType));
-                    if (item != null) {
-                        currentItemType = item.getType();
-                        currentLevelObject = item;
+            if (point.x > screenWidth - iconSize - 10 && point.x < screenWidth - 10 && point.y > 10 && point.y < iconSize + 10) {
+                closeButtonIsDown = true;
+                drawGame();
+            } else {
+                point = snapToLocation(point);
+                if (SwingUtilities.isRightMouseButton(me)) {
+                    removeFromLevelChecked(currentLevel, new Item(point.x, point.y, itemSize, currentItemType), true, true);
+                } else if (SwingUtilities.isLeftMouseButton(me)) {
+                    if (painting) {
+                        addToLevelChecked(currentLevel, new Item(point.x, point.y, itemSize, currentItemType), true, true);
                     } else {
-                        currentLevelObject = new Item(point.x, point.y, itemSize, currentItemType);
+                        Item item = getFromLevelChecked(currentLevel, new Item(point.x, point.y, itemSize, currentItemType));
+                        if (item != null) {
+                            currentItemType = item.getType();
+                            currentLevelObject = item;
+                        } else {
+                            currentLevelObject = new Item(point.x, point.y, itemSize, currentItemType);
+                        }
                     }
                 }
             }
@@ -452,7 +460,10 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
 
     @Override
     public void mouseReleased(MouseEvent me) {
-        if (currentLevelObject != null && !painting) {
+        Point point = me.getLocationOnScreen();
+        if (point.x > screenWidth - iconSize - 10 && point.x < screenWidth - 10 && point.y > 10 && point.y < iconSize + 10 && closeButtonIsDown) {
+            System.exit(0);
+        } else if (currentLevelObject != null && !painting) {
             if (me.getLocationOnScreen().x > menuWidth) {
                 addToLevelChecked(currentLevel, currentLevelObject, true, true);
             }
@@ -518,7 +529,7 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
             chengleLevel('d', true, true);
         } else if (key == KeyEvent.VK_S && ke.isControlDown() && saveKeyIsDown == true) {
             saveKeyIsDown = false;
-            saveLevel();
+            save();
         }
     }
 
