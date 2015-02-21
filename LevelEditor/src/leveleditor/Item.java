@@ -2,7 +2,7 @@ package leveleditor;
 
 import java.awt.Point;
 
-public class Item implements Comparable, Cloneable {
+public final class Item implements Comparable, Cloneable {
 
     private Point location;
     final int type, size;
