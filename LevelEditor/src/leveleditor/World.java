@@ -60,10 +60,14 @@ public final class World extends ArrayList<Level> {
             }
         }
         for (ItemBackup item : undo) {
-            item.shiftLocation(x, y);
+            if (item.backupType == 'a' || item.backupType == 'r') {
+                item.shiftLocation(x, y);
+            }
         }
         for (ItemBackup item : redo) {
-            item.shiftLocation(x, y);
+            if (item.backupType == 'a' || item.backupType == 'r') {
+                item.shiftLocation(x, y);
+            }
         }
     }
 }
