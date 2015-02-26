@@ -11,17 +11,18 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
     private final Image memoryImage;
     private final Graphics memoryGraphics;
     private final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-    private final int screenWidth = (int) screenSize.getWidth(), screenHeight = (int) screenSize.getHeight(), itemSize = 64, levelOffset = itemSize / 4, menuWidth = itemSize * 4, iconSize = 40, iconPadding = 5, bottomMenuHeight = iconSize + (iconPadding * 2);
+    private final int screenWidth = (int) screenSize.getWidth(), screenHeight = (int) screenSize.getHeight(), itemSize = 64, levelOffset = itemSize / 4, menuWidth = itemSize * 4, iconSize = 40;
     private Item currentLevelObject = null;
-    private int currentItemType = 0, currentLevel = 0, currentWorld = 0;
+    private int currentItemType = 0, currentLevel = 0;
     private boolean levelUpKeyIsDown = false, levelDownKeyIsDown = false, saveKeyIsDown = false, closeButtonIsDown = false, painting = true;
-    private final ArrayList<World> worlds;
+    private final World world;
     private final Image itemImages[], iconImages[];
     private final Item[] menuItems;
+    ArrayList<ItemBackup> undoCache = new ArrayList(), redoCache = new ArrayList();
     private boolean canDraw = false;
 
     LevelEditor() {
-        worlds = new ArrayList();
+        world = new World();
         menuItems = new Item[9];
         itemImages = new Image[menuItems.length];
         iconImages = new Image[6];
@@ -53,12 +54,6 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
         memoryImage = createImage(screenWidth, screenHeight);
         memoryGraphics = (Graphics2D) memoryImage.getGraphics();
         load();
-        for (Image itemImage : itemImages) {
-            memoryGraphics.drawImage(itemImage, 0, 0, null);
-        }
-        for (Image iconImage : iconImages) {
-            memoryGraphics.drawImage(iconImage, 0, 0, null);
-        }
         canDraw = true;
         drawGame();
     }
@@ -68,137 +63,117 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
     }
 
     private void save() {
-        for (World world : worlds) {
-            int minX = 999999, minY = 999999, maxX = -999999, maxY = -999999;
-            for (Level layer : world) {
-                for (Item item : layer) {
-                    if (item.getX() < minX) {
-                        minX = item.getX();
-                    }
-                    if (item.getX() > maxX) {
-                        maxX = item.getX();
-                    }
-                    if (item.getY() < minY) {
-                        minY = item.getY();
-                    }
-                    if (item.getY() > maxY) {
-                        maxY = item.getY();
-                    }
+        int minX = 999999, minY = 999999, maxX = -999999, maxY = -999999;
+        for (Level layer : world) {
+            for (Item item : layer) {
+                if (item.getX() < minX) {
+                    minX = item.getX();
+                }
+                if (item.getX() > maxX) {
+                    maxX = item.getX();
+                }
+                if (item.getY() < minY) {
+                    minY = item.getY();
+                }
+                if (item.getY() > maxY) {
+                    maxY = item.getY();
                 }
             }
-            String levelText = String.valueOf((maxX - minX) + itemSize) + " " + String.valueOf((maxY - minY) + itemSize) + "\n" + String.valueOf(world.size()) + "\n";
-            for (Level level : world) {
-                levelText += String.valueOf(level.size()) + "\n";
-                for (Item item : level) {
-                    int trans = 0;
-                    levelText += String.valueOf(item.getType()) + " " + String.valueOf((item.getX() - minX) / (itemSize / 2)) + " " + String.valueOf((item.getY() - minY) / (levelOffset / 2)) + " " + String.valueOf(trans) + "\n";
-                }
+        }
+        String levelText = String.valueOf((maxX - minX) + itemSize) + " " + String.valueOf((maxY - minY) + itemSize) + "\n" + String.valueOf(world.size()) + "\n";
+        for (Level level : world) {
+            levelText += String.valueOf(level.size()) + "\n";
+            for (Item item : level) {
+                int trans = 0;
+                levelText += String.valueOf(item.getType()) + " " + String.valueOf((item.getX() - minX) / (itemSize / 2)) + " " + String.valueOf((item.getY() - minY) / (levelOffset / 2)) + " " + String.valueOf(trans) + "\n";
             }
-            File file = new File(world.getName() + ".txt");
-            try (BufferedWriter output = new BufferedWriter(new FileWriter(file))) {
-                output.write(levelText);
-            } catch (IOException ex) {
-            }
+        }
+        File file = new File("level.txt");
+        try (BufferedWriter output = new BufferedWriter(new FileWriter(file))) {
+            output.write(levelText);
+        } catch (IOException ex) {
         }
     }
 
     private void load() {
-        Scanner worldReader;
+        Scanner reader;
         try {
-            worldReader = new Scanner(new File("levels.txt"));
+            reader = new Scanner(new File("level.txt"));
         } catch (IOException ex) {
-            worlds.add(new World("nameless"));
-            worlds.get(0).add(new Level());
+            world.add(new Level());
             return;
         }
-        while (worldReader.hasNext()) {
-            worlds.add(new World(worldReader.next()));
-        }
-        for (World world : worlds) {
-            Scanner reader;
-            try {
-                reader = new Scanner(new File(world.getName() + ".txt"));
-            } catch (IOException ex) {
-                world.add(new Level());
-                return;
+        reader.nextInt();
+        reader.nextInt();
+        int numberOfLevels = reader.nextInt(), numberOfBlocks, type, x, y;
+        for (int i = 0; i < numberOfLevels; i++) {
+            Level level = new Level();
+            numberOfBlocks = reader.nextInt();
+            for (int j = 0; j < numberOfBlocks; j++) {
+                type = reader.nextInt();
+                Point point = new Point(reader.nextInt() * (itemSize / 2), reader.nextInt() * (levelOffset / 2));
+                point = snapToLocation(point);
+                reader.nextInt();
+                //to open and save old levels
+                //level.add(new Item(x, y, itemWidth, itemHeight, type));
+                level.add(new Item(point.x, point.y, itemSize, type));
             }
-            reader.nextInt();
-            reader.nextInt();
-            int numberOfLevels = reader.nextInt(), numberOfBlocks, type, x, y;
-            for (int i = 0; i < numberOfLevels; i++) {
-                Level level = new Level();
-                numberOfBlocks = reader.nextInt();
-                for (int j = 0; j < numberOfBlocks; j++) {
-                    type = reader.nextInt();
-                    Point point = new Point(reader.nextInt() * (itemSize / 2), reader.nextInt() * (levelOffset / 2));
-                    point = snapToLocation(point);
-                    reader.nextInt();
-                    //to open and save old levels
-                    //level.add(new Item(x, y, itemWidth, itemHeight, type));
-                    level.add(new Item(point.x, point.y, itemSize, type));
-                }
-                world.add(level);
-            }
+            world.add(level);
         }
     }
 
     @Override
     public void paint(Graphics g) {
         super.paint(g);
-        if (canDraw) {
-            drawGame();
-        }
+        drawGame();
     }
 
     public final void drawGame() {
-        memoryGraphics.setColor(Color.black);
-        memoryGraphics.fillRect(menuWidth, 0, screenWidth - menuWidth, screenHeight);
-        boolean printedLive = null == currentLevelObject;
-        for (int i = 0; i < worlds.get(currentWorld).size(); i++) {
-            if (!printedLive && worlds.get(currentWorld).get(i).size() == 0) {
-                drawItem(currentLevelObject);
-                printedLive = true;
-            } else {
-                for (int j = 0; j < worlds.get(currentWorld).get(i).size(); j++) {
-                    if (worlds.get(currentWorld).get(i).isVisible()) {
-                        if (!printedLive && currentLevel == i && currentLevelObject.getY() < worlds.get(currentWorld).get(i).get(j).getY()) {
-                            drawItem(currentLevelObject);
-                            printedLive = true;
-                        }
-                        Point location = worlds.get(currentWorld).get(i).get(j).getLocation();
-                        if (location.x > menuWidth - itemSize && location.x < screenWidth && location.y > -itemSize && location.y < screenHeight) {
-                            if (currentLevel == i) {
-                                drawItem(worlds.get(currentWorld).get(i).get(j));
-                            } else {
-                                drawFaddedItem(worlds.get(currentWorld).get(i).get(j));
+        if (canDraw) {
+            memoryGraphics.setColor(Color.black);
+            memoryGraphics.fillRect(menuWidth, 0, screenWidth - menuWidth, screenHeight);
+            boolean printedLive = null == currentLevelObject;
+            for (int i = 0; i < world.size(); i++) {
+                if (!printedLive && world.get(i).size() == 0) {
+                    drawItem(currentLevelObject);
+                    printedLive = true;
+                } else {
+                    for (int j = 0; j < world.get(i).size(); j++) {
+                        if (world.get(i).isVisible()) {
+                            if (!printedLive && currentLevel == i && currentLevelObject.getY() < world.get(i).get(j).getY()) {
+                                drawItem(currentLevelObject);
+                                printedLive = true;
+                            }
+                            Point location = world.get(i).get(j).getLocation();
+                            if (location.x > menuWidth - itemSize && location.x < screenWidth && location.y > -itemSize && location.y < screenHeight) {
+                                if (currentLevel == i) {
+                                    drawItem(world.get(i).get(j));
+                                } else {
+                                    drawFaddedItem(world.get(i).get(j));
+                                }
                             }
                         }
                     }
                 }
+                if (!printedLive && currentLevel == i) {
+                    drawItem(currentLevelObject);
+                    printedLive = true;
+                }
             }
-            if (!printedLive && currentLevel == i) {
-                drawItem(currentLevelObject);
-                printedLive = true;
+            memoryGraphics.setColor(Color.gray);
+            memoryGraphics.fillRect(0, 0, menuWidth, screenHeight);
+            memoryGraphics.setColor(Color.white);
+            memoryGraphics.drawLine(menuWidth, 0, menuWidth, screenHeight);
+            for (Item item : menuItems) {
+                drawItem(item);
             }
+            memoryGraphics.drawImage(iconImages[closeButtonIsDown ? 5 : 4], screenWidth - iconSize - 10, 10, this);
+            memoryGraphics.drawString("Level: " + String.valueOf(currentLevel), screenWidth - 60, screenHeight - 10);
+            memoryGraphics.drawImage(iconImages[world.get(currentLevel).isVisible() ? 0 : 1], menuWidth + 10, screenHeight - iconSize - (iconSize / 4), this);
+            memoryGraphics.drawImage(iconImages[painting ? 2 : 3], menuWidth + iconSize + 20, screenHeight - iconSize - (iconSize / 4), this);
+            getGraphics().drawImage(memoryImage, 0, 0, this);
+            getGraphics().dispose();
         }
-        memoryGraphics.setColor(Color.gray);
-        memoryGraphics.fillRect(0, 0, menuWidth, screenHeight);
-        memoryGraphics.fillRect(0, screenHeight - bottomMenuHeight, screenWidth, screenHeight - bottomMenuHeight);
-        memoryGraphics.setColor(Color.white);
-        memoryGraphics.drawLine(menuWidth, 0, menuWidth, screenHeight);
-        memoryGraphics.drawLine(menuWidth, screenHeight - bottomMenuHeight, screenWidth, screenHeight - bottomMenuHeight);
-        for (Item item : menuItems) {
-            drawItem(item);
-        }
-        memoryGraphics.setColor(Color.black);
-        memoryGraphics.drawLine(0, screenHeight - bottomMenuHeight, menuWidth - 1, screenHeight - bottomMenuHeight);
-        memoryGraphics.drawString(worlds.get(currentWorld).getName(), iconPadding * 2, screenHeight - (iconPadding * 2));
-        memoryGraphics.drawString("Level: " + String.valueOf(currentLevel), screenWidth - 60, screenHeight - (iconPadding * 2));
-        memoryGraphics.drawImage(iconImages[closeButtonIsDown ? 5 : 4], screenWidth - iconSize, 0, this);
-        memoryGraphics.drawImage(iconImages[worlds.get(currentWorld).get(currentLevel).isVisible() ? 0 : 1], menuWidth + iconPadding, screenHeight - iconSize - iconPadding, this);
-        memoryGraphics.drawImage(iconImages[painting ? 2 : 3], menuWidth + iconSize + (iconPadding * 2), screenHeight - iconSize - iconPadding, this);
-        getGraphics().drawImage(memoryImage, 0, 0, this);
-        getGraphics().dispose();
     }
 
     public final void drawItem(Item item) {
@@ -222,35 +197,35 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
     }
 
     public final void addToLevelChecked(int level, Item item, boolean setUndo, boolean wipeRedoCache) {
-        if (worlds.get(currentWorld).get(level).addItem(item)) {
+        if (world.get(level).addItem(item)) {
             drawGame();
             if (setUndo) {
-                worlds.get(currentWorld).addUndo(new ItemBackup('a', level, item.getType(), (Point) item.getLocation().clone()));
+                undoCache.add(new ItemBackup('a', level, item.getType(), (Point) item.getLocation().clone()));
                 if (wipeRedoCache) {
-                    worlds.get(currentWorld).clearRedo();
+                    redoCache.clear();
                 }
             }
         }
     }
 
     public final void removeFromLevelChecked(int level, Item item, boolean setUndo, boolean wipeRedoCache) {
-        Item removedItem = worlds.get(currentWorld).get(level).removeItem(item);
+        Item removedItem = world.get(level).removeItem(item);
         if (removedItem != null) {
             drawGame();
             if (setUndo) {
-                worlds.get(currentWorld).addUndo(new ItemBackup('r', level, removedItem.getType(), (Point) removedItem.getLocation().clone()));
+                undoCache.add(new ItemBackup('r', level, removedItem.getType(), (Point) removedItem.getLocation().clone()));
                 if (wipeRedoCache) {
-                    worlds.get(currentWorld).clearRedo();
+                    redoCache.clear();
                 }
             }
         }
     }
 
     public final Item getFromLevelChecked(int level, Item item) {
-        Item removedItem = worlds.get(currentWorld).get(level).removeItem(item);
+        Item removedItem = world.get(level).removeItem(item);
         if (removedItem != null) {
-            worlds.get(currentWorld).addUndo(new ItemBackup('r', level, removedItem.getType(), (Point) removedItem.getLocation().clone()));
-            worlds.get(currentWorld).clearRedo();
+            undoCache.add(new ItemBackup('r', level, removedItem.getType(), (Point) removedItem.getLocation().clone()));
+            redoCache.clear();
             try {
                 return (Item) removedItem.clone();
             } catch (CloneNotSupportedException ex) {
@@ -270,93 +245,132 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
     }
 
     public final void moveItems(int x, int y) {
-        worlds.get(currentWorld).shiftItems(x * itemSize, y * itemSize / 2);
+        for (Level level : world) {
+            for (Item item : level) {
+                item.shiftLocation(x * itemSize, y * itemSize / 2);
+            }
+        }
+        for (ItemBackup backup : redoCache) {
+            if (backup.backupType == 'a' || backup.backupType == 'r') {
+                backup.shiftLocation(x * itemSize, y * itemSize / 2);
+            }
+        }
+        for (ItemBackup backup : undoCache) {
+            if (backup.backupType == 'a' || backup.backupType == 'r') {
+                backup.shiftLocation(x * itemSize, y * itemSize / 2);
+            }
+        }
     }
 
     public final void undo() {
-        ItemBackup backup = worlds.get(currentWorld).peekUndo();
-        if (backup == null) {
-            return;
-        } else if (backup.backupType == 'a' || backup.backupType == 'r') {
-            while (backup.location.x < menuWidth + (itemSize * 2)) {
-                moveItems(1, 0);
+        if (undoCache.size() > 0) {
+            ItemBackup backup = undoCache.get(undoCache.size() - 1);
+            if (backup.backupType == 'a' || backup.backupType == 'r') {
+                while (backup.location.x < menuWidth + (itemSize * 2)) {
+                    moveItems(1, 0);
+                }
+                while (backup.location.x > screenWidth - (itemSize * 2)) {
+                    moveItems(-1, 0);
+                }
+                while (backup.location.y < itemSize * 2) {
+                    moveItems(0, 1);
+                }
+                while (backup.location.y > screenHeight - (itemSize * 2)) {
+                    moveItems(0, -1);
+                }
+                backup = undoCache.get(undoCache.size() - 1);
+                redoCache.add(new ItemBackup(backup.backupType, backup.level, backup.type, backup.location));
+                if (backup.backupType == 'r') {
+                    addToLevelChecked(backup.level, new Item(backup.location.x, backup.location.y, backup.type), false, false);
+                } else {
+                    removeFromLevelChecked(backup.level, new Item(backup.location.x, backup.location.y, backup.type), false, false);
+                }
+            } else if (backup.backupType == 'u' || backup.backupType == 'd') {
+                if (backup.backupType == 'u') {
+                    chengleLevel('d', false, false);
+                } else {
+                    chengleLevel('u', false, false);
+                }
+                redoCache.add(backup);
+            } else if (backup.backupType == 'h') {
+                hideCurrentLevel();
+                redoCache.add(backup);
             }
-            while (backup.location.x > screenWidth - (itemSize * 2)) {
-                moveItems(-1, 0);
-            }
-            while (backup.location.y < itemSize * 2) {
-                moveItems(0, 1);
-            }
-            while (backup.location.y > screenHeight - (itemSize * 2)) {
-                moveItems(0, -1);
-            }
-            backup = worlds.get(currentWorld).peekUndo();
-            worlds.get(currentWorld).addRedo(new ItemBackup(backup.backupType, backup.level, backup.type, backup.location));
-            if (backup.backupType == 'r') {
-                addToLevelChecked(backup.level, new Item(backup.location.x, backup.location.y, backup.type), false, false);
-            } else {
-                removeFromLevelChecked(backup.level, new Item(backup.location.x, backup.location.y, backup.type), false, false);
-            }
-        } else if (backup.backupType == 'u' || backup.backupType == 'd') {
-            if (backup.backupType == 'u') {
-                chengleLevel('d', false, false);
-            } else {
-                chengleLevel('u', false, false);
-            }
-            worlds.get(currentWorld).addRedo(backup);
-        } else if (backup.backupType == 'h') {
-            hideCurrentLevel();
-            worlds.get(currentWorld).addRedo(backup);
+            undoCache.remove(undoCache.size() - 1);
         }
-        worlds.get(currentWorld).popUndo();
     }
 
     public final void redo() {
-        ItemBackup backup = worlds.get(currentWorld).peekRedo();
-        if (backup == null) {
-            return;
+        if (redoCache.size() > 0) {
+            ItemBackup backup = redoCache.get(redoCache.size() - 1);
+            if (backup.backupType == 'a' || backup.backupType == 'r') {
+                while (backup.location.x < menuWidth + itemSize) {
+                    moveItems(1, 0);
+                }
+                while (backup.location.x > screenWidth - itemSize) {
+                    moveItems(-1, 0);
+                }
+                while (backup.location.y < itemSize) {
+                    moveItems(0, 1);
+                }
+                while (backup.location.y > screenHeight - itemSize) {
+                    moveItems(0, -1);
+                }
+                backup = redoCache.get(redoCache.size() - 1);
+                undoCache.add(new ItemBackup(backup.backupType, backup.level, backup.type, backup.location));
+                if (backup.backupType == 'a') {
+                    addToLevelChecked(backup.level, new Item(backup.location.x, backup.location.y, backup.type), false, false);
+                } else {
+                    removeFromLevelChecked(backup.level, new Item(backup.location.x, backup.location.y, backup.type), false, false);
+                }
+            } else if (backup.backupType == 'u' || backup.backupType == 'd') {
+                chengleLevel(backup.backupType, false, false);
+                undoCache.add(backup);
+            } else if (backup.backupType == 'h') {
+                hideCurrentLevel();
+                undoCache.add(backup);
+            }
+            redoCache.remove(backup);
         }
-        if (backup.backupType == 'a' || backup.backupType == 'r') {
-            while (backup.location.x < menuWidth + itemSize) {
-                moveItems(1, 0);
-            }
-            while (backup.location.x > screenWidth - itemSize) {
-                moveItems(-1, 0);
-            }
-            while (backup.location.y < itemSize) {
-                moveItems(0, 1);
-            }
-            while (backup.location.y > screenHeight - itemSize) {
-                moveItems(0, -1);
-            }
-            backup = worlds.get(currentWorld).peekRedo();
-            worlds.get(currentWorld).addUndo(new ItemBackup(backup.backupType, backup.level, backup.type, backup.location));
-            if (backup.backupType == 'a') {
-                addToLevelChecked(backup.level, new Item(backup.location.x, backup.location.y, backup.type), false, false);
-            } else {
-                removeFromLevelChecked(backup.level, new Item(backup.location.x, backup.location.y, backup.type), false, false);
-            }
-        } else if (backup.backupType == 'u' || backup.backupType == 'd') {
-            chengleLevel(backup.backupType, false, false);
-            worlds.get(currentWorld).addUndo(backup);
-        } else if (backup.backupType == 'h') {
-            hideCurrentLevel();
-            worlds.get(currentWorld).addUndo(backup);
+    }
+
+    private final class ItemBackup {
+
+        public char backupType;
+        public int type, level;
+        public Point location;
+
+        public ItemBackup(char backupTypeGiven, int levelGiven, int typeGiven, Point locationGiven) {
+            backupType = backupTypeGiven;
+            level = levelGiven;
+            type = typeGiven;
+            location = locationGiven;
         }
-        worlds.get(currentWorld).popRedo();
+
+        public ItemBackup(char backupTypeGiven) {
+            backupType = backupTypeGiven;
+            level = 0;
+            type = 0;
+            location = null;
+        }
+
+        public final void shiftLocation(int xShift, int yShift) {
+            location.x += xShift;
+            location.y += yShift;
+        }
     }
 
     private void chengleLevel(char direction, boolean setUndo, boolean wipeRedoCache) {
         boolean moved = true;
         if (direction == 'u') {
-            if (currentLevel + 1 == worlds.get(currentWorld).size()) {
-                worlds.get(currentWorld).add(new Level());
+            if (currentLevel + 1 == world.size()) {
+                world.add(new Level());
             }
             currentLevel++;
         } else {
             if (currentLevel > 0) {
-                if (worlds.get(currentWorld).get(currentLevel).size() == 0) {
-                    worlds.get(currentWorld).remove(currentLevel);
+                if (world.get(currentLevel).size() == 0) {
+                    world.remove(currentLevel);
                 }
                 currentLevel--;
                 moved = true;
@@ -366,26 +380,16 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
         }
         if (setUndo && moved) {
             drawGame();
-            worlds.get(currentWorld).addUndo(new ItemBackup(direction));
+            undoCache.add(new ItemBackup(direction));
             if (wipeRedoCache) {
-                worlds.get(currentWorld).clearRedo();
+                redoCache.clear();
             }
         }
     }
 
     private void hideCurrentLevel() {
-        worlds.get(currentWorld).get(currentLevel).switchVisibility();
+        world.get(currentLevel).switchVisibility();
         drawGame();
-    }
-
-    private void switchWorld(int i) {
-        currentWorld = (i > worlds.size() - 1) ? 0 : i;
-        currentLevel = 0;
-        drawGame();
-    }
-
-    private void exit() {
-        System.exit(0);
     }
 
     @Override
@@ -423,7 +427,7 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
     public void mousePressed(MouseEvent me) {
         Point point = me.getLocationOnScreen();
         if (point.x > menuWidth) {
-            if (point.x > screenWidth - iconSize && point.x < screenWidth && point.y > 0 && point.y < iconSize) {
+            if (point.x > screenWidth - iconSize - 10 && point.x < screenWidth - 10 && point.y > 10 && point.y < iconSize + 10) {
                 closeButtonIsDown = true;
                 drawGame();
             } else {
@@ -457,8 +461,8 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
     @Override
     public void mouseReleased(MouseEvent me) {
         Point point = me.getLocationOnScreen();
-        if (point.x > screenWidth - iconSize && point.x < screenWidth && point.y > 0 && point.y < iconSize && closeButtonIsDown) {
-            exit();
+        if (point.x > screenWidth - iconSize - 10 && point.x < screenWidth - 10 && point.y > 10 && point.y < iconSize + 10 && closeButtonIsDown) {
+            System.exit(0);
         } else if (currentLevelObject != null && !painting) {
             if (me.getLocationOnScreen().x > menuWidth) {
                 addToLevelChecked(currentLevel, currentLevelObject, true, true);
@@ -503,16 +507,14 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
             drawGame();
         } else if (key == KeyEvent.VK_H) {
             hideCurrentLevel();
-            worlds.get(currentWorld).addUndo(new ItemBackup('h'));
-            worlds.get(currentWorld).clearRedo();
+            undoCache.add(new ItemBackup('h'));
+            redoCache.clear();
         } else if (key == KeyEvent.VK_Z && ke.isControlDown()) {
             undo();
         } else if (key == KeyEvent.VK_Y && ke.isControlDown()) {
             redo();
         } else if (key == KeyEvent.VK_S && ke.isControlDown()) {
             saveKeyIsDown = true;
-        } else if (key == KeyEvent.VK_W) {
-            switchWorld(currentWorld + 1);
         }
     }
 
@@ -535,7 +537,7 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
     public void mouseWheelMoved(MouseWheelEvent mwe) {
         if (mwe.getX() < menuWidth) {
             int amount = mwe.getWheelRotation() * 15;
-            if ((menuItems[0].getY() - amount > 0 || menuItems[menuItems.length - 1].getY() - amount > screenHeight - bottomMenuHeight) && (menuItems[menuItems.length - 1].getY() - amount + itemSize < screenHeight - bottomMenuHeight || menuItems[0].getY() - amount < 0)) {
+            if ((menuItems[0].getY() - amount > 0 || menuItems[menuItems.length - 1].getY() - amount > screenSize.getHeight()) && (menuItems[menuItems.length - 1].getY() - amount + itemSize < screenSize.getHeight() || menuItems[0].getY() - amount < 0)) {
                 for (Item item : menuItems) {
                     item.shiftLocation(0, -amount);
                 }
