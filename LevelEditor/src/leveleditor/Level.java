@@ -3,7 +3,7 @@ package leveleditor;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class Level extends ArrayList<Item> {
+public final class Level extends ArrayList<Item> {
 
     private boolean visible = true;
 
