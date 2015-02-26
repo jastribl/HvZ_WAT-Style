@@ -29,14 +29,14 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
         for (int i = 0; i < itemImages.length; i++) {
             menuItems[i] = new Item(itemSize * ((i % 3) + 1), itemSize * ((i / 3) + 1), itemSize, i);
             try {
-                itemImages[i] = new ImageIcon(getClass().getResource("/media/items/" + i + ".png")).getImage().getScaledInstance(itemSize, itemSize, Image.SCALE_SMOOTH);
+                itemImages[i] = new ImageIcon(getClass().getResource("/media/o" + i + ".png")).getImage().getScaledInstance(itemSize, itemSize, Image.SCALE_SMOOTH);
                 imageTracker.addImage(itemImages[i], 0);
             } catch (Exception e) {
             }
         }
         for (int i = 0; i < iconImages.length; i++) {
             try {
-                iconImages[i] = new ImageIcon(getClass().getResource("/media/icons/" + i + ".png")).getImage().getScaledInstance(iconSize, iconSize, Image.SCALE_SMOOTH);
+                iconImages[i] = new ImageIcon(getClass().getResource("/media/i" + i + ".png")).getImage().getScaledInstance(iconSize, iconSize, Image.SCALE_SMOOTH);
                 imageTracker.addImage(iconImages[i], 1);
             } catch (Exception e) {
             }
@@ -110,9 +110,9 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
 
     private void save() {
         File worldFile = new File("levels.txt");
-        for (World world : worlds) {
-            try (BufferedWriter worldWriter = new BufferedWriter(new FileWriter(worldFile))) {
-                worldWriter.write(world.getName());
+        try (BufferedWriter worldWriter = new BufferedWriter(new FileWriter(worldFile))) {
+            for (World world : worlds) {
+                worldWriter.write(world.getName() + "\n");
                 int minX = 999999, minY = 999999, maxX = -999999, maxY = -999999;
                 for (Level layer : world) {
                     for (Item item : layer) {
@@ -143,8 +143,8 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
                     output.write(levelText);
                 } catch (IOException ex) {
                 }
-            } catch (IOException ex) {
             }
+        } catch (IOException ex) {
         }
     }
 
