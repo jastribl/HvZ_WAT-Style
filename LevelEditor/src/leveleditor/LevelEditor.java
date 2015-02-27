@@ -528,6 +528,11 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
             saveKeyIsDown = true;
         } else if (key == KeyEvent.VK_W) {
             switchWorld(currentWorld + 1);
+        } else if (key == KeyEvent.VK_N && ke.isControlDown()) {
+            worlds.add(new World(JOptionPane.showInputDialog(this, "Name the new world", "New", JOptionPane.QUESTION_MESSAGE).replaceAll(" ", "_")));
+            worlds.get(worlds.size() - 1).add(new Level());
+            currentWorld = worlds.size() - 1;
+            drawGame();
         }
     }
 
