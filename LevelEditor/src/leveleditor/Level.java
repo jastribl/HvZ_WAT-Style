@@ -7,7 +7,7 @@ public final class Level extends ArrayList<Item> {
 
     private boolean visible = true;
 
-    public final boolean isVisible() {
+    public boolean isVisible() {
         return visible;
     }
 
