@@ -21,8 +21,6 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
     private boolean canDraw = false;
 
     LevelEditor() {
-        screenSize.width += 100;
-        screenSize.height += 100;
         worlds = new ArrayList();
         menuItems = new Item[9];
         MediaTracker imageTracker = new MediaTracker(this);
@@ -52,8 +50,8 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setLocation(0, 0);
 //        setUndecorated(true);
-        setSize(999999999, 999999999);
-        getContentPane().setSize(99999999, 99999999);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        setSize(screenWidth, screenHeight);
         setFocusable(true);
         addMouseMotionListener(this);
         addMouseListener(this);
@@ -62,11 +60,9 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
         addWindowListener(this);
         addComponentListener(this);
         setVisible(true);
-        g = getContentPane().getGraphics();
-        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        g = getGraphics();
         load();
         canDraw = true;
-        this.setBackground(Color.black);
         drawGame();
     }
 
@@ -161,9 +157,8 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
     }
 
     public final void drawGame() {
-        System.out.println(g.getClipRect());
         g.setColor(Color.black);
-        g.fillRect(0, 0, screenWidth, screenHeight);
+        g.fillRect(menuWidth, 0, screenWidth - menuWidth, screenHeight);
         boolean printedLive = null == currentLevelObject;
         for (int i = 0; i < worlds.get(currentWorld).size(); i++) {
             if (!printedLive && worlds.get(currentWorld).get(i).size() == 0) {
@@ -400,11 +395,11 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
 
     @Override
     public void mouseDragged(MouseEvent me) {
-        Point point = getContentPane().getMousePosition();
+        Point point = getMousePosition();
         if (point != null) {
             if (!closeButtonIsDown) {
                 point = snapToLocation(point);
-                if (painting && getContentPane().getMousePosition().x > menuWidth && getContentPane().getMousePosition().y < screenHeight - bottomMenuHeight) {
+                if (painting && getMousePosition().x > menuWidth && getMousePosition().y < screenHeight - bottomMenuHeight) {
                     if (SwingUtilities.isRightMouseButton(me)) {
                         removeFromLevelChecked(currentLevel, new Item(point.x, point.y, itemSize, currentItemType), true, true);
                     } else if (SwingUtilities.isLeftMouseButton(me)) {
@@ -430,7 +425,7 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
 
     @Override
     public void mousePressed(MouseEvent me) {
-        Point point = getContentPane().getMousePosition();
+        Point point = getMousePosition();
         if (point.x > menuWidth && point.y < screenHeight - bottomMenuHeight) {
             if (point.x >= screenWidth - iconSize && point.x < screenWidth && point.y >= 0 && point.y < iconSize) {
                 closeButtonIsDown = true;
@@ -465,7 +460,7 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
 
     @Override
     public void mouseReleased(MouseEvent me) {
-        Point point = getContentPane().getMousePosition();
+        Point point = getMousePosition();
         if (closeButtonIsDown && point.x >= screenWidth - iconSize && point.x < screenWidth && point.y >= 0 && point.y < iconSize) {
             closeButtonIsDown = false;
             drawGame();
@@ -474,7 +469,7 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
             closeButtonIsDown = false;
             drawGame();
         } else if (currentLevelObject != null && !painting) {
-            if (getContentPane().getMousePosition().x > menuWidth && getContentPane().getMousePosition().y < screenHeight - bottomMenuHeight) {
+            if (getMousePosition().x > menuWidth && getMousePosition().y < screenHeight - bottomMenuHeight) {
                 addToLevelChecked(currentLevel, currentLevelObject, true, true);
             }
             currentLevelObject = null;
@@ -601,7 +596,7 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
 
     @Override
     public void componentResized(ComponentEvent ce) {
-        screenWidth = getContentPane().getWidth();
+        screenWidth = getWidth() - (getWidth() - getContentPane().getWidth());
         screenHeight = getContentPane().getHeight();
     }
 
