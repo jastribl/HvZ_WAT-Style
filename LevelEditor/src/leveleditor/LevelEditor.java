@@ -2,6 +2,7 @@ package leveleditor;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.Rectangle2D;
 import java.io.*;
 import java.util.*;
 import javax.swing.*;
@@ -11,11 +12,11 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
     private final Image memoryImage;
     private final Graphics memoryGraphics;
     private final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-    private int screenWidth = (int) screenSize.getWidth() + 100, screenHeight = (int) screenSize.getHeight() + 100;
-    private final int itemSize = 64, levelOffset = itemSize / 4, menuWidth = itemSize * 4, iconSize = 40, iconPadding = 5, bottomMenuHeight = iconSize + (iconPadding * 2);
+    private int screenWidth = (int) screenSize.getWidth(), screenHeight = (int) screenSize.getHeight();
+    private final int itemSize = 64, levelOffset = itemSize / 4, menuWidth = itemSize * 4, tabHeight = 25, iconSize = 40, iconPadding = 5, bottomMenuHeight = iconSize + (iconPadding * 2);
     private Item currentLevelObject = null;
     private int currentItemType = 6, currentLevel = 0, currentWorld = 0;
-    private boolean levelUpKeyIsDown = false, levelDownKeyIsDown = false, saveKeyIsDown = false, closeButtonIsDown = false, painting = true;
+    private boolean levelUpKeyIsDown = false, levelDownKeyIsDown = false, saveKeyIsDown = false, painting = true;
     private final ArrayList<World> worlds;
     private final Image itemImages[], iconImages[];
     private final Item[] menuItems;
@@ -26,7 +27,7 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
         menuItems = new Item[9];
         MediaTracker imageTracker = new MediaTracker(this);
         itemImages = new Image[menuItems.length];
-        iconImages = new Image[6];
+        iconImages = new Image[4];
         for (int i = 0; i < itemImages.length; i++) {
             menuItems[i] = new Item(itemSize * ((i % 3) + 1), itemSize * ((i / 3) + 1), itemSize, i);
             try {
@@ -49,7 +50,7 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
         }
         setTitle("LevelUpGame - 2015 - Justin Stribling");
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        setLocation(0, 0);
+//        setLocation(0, 0);
         setSize(999999999, 999999999);
         getContentPane().setSize(99999999, 99999999);
         setFocusable(true);
@@ -59,6 +60,8 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
         addMouseWheelListener(this);
         addWindowListener(this);
         addComponentListener(this);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        setFocusTraversalKeysEnabled(false);
         setVisible(true);
         memoryImage = createImage(screenWidth, screenHeight);
         memoryGraphics = memoryImage.getGraphics();
@@ -199,13 +202,26 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
             drawItem(item);
         }
         memoryGraphics.setColor(Color.black);
+        memoryGraphics.fillRect(menuWidth + 1, 0, screenWidth - menuWidth, tabHeight);
+        double tabWidth = (screenWidth - menuWidth) / worlds.size();
+        for (int i = 0; i < worlds.size(); i++) {
+            if (currentWorld == i) {
+                memoryGraphics.setColor(Color.lightGray);
+            } else {
+                memoryGraphics.setColor(Color.gray);
+            }
+            memoryGraphics.fillRect(menuWidth + (int) (i * tabWidth) + 1, 0, (int) tabWidth - 1, tabHeight);
+            Rectangle2D stringSize = memoryGraphics.getFontMetrics().getStringBounds(worlds.get(i).getName(), memoryGraphics);
+            memoryGraphics.setColor(Color.black);
+            memoryGraphics.drawString(worlds.get(i).getName(), menuWidth + ((int) (i * tabWidth)) + 1 + (int) ((tabWidth - stringSize.getWidth()) / 2), (tabHeight / 2) + (int) (stringSize.getHeight() / 2));
+        }
+        memoryGraphics.setColor(Color.black);
         memoryGraphics.drawLine(0, screenHeight - bottomMenuHeight, menuWidth - 1, screenHeight - bottomMenuHeight);
         memoryGraphics.drawString(worlds.get(currentWorld).getName(), iconPadding * 2, screenHeight - (iconPadding * 2));
         memoryGraphics.drawString("Level: " + String.valueOf(currentLevel), screenWidth - 60, screenHeight - (iconPadding * 2));
-        memoryGraphics.drawImage(iconImages[closeButtonIsDown ? 5 : 4], screenWidth - iconSize, 0, this);
         memoryGraphics.drawImage(iconImages[worlds.get(currentWorld).get(currentLevel).isVisible() ? 0 : 1], menuWidth + iconPadding, screenHeight - iconSize - iconPadding, this);
         memoryGraphics.drawImage(iconImages[painting ? 2 : 3], menuWidth + iconSize + (iconPadding * 2), screenHeight - iconSize - iconPadding, this);
-        getGraphics().drawImage(memoryImage, 0, 0, this);
+        getGraphics().drawImage(memoryImage, getInsets().left, getInsets().top, this);
         getGraphics().dispose();
     }
 
@@ -281,23 +297,33 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
         worlds.get(currentWorld).shiftItems(x * itemSize, y * itemSize / 2);
     }
 
+    public final void findPlaceToBe(ItemBackup backup) {
+        while (backup.level < currentLevel) {
+            chengleLevel('d');
+        }
+        while (backup.level > currentLevel) {
+            chengleLevel('u');
+        }
+        while (backup.location.x < menuWidth + itemSize) {
+            moveItems(1, 0);
+        }
+        while (backup.location.x > screenWidth - itemSize) {
+            moveItems(-1, 0);
+        }
+        while (backup.location.y < itemSize) {
+            moveItems(0, 1);
+        }
+        while (backup.location.y > screenHeight - itemSize) {
+            moveItems(0, -1);
+        }
+    }
+
     public final void undo() {
         ItemBackup backup = worlds.get(currentWorld).peekUndo();
         if (backup == null) {
             return;
         } else if (backup.backupType == 'a' || backup.backupType == 'r') {
-            while (backup.location.x < menuWidth + (itemSize * 2)) {
-                moveItems(1, 0);
-            }
-            while (backup.location.x > screenWidth - (itemSize * 2)) {
-                moveItems(-1, 0);
-            }
-            while (backup.location.y < itemSize * 2) {
-                moveItems(0, 1);
-            }
-            while (backup.location.y > screenHeight - (itemSize * 2)) {
-                moveItems(0, -1);
-            }
+            findPlaceToBe(backup);
             backup = worlds.get(currentWorld).peekUndo();
             worlds.get(currentWorld).addRedo(new ItemBackup(backup.backupType, backup.level, backup.type, backup.location));
             if (backup.backupType == 'r') {
@@ -305,13 +331,6 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
             } else {
                 removeFromLevelChecked(backup.level, new Item(backup.location.x, backup.location.y, backup.type), false, false);
             }
-        } else if (backup.backupType == 'u' || backup.backupType == 'd') {
-            if (backup.backupType == 'u') {
-                chengleLevel('d', false, false);
-            } else {
-                chengleLevel('u', false, false);
-            }
-            worlds.get(currentWorld).addRedo(backup);
         } else if (backup.backupType == 'h') {
             hideCurrentLevel();
             worlds.get(currentWorld).addRedo(backup);
@@ -324,18 +343,7 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
         if (backup == null) {
             return;
         } else if (backup.backupType == 'a' || backup.backupType == 'r') {
-            while (backup.location.x < menuWidth + itemSize) {
-                moveItems(1, 0);
-            }
-            while (backup.location.x > screenWidth - itemSize) {
-                moveItems(-1, 0);
-            }
-            while (backup.location.y < itemSize) {
-                moveItems(0, 1);
-            }
-            while (backup.location.y > screenHeight - itemSize) {
-                moveItems(0, -1);
-            }
+            findPlaceToBe(backup);
             backup = worlds.get(currentWorld).peekRedo();
             worlds.get(currentWorld).addUndo(new ItemBackup(backup.backupType, backup.level, backup.type, backup.location));
             if (backup.backupType == 'a') {
@@ -343,9 +351,6 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
             } else {
                 removeFromLevelChecked(backup.level, new Item(backup.location.x, backup.location.y, backup.type), false, false);
             }
-        } else if (backup.backupType == 'u' || backup.backupType == 'd') {
-            chengleLevel(backup.backupType, false, false);
-            worlds.get(currentWorld).addUndo(backup);
         } else if (backup.backupType == 'h') {
             hideCurrentLevel();
             worlds.get(currentWorld).addUndo(backup);
@@ -353,7 +358,7 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
         worlds.get(currentWorld).popRedo();
     }
 
-    private void chengleLevel(char direction, boolean setUndo, boolean wipeRedoCache) {
+    private void chengleLevel(char direction) {
         boolean moved = true;
         if (direction == 'u') {
             if (currentLevel + 1 == worlds.get(currentWorld).size()) {
@@ -366,19 +371,12 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
                     worlds.get(currentWorld).remove(currentLevel);
                 }
                 currentLevel--;
-                moved = true;
             } else {
                 moved = false;
             }
         }
         if (moved) {
             drawGame();
-            if (setUndo) {
-                worlds.get(currentWorld).addUndo(new ItemBackup(direction));
-                if (wipeRedoCache) {
-                    worlds.get(currentWorld).clearRedo();
-                }
-            }
         }
     }
 
@@ -387,10 +385,56 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
         drawGame();
     }
 
-    private void switchWorld(int i) {
-        currentWorld = (i > worlds.size() - 1) ? 0 : i;
+    private void switchWorld(int toGo) {
+        currentWorld = (toGo > worlds.size() - 1) ? 0 : (toGo < 0 ? worlds.size() - 1 : toGo);
         currentLevel = 0;
         drawGame();
+    }
+
+    private void addWorld() {
+        String name = null;
+        boolean bad;
+        do {
+            bad = false;
+            try {
+                name = JOptionPane.showInputDialog(this, "Name the new world", "New", JOptionPane.QUESTION_MESSAGE).replaceAll(" ", "_");
+                if (name.equals("")) {
+                    bad = true;
+                }
+                for (World world : worlds) {
+                    if (world.getName().equals(name)) {
+                        bad = true;
+                        break;
+                    }
+                }
+            } catch (NullPointerException ex) {
+                bad = true;
+                break;
+            }
+        } while (bad);
+        if (!bad) {
+            worlds.add(new World(name));
+            worlds.get(worlds.size() - 1).add(new Level());
+            currentWorld = worlds.size() - 1;
+            drawGame();
+        }
+    }
+
+    private void removeWorld() {
+        if (JOptionPane.showConfirmDialog(null, "Are you sure you want to remove this World", "Remove?", JOptionPane.YES_NO_OPTION) == 0) {
+            boolean move = worlds.size() == 1;
+            while (worlds.size() == 1) {
+                addWorld();
+            }
+            if (move) {
+                currentWorld--;
+            }
+            worlds.remove(currentWorld);
+            if (currentWorld >= worlds.size()) {
+                currentWorld--;
+            }
+            drawGame();
+        }
     }
 
     private void exit() {
@@ -400,24 +444,24 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
             }
             System.exit(0);
         }
+        System.exit(0);
     }
 
     @Override
     public void mouseDragged(MouseEvent me) {
-        Point point = me.getLocationOnScreen();
-        if (!closeButtonIsDown) {
-            point = snapToLocation(point);
-            if (painting && me.getLocationOnScreen().x > menuWidth && me.getLocationOnScreen().y < screenHeight - bottomMenuHeight) {
-                if (SwingUtilities.isRightMouseButton(me)) {
-                    removeFromLevelChecked(currentLevel, new Item(point.x, point.y, itemSize, currentItemType), true, true);
-                } else if (SwingUtilities.isLeftMouseButton(me)) {
-                    addToLevelChecked(currentLevel, new Item(point.x, point.y, itemSize, currentItemType), true, true);
-                }
-            } else {
-                if (currentLevelObject != null && SwingUtilities.isLeftMouseButton(me)) {
-                    currentLevelObject.setLocationAndFix(point);
-                    drawGame();
-                }
+        Point actualPoint = me.getPoint();
+        actualPoint.translate(-getInsets().left, -getInsets().top);
+        Point snapedPoint = snapToLocation(actualPoint);
+        if (painting && actualPoint.x > menuWidth && actualPoint.y < screenHeight - bottomMenuHeight && actualPoint.y > tabHeight) {
+            if (SwingUtilities.isRightMouseButton(me)) {
+                removeFromLevelChecked(currentLevel, new Item(snapedPoint.x, snapedPoint.y, itemSize, currentItemType), true, true);
+            } else if (SwingUtilities.isLeftMouseButton(me)) {
+                addToLevelChecked(currentLevel, new Item(snapedPoint.x, snapedPoint.y, itemSize, currentItemType), true, true);
+            }
+        } else {
+            if (currentLevelObject != null && SwingUtilities.isLeftMouseButton(me)) {
+                currentLevelObject.setLocationAndFix(snapedPoint);
+                drawGame();
             }
         }
     }
@@ -432,51 +476,40 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
 
     @Override
     public void mousePressed(MouseEvent me) {
-        Point point = me.getLocationOnScreen();
-        if (point.x > menuWidth && point.y < screenHeight - bottomMenuHeight) {
-            if (point.x >= screenWidth - iconSize && point.x < screenWidth && point.y >= 0 && point.y < iconSize) {
-                closeButtonIsDown = true;
-                drawGame();
-            } else {
-                point = snapToLocation(point);
-                if (SwingUtilities.isRightMouseButton(me)) {
-                    removeFromLevelChecked(currentLevel, new Item(point.x, point.y, itemSize, currentItemType), true, true);
-                } else if (SwingUtilities.isLeftMouseButton(me)) {
-                    if (painting) {
-                        addToLevelChecked(currentLevel, new Item(point.x, point.y, itemSize, currentItemType), true, true);
+        Point actualPoint = me.getPoint();
+        actualPoint.translate(-getInsets().left, -getInsets().top);
+        Point snapedPoint = snapToLocation(actualPoint);
+        if (actualPoint.x > menuWidth && actualPoint.y < screenHeight - bottomMenuHeight && actualPoint.y > tabHeight) {
+            if (SwingUtilities.isRightMouseButton(me)) {
+                removeFromLevelChecked(currentLevel, new Item(snapedPoint.x, snapedPoint.y, itemSize, currentItemType), true, true);
+            } else if (SwingUtilities.isLeftMouseButton(me)) {
+                if (painting) {
+                    addToLevelChecked(currentLevel, new Item(snapedPoint.x, snapedPoint.y, itemSize, currentItemType), true, true);
+                } else {
+                    Item item = getFromLevelChecked(currentLevel, new Item(snapedPoint.x, snapedPoint.y, itemSize, currentItemType));
+                    if (item != null) {
+                        currentItemType = item.getType();
+                        currentLevelObject = item;
                     } else {
-                        Item item = getFromLevelChecked(currentLevel, new Item(point.x, point.y, itemSize, currentItemType));
-                        if (item != null) {
-                            currentItemType = item.getType();
-                            currentLevelObject = item;
-                        } else {
-                            currentLevelObject = new Item(point.x, point.y, itemSize, currentItemType);
-                        }
+                        currentLevelObject = new Item(snapedPoint.x, snapedPoint.y, itemSize, currentItemType);
                     }
                 }
             }
         } else {
-            int itemType = getSelectedMenuItemType(point);
+            int itemType = getSelectedMenuItemType(actualPoint);
             if (itemType >= 0) {
                 currentItemType = itemType;
-                point = snapToLocation(point);
-                currentLevelObject = new Item(point.x, point.y, itemSize, itemType);
+                currentLevelObject = new Item(snapedPoint.x, snapedPoint.y, itemSize, itemType);
             }
         }
     }
 
     @Override
     public void mouseReleased(MouseEvent me) {
-        Point point = me.getLocationOnScreen();
-        if (point.x >= screenWidth - iconSize && point.x < screenWidth && point.y >= 0 && point.y < iconSize && closeButtonIsDown) {
-            closeButtonIsDown = false;
-            drawGame();
-            exit();
-        } else if (closeButtonIsDown) {
-            closeButtonIsDown = false;
-            drawGame();
-        } else if (currentLevelObject != null && !painting) {
-            if (me.getLocationOnScreen().x > menuWidth && me.getLocationOnScreen().y < screenHeight - bottomMenuHeight) {
+        Point actualPoint = me.getPoint();
+        actualPoint.translate(-getInsets().left, -getInsets().top);
+        if (currentLevelObject != null && !painting) {
+            if (actualPoint.x > menuWidth && actualPoint.y < screenHeight - bottomMenuHeight && actualPoint.y > tabHeight) {
                 addToLevelChecked(currentLevel, currentLevelObject, true, true);
             }
             currentLevelObject = null;
@@ -528,13 +561,12 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
             redo();
         } else if (key == KeyEvent.VK_S && ke.isControlDown()) {
             saveKeyIsDown = true;
-        } else if (key == KeyEvent.VK_W) {
-            switchWorld(currentWorld + 1);
+        } else if (key == KeyEvent.VK_TAB && ke.isControlDown()) {
+            switchWorld(currentWorld + (ke.isShiftDown() ? -1 : 1));
         } else if (key == KeyEvent.VK_N && ke.isControlDown()) {
-            worlds.add(new World(JOptionPane.showInputDialog(this, "Name the new world", "New", JOptionPane.QUESTION_MESSAGE).replaceAll(" ", "_")));
-            worlds.get(worlds.size() - 1).add(new Level());
-            currentWorld = worlds.size() - 1;
-            drawGame();
+            addWorld();
+        } else if (key == KeyEvent.VK_F4 && ke.isControlDown()) {
+            removeWorld();
         }
     }
 
@@ -543,10 +575,10 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
         int key = ke.getKeyCode();
         if (key == KeyEvent.VK_PAGE_UP && levelUpKeyIsDown) {
             levelUpKeyIsDown = false;
-            chengleLevel('u', true, true);
+            chengleLevel('u');
         } else if (key == KeyEvent.VK_PAGE_DOWN && levelDownKeyIsDown) {
             levelDownKeyIsDown = false;
-            chengleLevel('d', true, true);
+            chengleLevel('d');
         } else if (key == KeyEvent.VK_S && ke.isControlDown() && saveKeyIsDown == true) {
             saveKeyIsDown = false;
             save();
