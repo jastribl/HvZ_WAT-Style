@@ -7,7 +7,7 @@ import java.io.*;
 import java.util.*;
 import javax.swing.*;
 
-public final class LevelEditor extends JFrame implements MouseMotionListener, MouseListener, MouseWheelListener, KeyListener, WindowListener, ComponentListener {
+public final class LevelEditor extends JFrame implements MouseMotionListener, MouseListener, MouseWheelListener, KeyListener, WindowListener, ComponentListener, ActionListener {
 
     private final Image memoryImage;
     private final Graphics memoryGraphics;
@@ -21,6 +21,9 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
     private final Image itemImages[], iconImages[];
     private final Item[] menuItems;
     private boolean canDraw = false;
+    private final JPopupMenu mainAreaRightClickMenu, mainMenuRightClickMenu, bottomMenuRightClickMenu, tabsRightClickMenu;
+    private int topPad = getInsets().top, bottomPad = getInsets().bottom, rightPad = getInsets().right, leftPad = getInsets().left;
+    private final JMenuItem mainAreaRightClickMenuItems[], mainMenuRightClickMenuItems[], bottomMenuRightClickMenuItems[], tabsRightClickMenuItems[];
 
     LevelEditor() {
         worlds = new ArrayList();
@@ -50,18 +53,49 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
         }
         setTitle("LevelUpGame - 2015 - Justin Stribling");
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-//        setLocation(0, 0);
         setSize(999999999, 999999999);
         getContentPane().setSize(99999999, 99999999);
         setFocusable(true);
         addMouseMotionListener(this);
-        addMouseListener(this);
         addKeyListener(this);
         addMouseWheelListener(this);
         addWindowListener(this);
         addComponentListener(this);
+        addMouseListener(this);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setFocusTraversalKeysEnabled(false);
+        mainAreaRightClickMenuItems = new JMenuItem[1];
+        mainAreaRightClickMenuItems[0] = new JMenuItem("Main Area Test Button");
+        mainAreaRightClickMenuItems[0].setActionCommand("Main Area Test Button");
+        mainAreaRightClickMenu = new JPopupMenu();
+        for (JMenuItem item : mainAreaRightClickMenuItems) {
+            item.addActionListener(this);
+            mainAreaRightClickMenu.add(item);
+        }
+        mainMenuRightClickMenuItems = new JMenuItem[1];
+        mainMenuRightClickMenuItems[0] = new JMenuItem("Main Menu Test Button");
+        mainMenuRightClickMenuItems[0].setActionCommand("Main Menu Test Button");
+        mainMenuRightClickMenu = new JPopupMenu();
+        for (JMenuItem item : mainMenuRightClickMenuItems) {
+            item.addActionListener(this);
+            mainMenuRightClickMenu.add(item);
+        }
+        bottomMenuRightClickMenuItems = new JMenuItem[1];
+        bottomMenuRightClickMenuItems[0] = new JMenuItem("Bottom Menu Test Button");
+        bottomMenuRightClickMenuItems[0].setActionCommand("Bottom Menu Test Button");
+        bottomMenuRightClickMenu = new JPopupMenu();
+        for (JMenuItem item : bottomMenuRightClickMenuItems) {
+            item.addActionListener(this);
+            bottomMenuRightClickMenu.add(item);
+        }
+        tabsRightClickMenuItems = new JMenuItem[1];
+        tabsRightClickMenuItems[0] = new JMenuItem("Tabs Menu Test Button");
+        tabsRightClickMenuItems[0].setActionCommand("Tabs Menu Test Button");
+        tabsRightClickMenu = new JPopupMenu();
+        for (JMenuItem item : tabsRightClickMenuItems) {
+            item.addActionListener(this);
+            tabsRightClickMenu.add(item);
+        }
         setVisible(true);
         memoryImage = createImage(screenWidth, screenHeight);
         memoryGraphics = memoryImage.getGraphics();
@@ -221,7 +255,7 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
         memoryGraphics.drawString("Level: " + String.valueOf(currentLevel), screenWidth - 60, screenHeight - (iconPadding * 2));
         memoryGraphics.drawImage(iconImages[worlds.get(currentWorld).get(currentLevel).isVisible() ? 0 : 1], menuWidth + iconPadding, screenHeight - iconSize - iconPadding, this);
         memoryGraphics.drawImage(iconImages[painting ? 2 : 3], menuWidth + iconSize + (iconPadding * 2), screenHeight - iconSize - iconPadding, this);
-        getGraphics().drawImage(memoryImage, getInsets().left, getInsets().top, this);
+        getGraphics().drawImage(memoryImage, leftPad, topPad, this);
         getGraphics().dispose();
     }
 
@@ -438,21 +472,37 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
     }
 
     private void exit() {
-        if (JOptionPane.showConfirmDialog(null, "Are you sure you want to Quit?", "Quit?", JOptionPane.YES_NO_OPTION) == 0) {
-            if (JOptionPane.showConfirmDialog(null, "Would you like to save your game?", "Save Game?", JOptionPane.YES_NO_OPTION) == 0) {
-                save();
-            }
-            System.exit(0);
-        }
+//        if (JOptionPane.showConfirmDialog(null, "Are you sure you want to Quit?", "Quit?", JOptionPane.YES_NO_OPTION) == 0) {
+//            if (JOptionPane.showConfirmDialog(null, "Would you like to save your game?", "Save Game?", JOptionPane.YES_NO_OPTION) == 0) {
+//                save();
+//            }
+//            System.exit(0);
+//        }
         System.exit(0);
+    }
+
+    private boolean mouseIsInMain(Point point) {
+        return (point.x > menuWidth && point.y < screenHeight - bottomMenuHeight && point.y > tabHeight);
+    }
+
+    private boolean mouseIsInSideMenu(Point point) {
+        return (point.x < menuWidth && point.y < screenHeight - bottomMenuHeight);
+    }
+
+    private boolean mouseIsInBottomMenu(Point point) {
+        return (point.x > menuWidth && point.y > screenHeight - bottomMenuHeight);
+    }
+
+    private boolean mouseIsInTabs(Point point) {
+        return (point.x > menuWidth && point.y < tabHeight);
     }
 
     @Override
     public void mouseDragged(MouseEvent me) {
         Point actualPoint = me.getPoint();
-        actualPoint.translate(-getInsets().left, -getInsets().top);
+        actualPoint.translate(-leftPad, -topPad);
         Point snapedPoint = snapToLocation(actualPoint);
-        if (painting && actualPoint.x > menuWidth && actualPoint.y < screenHeight - bottomMenuHeight && actualPoint.y > tabHeight) {
+        if (painting && mouseIsInMain(actualPoint)) {
             if (SwingUtilities.isRightMouseButton(me)) {
                 removeFromLevelChecked(currentLevel, new Item(snapedPoint.x, snapedPoint.y, itemSize, currentItemType), true, true);
             } else if (SwingUtilities.isLeftMouseButton(me)) {
@@ -476,10 +526,14 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
 
     @Override
     public void mousePressed(MouseEvent me) {
+        tabsRightClickMenu.setVisible(false);
+        mainAreaRightClickMenu.setVisible(false);
+        mainMenuRightClickMenu.setVisible(false);
+        bottomMenuRightClickMenu.setVisible(false);
         Point actualPoint = me.getPoint();
-        actualPoint.translate(-getInsets().left, -getInsets().top);
+        actualPoint.translate(-leftPad, -topPad);
         Point snapedPoint = snapToLocation(actualPoint);
-        if (actualPoint.x > menuWidth && actualPoint.y < screenHeight - bottomMenuHeight && actualPoint.y > tabHeight) {
+        if (mouseIsInMain(actualPoint)) {
             if (SwingUtilities.isRightMouseButton(me)) {
                 removeFromLevelChecked(currentLevel, new Item(snapedPoint.x, snapedPoint.y, itemSize, currentItemType), true, true);
             } else if (SwingUtilities.isLeftMouseButton(me)) {
@@ -506,15 +560,32 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
 
     @Override
     public void mouseReleased(MouseEvent me) {
-        Point actualPoint = me.getPoint();
-        actualPoint.translate(-getInsets().left, -getInsets().top);
-        if (currentLevelObject != null && !painting) {
-            if (actualPoint.x > menuWidth && actualPoint.y < screenHeight - bottomMenuHeight && actualPoint.y > tabHeight) {
-                addToLevelChecked(currentLevel, currentLevelObject, true, true);
+        if (me.isPopupTrigger()) {
+            Point point = me.getPoint();
+            point.translate(-leftPad, -topPad);
+            if (mouseIsInMain(point)) {
+                mainAreaRightClickMenu.setLocation(me.getPoint());
+                mainAreaRightClickMenu.setVisible(true);
+            } else if (mouseIsInSideMenu(point)) {
+                mainMenuRightClickMenu.setLocation(me.getPoint());
+                mainMenuRightClickMenu.setVisible(true);
+            } else if (mouseIsInBottomMenu(point)) {
+                bottomMenuRightClickMenu.setLocation(me.getPoint());
+                bottomMenuRightClickMenu.setVisible(true);
+            } else if (mouseIsInTabs(point)) {
+                tabsRightClickMenu.setLocation(me.getPoint());
+                tabsRightClickMenu.setVisible(true);
             }
-            currentLevelObject = null;
+        } else {
+            Point actualPoint = me.getPoint();
+            actualPoint.translate(-leftPad, -topPad);
+            if (currentLevelObject != null && !painting) {
+                if (mouseIsInMain(actualPoint)) {
+                    addToLevelChecked(currentLevel, currentLevelObject, true, true);
+                }
+                currentLevelObject = null;
+            }
         }
-
     }
 
     @Override
@@ -631,6 +702,10 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
     public void componentResized(ComponentEvent ce) {
         screenWidth = getContentPane().getWidth();
         screenHeight = getContentPane().getHeight();
+        topPad = getInsets().top;
+        bottomPad = getInsets().bottom;
+        rightPad = getInsets().right;
+        leftPad = getInsets().left;
     }
 
     @Override
@@ -643,5 +718,21 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
 
     @Override
     public void componentHidden(ComponentEvent ce) {
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent ae) {
+        if (ae.getActionCommand().equals(mainAreaRightClickMenuItems[0].getActionCommand())) {
+            //do stuff
+        } else if (ae.getActionCommand().equals(mainMenuRightClickMenuItems[0].getActionCommand())) {
+            //do stuff
+        } else if (ae.getActionCommand().equals(bottomMenuRightClickMenuItems[0].getActionCommand())) {
+            //do stuff
+        } else if (ae.getActionCommand().equals(tabsRightClickMenuItems[0].getActionCommand())) {
+            //do stuff
+        } else {
+            return;
+        }
+        ((JMenuItem) ae.getSource()).getParent().setVisible(false);
     }
 }
