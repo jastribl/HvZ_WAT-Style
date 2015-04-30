@@ -12,9 +12,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
-import static leveleditor.LevelEditor.worlds;
-import static leveleditor.LevelEditor.numWorldOpen;
-import static leveleditor.LevelEditor.currentWorld;
+import static leveleditor.Globals.*;
 
 public class OpenWindow extends JFrame {
 
@@ -80,7 +78,7 @@ public class OpenWindow extends JFrame {
             if (worlds.get(i).getName() == mainList.getSelectedValue()) {
                 worlds.get(i).setOpen(true);
                 setVisible(false);
-                numWorldOpen++;
+                numberOfWorldsOpen++;
                 currentWorld = i;
             }
         }

@@ -1,6 +1,11 @@
 package leveleditor;
 
+import java.awt.AlphaComposite;
+import java.awt.Composite;
+import java.awt.Graphics2D;
 import java.awt.Point;
+import static leveleditor.Globals.itemImages;
+import static leveleditor.Globals.memoryGraphics;
 
 public final class Item implements Comparable, Cloneable {
 
@@ -56,6 +61,19 @@ public final class Item implements Comparable, Cloneable {
     public final void shiftLocation(int xShift, int yShift) {
         location.x += xShift;
         location.y += yShift;
+    }
+
+    //draws an item to the screen
+    public final void draw() {
+        memoryGraphics.drawImage(itemImages[type], location.x, location.y, null);
+    }
+
+    //draws an item to the screen (fadded)
+    public final void drawFadded() {
+        Composite savedComposite = ((Graphics2D) memoryGraphics).getComposite();
+        ((Graphics2D) memoryGraphics).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f));
+        ((Graphics2D) memoryGraphics).drawImage(itemImages[type], location.x, location.y, null);
+        ((Graphics2D) memoryGraphics).setComposite(savedComposite);
     }
 
     @Override
