@@ -24,7 +24,6 @@ public final class World {
     }
 
     public final Level get(int i) {
-        isChanges = true;
         return world.get(i);
     }
 

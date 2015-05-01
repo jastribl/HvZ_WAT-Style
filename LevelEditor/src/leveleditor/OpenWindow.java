@@ -80,6 +80,8 @@ public class OpenWindow extends JFrame {
                 setVisible(false);
                 numberOfWorldsOpen++;
                 currentWorld = i;
+                drawOpen = true;
+                break;
             }
         }
     }
@@ -91,7 +93,7 @@ public class OpenWindow extends JFrame {
                 mainListModel.addElement(world.getName());
             }
         }
-        if(!mainListModel.isEmpty()){
+        if (!mainListModel.isEmpty()) {
             mainList.setSelectedIndex(0);
         }
     }

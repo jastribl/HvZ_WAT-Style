@@ -3,8 +3,6 @@ package leveleditor;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
-import java.io.*;
-import java.util.*;
 import javax.swing.*;
 import static leveleditor.Globals.*;
 
@@ -648,6 +646,7 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
         } else if (key == KeyEvent.VK_S && ke.isControlDown() && saveKeyIsDown == true) {
             saveKeyIsDown = false;
             saveAll();
+            drawGame();
         }
     }
 
@@ -688,6 +687,10 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
 
     @Override
     public void windowActivated(WindowEvent we) {
+        if (drawOpen) {
+            drawGame();
+            drawOpen = false;
+        }
     }
 
     @Override
@@ -728,8 +731,10 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
             drawGame();
         } else if (ae.getActionCommand().equals("SaveTab")) {
             saveOne(currentWorld);
+            drawGame();
         } else if (ae.getActionCommand().equals("SaveAllTabs")) {
             saveAll();
+            drawGame();
         } else if (ae.getActionCommand().equals("DeleteWorld")) {
             removeWorld();
         } else {
