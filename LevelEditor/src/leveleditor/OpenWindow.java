@@ -1,17 +1,8 @@
 package leveleditor;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.*;
 import java.util.ArrayList;
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.ListSelectionModel;
+import javax.swing.*;
 import static leveleditor.Globals.*;
 
 public class OpenWindow extends JFrame {
@@ -20,7 +11,7 @@ public class OpenWindow extends JFrame {
     public final JList mainList = new JList(mainListModel);
 
     public OpenWindow() {
-        mainList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        mainList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         mainList.setVisibleRowCount(20);
         mainList.setPrototypeCellValue("                                                                     ");
         JScrollPane mainScrollPane = new JScrollPane(mainList);
@@ -74,14 +65,17 @@ public class OpenWindow extends JFrame {
     }
 
     public final void open() {
-        for (int i = 0; i < worlds.size(); i++) {
-            if (worlds.get(i).getName() == mainList.getSelectedValue()) {
-                worlds.get(i).setOpen(true);
-                setVisible(false);
-                numberOfWorldsOpen++;
-                currentWorld = i;
-                drawOpen = true;
-                break;
+        int[] selected = mainList.getSelectedIndices();
+        for (int i = 0; i < selected.length; i++) {
+            for (int j = 0; j < worlds.size(); j++) {
+                if (worlds.get(j).getName() == mainListModel.get(selected[i])) {
+                    worlds.get(j).setOpen(true);
+                    numberOfWorldsOpen++;
+                    currentWorld = j;
+                    drawOpen = true;
+                    setVisible(false);
+                    break;
+                }
             }
         }
     }

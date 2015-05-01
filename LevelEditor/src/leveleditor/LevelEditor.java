@@ -129,7 +129,7 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
         memoryGraphics.fillRect(0, screenHeight - bottomMenuHeight, screenWidth, screenHeight - bottomMenuHeight);
         memoryGraphics.setColor(Color.white);
         memoryGraphics.drawLine(menuWidth, 0, menuWidth, screenHeight);
-        memoryGraphics.drawLine(menuWidth, screenHeight - bottomMenuHeight, screenWidth, screenHeight - bottomMenuHeight);
+        memoryGraphics.drawLine(0, screenHeight - bottomMenuHeight, screenWidth, screenHeight - bottomMenuHeight);
         //draw left menu
         if (numberOfWorldsOpen > 0) {
             for (Item item : menuItems) {
@@ -164,8 +164,6 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
         //draw open world data
         if (numberOfWorldsOpen > 0) {
             memoryGraphics.setColor(Color.black);
-            memoryGraphics.drawLine(0, screenHeight - bottomMenuHeight, menuWidth - 1, screenHeight - bottomMenuHeight);
-            memoryGraphics.drawString(worlds.get(currentWorld).getName(), iconPadding * 2, screenHeight - (iconPadding * 2));
             memoryGraphics.drawString("Level: " + String.valueOf(currentLevel), screenWidth - 60, screenHeight - (iconPadding * 2));
             memoryGraphics.drawImage(iconImages[worlds.get(currentWorld).get(currentLevel).isVisible() ? 0 : 1], menuWidth + iconPadding, screenHeight - iconSize - iconPadding, this);
             memoryGraphics.drawImage(iconImages[painting ? 2 : 3], menuWidth + iconSize + (iconPadding * 2), screenHeight - iconSize - iconPadding, this);
@@ -592,9 +590,9 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
     public void keyPressed(KeyEvent ke) {
         int key = ke.getKeyCode();
         if (key == KeyEvent.VK_PAGE_UP) {
-            levelUpKeyIsDown = true;
+            chengleLevel('u');
         } else if (key == KeyEvent.VK_PAGE_DOWN) {
-            levelDownKeyIsDown = true;
+            chengleLevel('d');
         } else if (key == KeyEvent.VK_UP) {
             moveItems(0, 1);
             drawGame();
@@ -619,7 +617,12 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
         } else if (key == KeyEvent.VK_Y && ke.isControlDown()) {
             redo();
         } else if (key == KeyEvent.VK_S && ke.isControlDown()) {
-            saveKeyIsDown = true;
+            if (ke.isShiftDown()) {
+                saveAll();
+            } else {
+                saveOne(currentWorld);
+            }
+            drawGame();
         } else if (key == KeyEvent.VK_TAB && ke.isControlDown()) {
             switchWorld(ke.isShiftDown() ? 'd' : 'u');
         } else if (key == KeyEvent.VK_N && ke.isControlDown()) {
@@ -633,21 +636,8 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
         }
     }
 
-    //triggered when a key is released
     @Override
     public void keyReleased(KeyEvent ke) {
-        int key = ke.getKeyCode();
-        if (key == KeyEvent.VK_PAGE_UP && levelUpKeyIsDown) {
-            levelUpKeyIsDown = false;
-            chengleLevel('u');
-        } else if (key == KeyEvent.VK_PAGE_DOWN && levelDownKeyIsDown) {
-            levelDownKeyIsDown = false;
-            chengleLevel('d');
-        } else if (key == KeyEvent.VK_S && ke.isControlDown() && saveKeyIsDown == true) {
-            saveKeyIsDown = false;
-            saveAll();
-            drawGame();
-        }
     }
 
     //triggered when the mouse wheel is moved

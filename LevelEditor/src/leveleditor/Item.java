@@ -4,8 +4,7 @@ import java.awt.AlphaComposite;
 import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import static leveleditor.Globals.itemImages;
-import static leveleditor.Globals.memoryGraphics;
+import static leveleditor.Globals.*;
 
 public final class Item implements Comparable, Cloneable {
 
