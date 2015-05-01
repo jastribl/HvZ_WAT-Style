@@ -91,5 +91,8 @@ public class OpenWindow extends JFrame {
                 mainListModel.addElement(world.getName());
             }
         }
+        if(!mainListModel.isEmpty()){
+            mainList.setSelectedIndex(0);
+        }
     }
 }

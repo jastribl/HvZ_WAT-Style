@@ -79,99 +79,6 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
         LevelEditor levelEditor = new LevelEditor();
     }
 
-    //load all worlds from files
-    private void load() {
-        Scanner worldReader;
-        try {
-            worldReader = new Scanner(new File("levels.txt"));
-        } catch (IOException ex) {
-            worlds.add(new World("World_1"));
-            worlds.get(0).addLevelUnchecked(new Level());
-            worlds.get(0).setOpen(false);
-            return;
-        }
-        while (worldReader.hasNext()) {
-            worlds.add(new World(worldReader.next()));
-        }
-        for (World world : worlds) {
-            Scanner reader;
-            try {
-                reader = new Scanner(new File(world.getName() + ".txt"));
-            } catch (IOException ex) {
-                world.addLevelUnchecked(new Level());
-                return;
-            }
-            int xShift = screenWidth / 2 + menuWidth - reader.nextInt() / 2;
-            int yShift = screenHeight / 2 - reader.nextInt() / 2;
-            int numberOfLevels = reader.nextInt(), numberOfBlocks, type;
-            for (int i = 0; i < numberOfLevels; i++) {
-                Level level = new Level();
-                numberOfBlocks = reader.nextInt();
-                for (int j = 0; j < numberOfBlocks; j++) {
-                    type = reader.nextInt();
-                    Point point = new Point((reader.nextInt() * (itemSize / 2)) + xShift, (reader.nextInt() * (levelOffset / 2)) + yShift);
-                    point = snapToGrid(point);
-                    reader.nextInt();
-                    level.addItemUnchecked(new Item(point.x, point.y, itemSize, type));
-                }
-                world.addLevelUnchecked(level);
-            }
-            world.setOpen(false);
-        }
-    }
-
-    //saves all worlds to files
-    private void saveAll() {
-        File worldFile = new File("levels.txt");
-        try (BufferedWriter worldWriter = new BufferedWriter(new FileWriter(worldFile))) {
-            for (World world : worlds) {
-                worldWriter.write(world.getName() + "\n");
-                saveOne(world);
-            }
-        } catch (IOException ex) {
-        }
-    }
-
-    //saves one world to file
-    private void saveOne(int i) {
-        saveOne(worlds.get(i));
-    }
-
-    //saves one world to file
-    private void saveOne(World world) {
-        int minX = 999999, minY = 999999, maxX = -999999, maxY = -999999;
-        for (Level level : world.getWorld()) {
-            for (Item item : level.getLevel()) {
-                if (item.getX() < minX) {
-                    minX = item.getX();
-                }
-                if (item.getX() > maxX) {
-                    maxX = item.getX();
-                }
-                if (item.getY() < minY) {
-                    minY = item.getY();
-                }
-                if (item.getY() > maxY) {
-                    maxY = item.getY();
-                }
-            }
-        }
-        String levelText = String.valueOf((maxX - minX) + itemSize) + " " + String.valueOf((maxY - minY) + itemSize) + "\n" + String.valueOf(world.size()) + "\n";
-        for (Level level : world.getWorld()) {
-            levelText += String.valueOf(level.size()) + "\n";
-            for (Item item : level.getLevel()) {
-                int trans = 0;
-                levelText += String.valueOf(item.getType()) + " " + String.valueOf((item.getX() - minX) / (itemSize / 2)) + " " + String.valueOf((item.getY() - minY) / (levelOffset / 2)) + " " + String.valueOf(trans) + "\n";
-            }
-        }
-        File file = new File(world.getName() + ".txt");
-        try (BufferedWriter output = new BufferedWriter(new FileWriter(file))) {
-            output.write(levelText);
-        } catch (IOException ex) {
-        }
-        world.setSaved();
-    }
-
     //paint method called by default (calls drawGame)
     @Override
     public void paint(Graphics g) {
@@ -184,52 +91,59 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
     //draws all content to the screen
     public final void drawGame() {
         Font defaultFont = memoryGraphics.getFontMetrics().getFont();
+        boolean printedCurrentItem = null == currentLevelObject;
+        //draw main background
         memoryGraphics.setColor(Color.black);
         memoryGraphics.fillRect(menuWidth, 0, screenWidth - menuWidth, screenHeight);
-        boolean printedLive = null == currentLevelObject;
-        for (int i = 0; i < worlds.get(currentWorld).size(); i++) {
-            if (!printedLive && worlds.get(currentWorld).get(i).size() == 0) {
-                currentLevelObject.draw();
-                printedLive = true;
-            } else {
-                for (int j = 0; j < worlds.get(currentWorld).get(i).size(); j++) {
-                    if (worlds.get(currentWorld).get(i).isVisible()) {
-                        if (!printedLive && currentLevel == i && currentLevelObject.getY() < worlds.get(currentWorld).get(i).get(j).getY()) {
-                            currentLevelObject.draw();
-                            printedLive = true;
-                        }
-                        Point location = worlds.get(currentWorld).get(i).get(j).getLocation();
-                        if (location.x > menuWidth - itemSize && location.x < screenWidth && location.y > -itemSize && location.y < screenHeight) {
-                            if (currentLevel == i) {
-                                worlds.get(currentWorld).get(i).get(j).draw();
-                            } else {
-                                worlds.get(currentWorld).get(i).get(j).drawFadded();
+        //draw currnet world
+        if (numberOfWorldsOpen > 0) {
+            for (int i = 0; i < worlds.get(currentWorld).size(); i++) {
+                if (!printedCurrentItem && worlds.get(currentWorld).get(i).size() == 0) {
+                    currentLevelObject.draw();
+                    printedCurrentItem = true;
+                } else {
+                    for (int j = 0; j < worlds.get(currentWorld).get(i).size(); j++) {
+                        if (worlds.get(currentWorld).get(i).isVisible()) {
+                            if (!printedCurrentItem && currentLevel == i && currentLevelObject.getY() < worlds.get(currentWorld).get(i).get(j).getY()) {
+                                currentLevelObject.draw();
+                                printedCurrentItem = true;
+                            }
+                            Point location = worlds.get(currentWorld).get(i).get(j).getLocation();
+                            if (location.x > menuWidth - itemSize && location.x < screenWidth && location.y > -itemSize && location.y < screenHeight) {
+                                if (currentLevel == i) {
+                                    worlds.get(currentWorld).get(i).get(j).draw();
+                                } else {
+                                    worlds.get(currentWorld).get(i).get(j).draw("fadded");
+                                }
                             }
                         }
                     }
                 }
-            }
-            if (!printedLive && currentLevel == i) {
-                currentLevelObject.draw();
-                printedLive = true;
+                if (!printedCurrentItem && currentLevel == i) {
+                    currentLevelObject.draw();
+                    printedCurrentItem = true;
+                }
             }
         }
+        //draw other background
         memoryGraphics.setColor(Color.gray);
         memoryGraphics.fillRect(0, 0, menuWidth, screenHeight);
         memoryGraphics.fillRect(0, screenHeight - bottomMenuHeight, screenWidth, screenHeight - bottomMenuHeight);
         memoryGraphics.setColor(Color.white);
         memoryGraphics.drawLine(menuWidth, 0, menuWidth, screenHeight);
         memoryGraphics.drawLine(menuWidth, screenHeight - bottomMenuHeight, screenWidth, screenHeight - bottomMenuHeight);
-        for (Item item : menuItems) {
-            item.draw();
-        }
-        memoryGraphics.setColor(Color.black);
-        memoryGraphics.fillRect(menuWidth + 1, 0, screenWidth - menuWidth, tabHeight);
-        if (numberOfWorldsOpen == 0) {
-            tabWidth = 0;
-        } else {
+        //draw left menu
+        if (numberOfWorldsOpen > 0) {
+            for (Item item : menuItems) {
+                item.draw();
+            }
+            memoryGraphics.setColor(Color.black);
+            memoryGraphics.fillRect(menuWidth + 1, 0, screenWidth - menuWidth, tabHeight);
             tabWidth = (screenWidth - menuWidth) / numberOfWorldsOpen;
+        } else {
+            tabWidth = 0;
         }
+        //draw tabs
         int count = 0;
         for (int i = 0; i < worlds.size(); i++) {
             if (worlds.get(i).isOpen()) {
@@ -249,12 +163,16 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
                 count++;
             }
         }
-        memoryGraphics.setColor(Color.black);
-        memoryGraphics.drawLine(0, screenHeight - bottomMenuHeight, menuWidth - 1, screenHeight - bottomMenuHeight);
-        memoryGraphics.drawString(worlds.get(currentWorld).getName(), iconPadding * 2, screenHeight - (iconPadding * 2));
-        memoryGraphics.drawString("Level: " + String.valueOf(currentLevel), screenWidth - 60, screenHeight - (iconPadding * 2));
-        memoryGraphics.drawImage(iconImages[worlds.get(currentWorld).get(currentLevel).isVisible() ? 0 : 1], menuWidth + iconPadding, screenHeight - iconSize - iconPadding, this);
-        memoryGraphics.drawImage(iconImages[painting ? 2 : 3], menuWidth + iconSize + (iconPadding * 2), screenHeight - iconSize - iconPadding, this);
+        //draw open world data
+        if (numberOfWorldsOpen > 0) {
+            memoryGraphics.setColor(Color.black);
+            memoryGraphics.drawLine(0, screenHeight - bottomMenuHeight, menuWidth - 1, screenHeight - bottomMenuHeight);
+            memoryGraphics.drawString(worlds.get(currentWorld).getName(), iconPadding * 2, screenHeight - (iconPadding * 2));
+            memoryGraphics.drawString("Level: " + String.valueOf(currentLevel), screenWidth - 60, screenHeight - (iconPadding * 2));
+            memoryGraphics.drawImage(iconImages[worlds.get(currentWorld).get(currentLevel).isVisible() ? 0 : 1], menuWidth + iconPadding, screenHeight - iconSize - iconPadding, this);
+            memoryGraphics.drawImage(iconImages[painting ? 2 : 3], menuWidth + iconSize + (iconPadding * 2), screenHeight - iconSize - iconPadding, this);
+        }
+        //draw to screen
         getContentPane().getGraphics().drawImage(memoryImage, 0, 0, this);
         getContentPane().getGraphics().dispose();
     }
@@ -474,8 +392,10 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
             }
         } while (bad);
         if (!bad) {
-            worlds.add(new World(name));
-            worlds.get(worlds.size() - 1).addLevelUnchecked(new Level());
+            World world = new World(name);
+            world.addLevelUnchecked(new Level());
+            world.setOpen(true);
+            worlds.add(world);
             currentWorld = worlds.size() - 1;
             numberOfWorldsOpen++;
             drawGame();
@@ -566,17 +486,19 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
     @Override
     public void mouseDragged(MouseEvent me) {
         Point actualPoint = ((JFrame) me.getSource()).getContentPane().getMousePosition();
-        Point snapedPoint = snapToGrid(actualPoint);
-        if (painting && mouseIsInMain(actualPoint)) {
-            if (SwingUtilities.isRightMouseButton(me)) {
-                removeFromLevelChecked(currentLevel, new Item(snapedPoint.x, snapedPoint.y, itemSize, currentItemType), true, true);
-            } else if (SwingUtilities.isLeftMouseButton(me)) {
-                addToLevelChecked(currentLevel, new Item(snapedPoint.x, snapedPoint.y, itemSize, currentItemType), true, true);
-            }
-        } else {
-            if (currentLevelObject != null && SwingUtilities.isLeftMouseButton(me)) {
-                currentLevelObject.setLocationAndFix(snapedPoint);
-                drawGame();
+        if (actualPoint != null) {
+            Point snapedPoint = snapToGrid(actualPoint);
+            if (painting && mouseIsInMain(actualPoint)) {
+                if (SwingUtilities.isRightMouseButton(me)) {
+                    removeFromLevelChecked(currentLevel, new Item(snapedPoint.x, snapedPoint.y, itemSize, currentItemType), true, true);
+                } else if (SwingUtilities.isLeftMouseButton(me)) {
+                    addToLevelChecked(currentLevel, new Item(snapedPoint.x, snapedPoint.y, itemSize, currentItemType), true, true);
+                }
+            } else {
+                if (currentLevelObject != null && SwingUtilities.isLeftMouseButton(me)) {
+                    currentLevelObject.setLocationAndFix(snapedPoint);
+                    drawGame();
+                }
             }
         }
     }
@@ -628,28 +550,29 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
     //triggerd when the mouse is released
     @Override
     public void mouseReleased(MouseEvent me) {
-        if (me.isPopupTrigger()) {
-            Point point = ((JFrame) me.getSource()).getContentPane().getMousePosition();
-            if (mouseIsInMain(point)) {
-                mainAreaRightClickMenu.setLocation(me.getPoint());
-                mainAreaRightClickMenu.setVisible(true);
-            } else if (mouseIsInSideMenu(point)) {
-                mainMenuRightClickMenu.setLocation(me.getPoint());
-                mainMenuRightClickMenu.setVisible(true);
-            } else if (mouseIsInBottomMenu(point)) {
-                bottomMenuRightClickMenu.setLocation(me.getPoint());
-                bottomMenuRightClickMenu.setVisible(true);
-            } else if (mouseIsInTabs(point) && numberOfWorldsOpen > 0) {
-                tabsRightClickMenu.setLocation(me.getPoint());
-                tabsRightClickMenu.setVisible(true);
-            }
-        } else {
-            Point actualPoint = ((JFrame) me.getSource()).getContentPane().getMousePosition();
-            if (currentLevelObject != null && !painting) {
+        Point actualPoint = ((JFrame) me.getSource()).getContentPane().getMousePosition();
+        if (actualPoint != null) {
+            if (me.isPopupTrigger()) {
                 if (mouseIsInMain(actualPoint)) {
-                    addToLevelChecked(currentLevel, currentLevelObject, true, true);
+                    mainAreaRightClickMenu.setLocation(me.getPoint());
+                    mainAreaRightClickMenu.setVisible(true);
+                } else if (mouseIsInSideMenu(actualPoint)) {
+                    mainMenuRightClickMenu.setLocation(me.getPoint());
+                    mainMenuRightClickMenu.setVisible(true);
+                } else if (mouseIsInBottomMenu(actualPoint)) {
+                    bottomMenuRightClickMenu.setLocation(me.getPoint());
+                    bottomMenuRightClickMenu.setVisible(true);
+                } else if (mouseIsInTabs(actualPoint) && numberOfWorldsOpen > 0) {
+                    tabsRightClickMenu.setLocation(me.getPoint());
+                    tabsRightClickMenu.setVisible(true);
                 }
-                currentLevelObject = null;
+            } else {
+                if (currentLevelObject != null && !painting) {
+                    if (mouseIsInMain(actualPoint)) {
+                        addToLevelChecked(currentLevel, currentLevelObject, true, true);
+                    }
+                    currentLevelObject = null;
+                }
             }
         }
     }
@@ -707,6 +630,8 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
             closeCurrentTab();
         } else if (key == KeyEvent.VK_O && ke.isControlDown()) {
             openWindow.display(worlds);
+        } else if (openWindow.isVisible() && key == KeyEvent.VK_ENTER) {
+            drawGame();
         }
     }
 
