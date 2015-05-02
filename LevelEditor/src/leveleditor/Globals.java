@@ -65,6 +65,7 @@ public class Globals {
                 world.addLevelUnchecked(level);
             }
             world.setOpen(false);
+            world.save();
         }
     }
 
@@ -73,50 +74,10 @@ public class Globals {
         try (BufferedWriter worldWriter = new BufferedWriter(new FileWriter(worldFile))) {
             for (World world : worlds) {
                 worldWriter.write(world.getName() + "\n");
-                saveOne(world);
+                world.save();
             }
         } catch (IOException ex) {
         }
-    }
-
-    public static void saveOne(int i) {
-        saveOne(worlds.get(i));
-
-    }
-
-    public static void saveOne(World world) {
-        int minX = 999999999, minY = 999999999, maxX = -999999999, maxY = -999999999;
-        for (Level level : world.getWorld()) {
-            for (Item item : level.getLevel()) {
-                if (item.getX() < minX) {
-                    minX = item.getX();
-                }
-                if (item.getX() > maxX) {
-                    maxX = item.getX();
-                }
-                if (item.getY() < minY) {
-                    minY = item.getY();
-                }
-                if (item.getY() > maxY) {
-                    maxY = item.getY();
-                }
-            }
-        }
-        String levelText = String.valueOf((maxX - minX) + itemSize) + " " + String.valueOf((maxY - minY) + itemSize) + "\n" + String.valueOf(world.size()) + "\n";
-        for (Level level : world.getWorld()) {
-            levelText += String.valueOf(level.size()) + "\n";
-            for (Item item : level.getLevel()) {
-                int trans = 0;
-                levelText += String.valueOf(item.getType()) + " " + String.valueOf((item.getX() - minX) / (itemSize / 2)) + " " + String.valueOf((item.getY() - minY) / (levelOffset / 2)) + " " + String.valueOf(trans) + "\n";
-            }
-        }
-        File file = new File(world.getName() + ".txt");
-        try (BufferedWriter output = new BufferedWriter(new FileWriter(file))) {
-            output.write(levelText);
-        } catch (IOException ex) {
-            return;
-        }
-        world.setSaved();
     }
 
     public static final void closeAllRightClickMenus() {

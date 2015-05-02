@@ -25,13 +25,12 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
         for (int i = 0; i < iconImages.length; i++) {
             try {
                 iconImages[i] = new ImageIcon(getClass().getResource("/media/i" + i + ".png")).getImage().getScaledInstance(iconSize, iconSize, Image.SCALE_SMOOTH);
-                imageTracker.addImage(iconImages[i], 1);
+                imageTracker.addImage(iconImages[i], 0);
             } catch (Exception e) {
             }
         }
         try {
             imageTracker.waitForID(0);
-            imageTracker.waitForID(1);
         } catch (InterruptedException e) {
         }
         setTitle("LevelUpGame - 2015 - Justin Stribling");
@@ -370,24 +369,17 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
             worlds.add(world);
             currentWorld = worlds.size() - 1;
             numberOfWorldsOpen++;
+            saveAll();
             drawGame();
         }
     }
 
-    private void removeWorld() {
+    private void removeWorld(int index) {
         if (JOptionPane.showConfirmDialog(null, "Are you sure you want to remove this World", "Remove?", JOptionPane.YES_NO_OPTION) == 0) {
-            boolean move = worlds.size() == 1;
-            while (worlds.size() == 1) {
-                addWorld();
-            }
-            if (move) {
-                currentWorld--;
-            }
-            worlds.remove(currentWorld);
-            if (currentWorld >= worlds.size()) {
-                currentWorld--;
-            }
+            worlds.remove(index);
+            chengleLevel('d');
             numberOfWorldsOpen--;
+            saveAll();
             drawGame();
         }
     }
@@ -435,7 +427,7 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
     }
 
     private boolean mouseIsInSideMenu(Point point) {
-        return (point.x < menuWidth && point.y < screenHeight - bottomMenuHeight);
+        return (point.x < menuWidth);
     }
 
     private boolean mouseIsInBottomMenu(Point point) {
@@ -610,7 +602,7 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
             if (ke.isShiftDown()) {
                 saveAll();
             } else {
-                saveOne(currentWorld);
+                worlds.get(currentWorld).save();
             }
             drawGame();
         } else if (key == KeyEvent.VK_TAB && ke.isControlDown()) {
@@ -710,13 +702,13 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
             currentWorld = 0;
             drawGame();
         } else if (ae.getActionCommand().equals("SaveTab")) {
-            saveOne(currentWorld);
+            worlds.get(currentWorld).save();
             drawGame();
         } else if (ae.getActionCommand().equals("SaveAllTabs")) {
             saveAll();
             drawGame();
         } else if (ae.getActionCommand().equals("DeleteWorld")) {
-            removeWorld();
+            removeWorld(currentWorld);
         } else {
             return;
         }
