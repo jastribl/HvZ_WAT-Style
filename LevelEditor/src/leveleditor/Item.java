@@ -62,12 +62,10 @@ public final class Item implements Comparable, Cloneable {
         location.y += yShift;
     }
 
-    //draws an item to the screen
     public final void draw() {
         memoryGraphics.drawImage(itemImages[type], location.x, location.y, null);
     }
 
-    //draws an item to the screen (fadded)
     public final void draw(String fadded) {
         Composite savedComposite = ((Graphics2D) memoryGraphics).getComposite();
         ((Graphics2D) memoryGraphics).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f));

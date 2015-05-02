@@ -19,7 +19,6 @@ public class Globals {
     public static final OpenWindow openWindow = new OpenWindow();
     public static Image itemImages[] = new Image[numberOfItemsTypes], iconImages[] = new Image[numberOfIcons];
 
-    //find the appropriate location to put the item baed on the mouse location
     public static Point snapToGrid(Point p) {
         int yy = p.y / levelOffset * levelOffset + (itemSize / 2);
         if ((yy / levelOffset) % 2 == 0) {
@@ -29,7 +28,6 @@ public class Globals {
         }
     }
 
-    //load all worlds from files
     public static void load() {
         Scanner worldReader;
         try {
@@ -70,7 +68,6 @@ public class Globals {
         }
     }
 
-    //saves all worlds to files
     public static void saveAll() {
         File worldFile = new File("levels.txt");
         try (BufferedWriter worldWriter = new BufferedWriter(new FileWriter(worldFile))) {
@@ -82,13 +79,11 @@ public class Globals {
         }
     }
 
-    //saves one world to file
     public static void saveOne(int i) {
         saveOne(worlds.get(i));
 
     }
 
-    //saves one world to file
     public static void saveOne(World world) {
         int minX = 999999999, minY = 999999999, maxX = -999999999, maxY = -999999999;
         for (Level level : world.getWorld()) {
