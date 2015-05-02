@@ -68,4 +68,8 @@ public final class Level {
         }
         return null;
     }
+
+    public final void clear() {
+        level.clear();
+    }
 }

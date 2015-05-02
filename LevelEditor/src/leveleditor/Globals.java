@@ -123,4 +123,11 @@ public class Globals {
         }
         world.setSaved();
     }
+
+    public static final void closeAllRightClickMenus() {
+        tabsRightClickMenu.setVisible(false);
+        mainAreaRightClickMenu.setVisible(false);
+        mainMenuRightClickMenu.setVisible(false);
+        bottomMenuRightClickMenu.setVisible(false);
+    }
 }
