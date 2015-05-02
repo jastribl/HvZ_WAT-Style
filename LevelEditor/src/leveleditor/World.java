@@ -1,6 +1,8 @@
 package leveleditor;
 
+import java.io.*;
 import java.util.ArrayList;
+import static leveleditor.Globals.*;
 
 public final class World {
 
@@ -39,7 +41,42 @@ public final class World {
         return isChanges;
     }
 
-    public final void setSaved() {
+    public final void setChages(boolean set) {
+        isChanges = set;
+    }
+
+    public final void save() {
+        int minX = 999999999, minY = 999999999, maxX = -999999999, maxY = -999999999;
+        for (Level level : world) {
+            for (Item item : level.getLevel()) {
+                if (item.getX() < minX) {
+                    minX = item.getX();
+                }
+                if (item.getX() > maxX) {
+                    maxX = item.getX();
+                }
+                if (item.getY() < minY) {
+                    minY = item.getY();
+                }
+                if (item.getY() > maxY) {
+                    maxY = item.getY();
+                }
+            }
+        }
+        String levelText = String.valueOf((maxX - minX) + itemSize) + " " + String.valueOf((maxY - minY) + itemSize) + "\n" + String.valueOf(world.size()) + "\n";
+        for (Level level : world) {
+            levelText += String.valueOf(level.size()) + "\n";
+            for (Item item : level.getLevel()) {
+                int trans = 0;
+                levelText += String.valueOf(item.getType()) + " " + String.valueOf((item.getX() - minX) / (itemSize / 2)) + " " + String.valueOf((item.getY() - minY) / (levelOffset / 2)) + " " + String.valueOf(trans) + "\n";
+            }
+        }
+        File file = new File(getName() + ".txt");
+        try (BufferedWriter output = new BufferedWriter(new FileWriter(file))) {
+            output.write(levelText);
+        } catch (IOException ex) {
+            return;
+        }
         isChanges = false;
     }
 

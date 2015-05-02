@@ -65,7 +65,7 @@ public class Globals {
                 world.addLevelUnchecked(level);
             }
             world.setOpen(false);
-            world.save();
+            world.setChages(false);
         }
     }
 
