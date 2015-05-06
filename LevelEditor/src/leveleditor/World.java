@@ -9,7 +9,7 @@ public final class World {
     private final ArrayList<Level> world = new ArrayList();
     private String name;
     private final Backup undo, redo;
-    private boolean open = false, isChanges = false;
+    private boolean isChanges = false;
 
     public World(String nameGiven) {
         name = nameGiven;
@@ -27,14 +27,6 @@ public final class World {
 
     public final Level get(int i) {
         return world.get(i);
-    }
-
-    public final boolean isOpen() {
-        return open;
-    }
-
-    public final void setOpen(boolean o) {
-        open = o;
     }
 
     public final boolean hasChanges() {

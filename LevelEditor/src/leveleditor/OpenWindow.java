@@ -67,24 +67,24 @@ public class OpenWindow extends JFrame {
     public final void open() {
         int[] selected = mainList.getSelectedIndices();
         for (int i = 0; i < selected.length; i++) {
-            for (int j = 0; j < worlds.size(); j++) {
-                if (worlds.get(j).getName() == mainListModel.get(selected[i])) {
-                    worlds.get(j).setOpen(true);
-                    numberOfWorldsOpen++;
-                    currentWorld = j;
-                    drawOpen = true;
-                    setVisible(false);
-                    break;
-                }
-            }
+            loadOne((String) mainListModel.get(selected[i]));
         }
+        currentWorld = worlds.size() - 1;
+        drawOpen = true;
+        setVisible(false);
     }
 
     private void refreshMainFrame(ArrayList<World> worlds) {
         mainListModel.clear();
-        for (World world : worlds) {
-            if (!world.isOpen()) {
-                mainListModel.addElement(world.getName());
+        for (String worldName : allWorlds) {
+            int count = 0;
+            for (World world : worlds) {
+                if (!world.getName().equals(worldName)) {
+                    count++;
+                }
+            }
+            if (count == worlds.size()) {
+                mainListModel.addElement(worldName);
             }
         }
         if (!mainListModel.isEmpty()) {
