@@ -7,6 +7,7 @@ import static leveleditor.Globals.*;
 public final class World {
 
     private final ArrayList<Level> world = new ArrayList();
+    //needs to be final for latter changeName method
     private String name;
     private final Backup undo, redo;
     private boolean isChanges = false;
@@ -85,11 +86,11 @@ public final class World {
     public final String getName() {
         return name;
     }
-
-    public final void setName(String nameGiven) {
-        isChanges = true;
-        name = nameGiven;
-    }
+//for use with rename latter
+//    public final void setName(String nameGiven) {
+//        isChanges = true;
+//        name = nameGiven;
+//    }
 
     public final void addUndo(ItemBackup itemBackup) {
         isChanges = true;
@@ -97,7 +98,6 @@ public final class World {
     }
 
     public final ItemBackup peekUndo() {
-        isChanges = true;
         return undo.peek();
     }
 
@@ -117,7 +117,6 @@ public final class World {
     }
 
     public final ItemBackup peekRedo() {
-        isChanges = true;
         return redo.peek();
     }
 
@@ -132,7 +131,6 @@ public final class World {
     }
 
     public final void shiftItems(int x, int y) {
-        isChanges = true;
         for (Level level : world) {
             for (Item item : level.getLevel()) {
                 item.shiftLocation(x, y);
