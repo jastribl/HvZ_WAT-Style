@@ -3,6 +3,7 @@ package leveleditor;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
+import java.io.File;
 import javax.swing.*;
 import static leveleditor.Globals.*;
 
@@ -392,6 +393,7 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
 
     private void removeWorld(int index) {
         if (JOptionPane.showConfirmDialog(null, "Are you sure you want to remove this World", "Remove?", JOptionPane.YES_NO_OPTION) == 0) {
+            new File(worlds.get(index).getName() + ".txt").delete();
             worlds.remove(index);
             chengleLevel('d');
             numberOfWorldsOpen--;
@@ -470,19 +472,31 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
     }
 
     private boolean mouseIsInMain(Point point) {
-        return (point.x > menuWidth && point.x < screenWidth && point.y > tabHeight && point.y < screenHeight - bottomMenuHeight);
+        if (point != null) {
+            return (point.x > menuWidth && point.x < screenWidth && point.y > tabHeight && point.y < screenHeight - bottomMenuHeight);
+        }
+        return false;
     }
 
     private boolean mouseIsInSideMenu(Point point) {
-        return (point.x > 0 && point.x < menuWidth && point.y > 0 && point.y < screenHeight);
+        if (point != null) {
+            return (point.x > 0 && point.x < menuWidth && point.y > 0 && point.y < screenHeight);
+        }
+        return false;
     }
 
     private boolean mouseIsInBottomMenu(Point point) {
-        return (point.x > menuWidth && point.x < screenWidth && point.y > screenHeight - bottomMenuHeight && point.y < screenHeight);
+        if (point != null) {
+            return (point.x > menuWidth && point.x < screenWidth && point.y > screenHeight - bottomMenuHeight && point.y < screenHeight);
+        }
+        return false;
     }
 
     private boolean mouseIsInTabs(Point point) {
-        return (point.x > menuWidth && point.x < screenWidth && point.y > 0 && point.y < tabHeight);
+        if (point != null) {
+            return (point.x > menuWidth && point.x < screenWidth && point.y > 0 && point.y < tabHeight);
+        }
+        return false;
     }
 
     @Override
@@ -663,7 +677,15 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
 
     @Override
     public void mouseWheelMoved(MouseWheelEvent mwe) {
-        if (mwe.getX() < menuWidth) {
+        Point actualPoint = ((JFrame) mwe.getSource()).getContentPane().getMousePosition();
+        if (mouseIsInMain(actualPoint)) {
+//            if (mwe.isControlDown()) {
+//                moveItems(2, 0);
+//            } else {
+//                moveItems(2, 1);
+//            }
+//            drawGame();
+        } else if (mouseIsInSideMenu(actualPoint)) {
             int amount = mwe.getWheelRotation() * 15;
             if ((menuItems[0].getY() - amount > 0 || menuItems[menuItems.length - 1].getY() - amount > screenHeight - bottomMenuHeight) && (menuItems[menuItems.length - 1].getY() - amount + itemSize < screenHeight - bottomMenuHeight || menuItems[0].getY() - amount < 0)) {
                 for (Item item : menuItems) {

@@ -33,9 +33,10 @@ public class Globals {
         try {
             worldReader = new Scanner(new File("levels.txt"));
         } catch (IOException ex) {
-            worlds.add(new World("World_1"));
-            worlds.get(0).addLevelUnchecked(new Level());
-            worlds.get(0).setOpen(false);
+            try {
+                new File("levels.txt").createNewFile();
+            } catch (IOException ex1) {
+            }
             return;
         }
         while (worldReader.hasNext()) {
