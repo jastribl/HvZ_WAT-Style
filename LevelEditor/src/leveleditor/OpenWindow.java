@@ -70,16 +70,16 @@ public class OpenWindow extends JFrame {
         drawOpen = true;
     }
 
-    private void refreshMainFrame(ArrayList<World> worlds) {
+    private void refreshWorldsList(ArrayList<World> worlds) {
         mainListModel.clear();
         for (String worldName : allWorlds) {
-            int count = 0;
-            for (World world : worlds) {
-                if (!world.getName().equals(worldName)) {
-                    count++;
+            breakpoint:
+            {
+                for (World world : worlds) {
+                    if (worldName.equals(world.getName())) {
+                        break breakpoint;
+                    }
                 }
-            }
-            if (count == worlds.size()) {
                 mainListModel.addElement(worldName);
             }
         }
