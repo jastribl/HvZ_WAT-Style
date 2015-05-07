@@ -191,14 +191,14 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
 
     public final void addToLevelChecked(int level, Item item, boolean setUndo, boolean wipeRedoCache, boolean draw) {
         if (worlds.get(currentWorld).get(level).addItemChecked(item)) {
-            if (draw) {
-                drawGame();
-            }
             if (setUndo) {
                 worlds.get(currentWorld).addUndo(new ItemBackup('a', level, item.getType(), (Point) item.getLocation().clone()));
                 if (wipeRedoCache) {
                     worlds.get(currentWorld).clearRedo();
                 }
+            }
+            if (draw) {
+                drawGame();
             }
         }
     }
@@ -206,14 +206,14 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
     public final void removeFromLevelChecked(int level, Item item, boolean setUndo, boolean wipeRedoCache, boolean draw) {
         Item removedItem = worlds.get(currentWorld).get(level).removeItem(item);
         if (removedItem != null) {
-            if (draw) {
-                drawGame();
-            }
             if (setUndo) {
                 worlds.get(currentWorld).addUndo(new ItemBackup('r', level, removedItem.getType(), (Point) removedItem.getLocation().clone()));
                 if (wipeRedoCache) {
                     worlds.get(currentWorld).clearRedo();
                 }
+            }
+            if (draw) {
+                drawGame();
             }
         }
     }
