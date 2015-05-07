@@ -15,10 +15,11 @@ public class Globals {
     public static ArrayList<World> worlds = new ArrayList();
     public static final Item[] menuItems = new Item[numberOfItemsTypes];
     public static final JPopupMenu tabsRightClickMenu = new JPopupMenu();
-    public static final JMenuItem tabsRightClickMenuItems[] = new JMenuItem[5];
+    public static final String[] tabsRightClickText = {"Close", "Close All", "Rename", "Save", "Save All", "Delete"};
+    public static final JMenuItem tabsRightClickMenuItems[] = new JMenuItem[tabsRightClickText.length];
     public static final OpenWindow openWindow = new OpenWindow();
     public static Image itemImages[] = new Image[numberOfItemsTypes], iconImages[] = new Image[numberOfIcons];
-    public static ArrayList<String> allWorlds = new ArrayList();
+    public static final ArrayList<String> allWorlds = new ArrayList();
 
     public static Point snapToGrid(Point p) {
         int yy = p.y / levelOffset * levelOffset + (itemSize / 2);

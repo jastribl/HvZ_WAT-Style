@@ -7,7 +7,7 @@ import java.io.File;
 import javax.swing.*;
 import static leveleditor.Globals.*;
 
-public final class LevelEditor extends JFrame implements MouseMotionListener, MouseListener, MouseWheelListener, KeyListener, WindowListener, ComponentListener, ActionListener {
+public final class LevelEditor extends JFrame implements MouseMotionListener, MouseListener, MouseWheelListener, KeyListener, WindowListener, ComponentListener {
 
     private final Image memoryImage;
     private Point rectangleStart = null, rectangleEnd = null;
@@ -49,19 +49,41 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
         addMouseListener(this);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setFocusTraversalKeysEnabled(false);
-        tabsRightClickMenuItems[0] = new JMenuItem("Close");
-        tabsRightClickMenuItems[0].setActionCommand("CloseTab");
-        tabsRightClickMenuItems[1] = new JMenuItem("Close All");
-        tabsRightClickMenuItems[1].setActionCommand("CloseAllTabs");
-        tabsRightClickMenuItems[2] = new JMenuItem("Save");
-        tabsRightClickMenuItems[2].setActionCommand("SaveTab");
-        tabsRightClickMenuItems[3] = new JMenuItem("Save All");
-        tabsRightClickMenuItems[3].setActionCommand("SaveAllTabs");
-        tabsRightClickMenuItems[4] = new JMenuItem("Delete");
-        tabsRightClickMenuItems[4].setActionCommand("DeleteWorld");
-        for (JMenuItem item : tabsRightClickMenuItems) {
-            item.addActionListener(this);
-            tabsRightClickMenu.add(item);
+        ActionListener tabsRightClickListener = new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                String command = ae.getActionCommand();
+                if (command.equals("Close")) {
+                    closeTab(currentWorld);
+                } else if (command.equals("Close All")) {
+                    saveAll();
+                    while (worlds.size() > 0) {
+                        worlds.remove(0);
+                    }
+                    currentWorld = 0;
+                    drawGame();
+                } else if (command.equals("Rename")) {
+                    renameWorld(currentWorld);
+                } else if (command.equals("Save")) {
+                    worlds.get(currentWorld).save();
+                    drawGame();
+                } else if (command.equals("Save All")) {
+                    saveAll();
+                    drawGame();
+                } else if (command.equals("Delete")) {
+                    removeWorld(currentWorld);
+                } else {
+                    return;
+                }
+                ((JMenuItem) ae.getSource()).getParent().setVisible(false);
+            }
+        };
+        for (int i = 0; i < tabsRightClickMenuItems.length; i++) {
+            tabsRightClickMenuItems[i] = new JMenuItem(tabsRightClickText[i]);
+            tabsRightClickMenuItems[i].setActionCommand(tabsRightClickText[i]);
+            tabsRightClickMenuItems[i].addActionListener(tabsRightClickListener);
+            tabsRightClickMenu.add(tabsRightClickMenuItems[i]);
         }
         setVisible(true);
         memoryImage = createImage(getContentPane().getWidth(), getContentPane().getHeight());
@@ -334,8 +356,8 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
         }
     }
 
-    private void addWorld() {
-        String name = null;
+    private String getNewWorldName() {
+        String name;
         boolean bad;
         do {
             bad = false;
@@ -352,13 +374,17 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
                     }
                 }
             } catch (NullPointerException ex) {
-                bad = true;
-                break;
+                return null;
             }
         } while (bad);
-        if (!bad) {
-            allWorlds.add(name);
-            World world = new World(name);
+        return name;
+    }
+
+    private void addWorld() {
+        String newWorldName = getNewWorldName();
+        if (newWorldName != null) {
+            allWorlds.add(newWorldName);
+            World world = new World(newWorldName);
             world.addLevelUnchecked(new Level());
             worlds.add(world);
             currentWorld = worlds.size() - 1;
@@ -367,13 +393,27 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
         }
     }
 
-    private void removeCurrentWorldWorld() {
+    private void removeWorld(int index) {
         if (JOptionPane.showConfirmDialog(null, "Are you sure you want to remove this World", "Remove?", JOptionPane.YES_NO_OPTION) == 0) {
             saveAll();
-            new File(worlds.get(currentWorld).getName() + ".txt").delete();
-            allWorlds.remove(worlds.get(currentWorld).getName());
-            worlds.remove(currentWorld);
-            chengleLevel('d');
+            new File(worlds.get(index).getName() + ".txt").delete();
+            allWorlds.remove(worlds.get(index).getName());
+            worlds.remove(index);
+            if (currentWorld == worlds.size()) {
+                currentWorld--;
+            }
+            saveAll();
+            drawGame();
+        }
+    }
+
+    private void renameWorld(int index) {
+        String newWorldName = getNewWorldName();
+        if (newWorldName != null) {
+            String oldWorldName = worlds.get(index).getName();
+            worlds.get(index).setName(newWorldName);
+            allWorlds.set(allWorlds.indexOf(oldWorldName), newWorldName);
+            new File(oldWorldName + ".txt").delete();
             saveAll();
             drawGame();
         }
@@ -721,30 +761,5 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
 
     @Override
     public void componentHidden(ComponentEvent ce) {
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent ae) {
-        if (ae.getActionCommand().equals("CloseTab")) {
-            closeCurrentTab();
-        } else if (ae.getActionCommand().equals("CloseAllTabs")) {
-            saveAll();
-            while (worlds.size() > 0) {
-                worlds.remove(0);
-            }
-            currentWorld = 0;
-            drawGame();
-        } else if (ae.getActionCommand().equals("SaveTab")) {
-            worlds.get(currentWorld).save();
-            drawGame();
-        } else if (ae.getActionCommand().equals("SaveAllTabs")) {
-            saveAll();
-            drawGame();
-        } else if (ae.getActionCommand().equals("DeleteWorld")) {
-            removeCurrentWorldWorld();
-        } else {
-            return;
-        }
-        ((JMenuItem) ae.getSource()).getParent().setVisible(false);
     }
 }
