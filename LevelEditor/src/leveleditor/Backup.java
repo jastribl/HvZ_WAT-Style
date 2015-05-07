@@ -31,6 +31,10 @@ public class Backup {
         }
     }
 
+    public final int getBackupSize() {
+        return backup.size();
+    }
+
     public final void clear() {
         backup.clear();
     }

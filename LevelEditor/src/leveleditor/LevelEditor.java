@@ -288,6 +288,10 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
             worlds.get(currentWorld).addRedo(backup);
         }
         worlds.get(currentWorld).popUndo();
+        if (worlds.get(currentWorld).undoSize() == 0) {
+            worlds.get(currentWorld).setChages(false);
+            drawGame();
+        }
     }
 
     public final void redo() {
