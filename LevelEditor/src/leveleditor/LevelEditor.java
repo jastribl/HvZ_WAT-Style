@@ -341,15 +341,15 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
         drawGame();
     }
 
-    private void switchWorld(char dir) {
+    private void switchWorld(char direction) {
         if (worlds.size() > 0) {
-            if (dir == 'u') {
+            if (direction == 'u') {
                 if (currentWorld == worlds.size() - 1) {
                     currentWorld = 0;
                 } else {
                     currentWorld++;
                 }
-            } else if (dir == 'd') {
+            } else if (direction == 'd') {
                 if (currentWorld == 0) {
                     currentWorld = worlds.size() - 1;
                 } else {
@@ -432,9 +432,9 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
         drawGame();
     }
 
-    private void closeCurrentTab() {
+    private void closeTab(int index) {
         saveAll();
-        worlds.remove(currentWorld);
+        worlds.remove(index);
         if (currentWorld == worlds.size()) {
             currentWorld--;
         }
@@ -680,7 +680,7 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
         } else if (key == KeyEvent.VK_N && ke.isControlDown()) {
             addWorld();
         } else if (key == KeyEvent.VK_F4 && ke.isControlDown()) {
-            closeCurrentTab();
+            closeTab(currentWorld);
         } else if (key == KeyEvent.VK_O && ke.isControlDown()) {
             openWindow.display(worlds);
         } else if (openWindow.isVisible() && key == KeyEvent.VK_ENTER) {
