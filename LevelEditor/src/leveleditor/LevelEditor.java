@@ -683,8 +683,8 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
             closeTab(currentWorld);
         } else if (key == KeyEvent.VK_O && ke.isControlDown()) {
             openWindow.display(worlds);
-        } else if (openWindow.isVisible() && key == KeyEvent.VK_ENTER) {
-            drawGame();
+        } else if (key == KeyEvent.VK_DELETE) {
+            removeWorld(currentWorld);
         }
     }
 
