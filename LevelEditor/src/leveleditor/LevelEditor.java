@@ -696,12 +696,13 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
     public void mouseWheelMoved(MouseWheelEvent mwe) {
         Point actualPoint = ((JFrame) mwe.getSource()).getContentPane().getMousePosition();
         if (mouseIsInMain(actualPoint)) {
-//            if (mwe.isControlDown()) {
-//                moveItems(2, 0);
-//            } else {
-//                moveItems(2, 1);
-//            }
-//            drawGame();
+            int amount = -mwe.getWheelRotation();
+            if (mwe.isControlDown()) {
+                moveItems(amount, 0);
+            } else {
+                moveItems(0, amount);
+            }
+            drawGame();
         } else if (mouseIsInSideMenu(actualPoint)) {
             int amount = mwe.getWheelRotation() * 15;
             if ((menuItems[0].getY() - amount > 0 || menuItems[menuItems.length - 1].getY() - amount > screenHeight - bottomMenuHeight) && (menuItems[menuItems.length - 1].getY() - amount + itemSize < screenHeight - bottomMenuHeight || menuItems[0].getY() - amount < 0)) {
