@@ -41,6 +41,7 @@ public final class World {
         int minX = 999999999, minY = 999999999, maxX = -999999999, maxY = -999999999;
         for (Level level : world) {
             for (Item item : level.getLevel()) {
+                item.snap();
                 if (item.getX() < minX) {
                     minX = item.getX();
                 }
@@ -60,7 +61,7 @@ public final class World {
             levelText += String.valueOf(level.size()) + "\n";
             for (Item item : level.getLevel()) {
                 int trans = 0;
-                levelText += String.valueOf(item.getType()) + " " + String.valueOf((item.getX() - minX) / (itemSize / 2)) + " " + String.valueOf((item.getY() - minY) / (levelOffset / 2)) + " " + String.valueOf(trans) + "\n";
+                levelText += String.valueOf(item.getType()) + " " + String.valueOf((item.getX() - minX) / halfItemSize) + " " + String.valueOf((item.getY() - minY) / (levelOffset / 2)) + " " + String.valueOf(trans) + "\n";
             }
         }
         File file = new File(getName() + ".txt");

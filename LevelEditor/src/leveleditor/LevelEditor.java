@@ -16,7 +16,7 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
     private Item currentLevelObject = null;
     private Level rectangleItems = new Level();
     private Point rectangleStart = null, rectangleEnd = null;
-    private final Item[] menuItems = new Item[numberOfItemsTypes];//make menu class//  
+    private final Item[] menuItems = new Item[numberOfItemsTypes];//make menu class  
     public final Image iconImages[] = new Image[numberOfIcons];
     private final JPopupMenu tabsRightClickMenu = new JPopupMenu();
     private final String[] tabsRightClickText = {"Close", "Close All", "Rename", "Save", "Save All", "Delete"};
@@ -251,7 +251,7 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
     }
 
     public final void moveItems(int x, int y) {
-        worlds.get(currentWorld).shiftItems(x * itemSize, y * itemSize / 2);
+        worlds.get(currentWorld).shiftItems(x * itemSize, y * halfItemSize);
         if (paintingMode == 2 && rectangleStart != null) {
             rectangleStart.x += x * itemSize;
             rectangleStart.y += y * itemSize;
@@ -289,9 +289,9 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
             backup = worlds.get(currentWorld).peekUndo();
             worlds.get(currentWorld).addRedo(new ItemBackup(backup.backupType, backup.level, backup.type, backup.location));
             if (backup.backupType == 'r') {
-                addToLevelChecked(backup.level, new Item(backup.location.x, backup.location.y, backup.type), false, false);
+                addToLevelChecked(backup.level, new Item(backup.location, backup.type), false, false);
             } else {
-                removeFromLevelChecked(backup.level, new Item(backup.location.x, backup.location.y, backup.type), false, false);
+                removeFromLevelChecked(backup.level, new Item(backup.location, backup.type), false, false);
             }
         } else if (backup.backupType == 'h') {
             hideCurrentLevel();
@@ -312,9 +312,9 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
             backup = worlds.get(currentWorld).peekRedo();
             worlds.get(currentWorld).addUndo(new ItemBackup(backup.backupType, backup.level, backup.type, backup.location));
             if (backup.backupType == 'a') {
-                addToLevelChecked(backup.level, new Item(backup.location.x, backup.location.y, backup.type), false, false);
+                addToLevelChecked(backup.level, new Item(backup.location, backup.type), false, false);
             } else {
-                removeFromLevelChecked(backup.level, new Item(backup.location.x, backup.location.y, backup.type), false, false);
+                removeFromLevelChecked(backup.level, new Item(backup.location, backup.type), false, false);
             }
         } else if (backup.backupType == 'h') {
             hideCurrentLevel();
@@ -460,7 +460,6 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
         try {
             int xStop = (rectangleEnd.x - rectangleStart.x) / itemSize;
             int yStop = (rectangleEnd.y - rectangleStart.y) / levelOffset;
-            int halfItem = itemSize / 2;
             int xStart, xEnd, yStart, yEnd;
             if (rectangleEnd.x > rectangleStart.x) {
                 xStart = 0;
@@ -478,7 +477,7 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
             }
             for (int i = yStart; i < yEnd; i++) {
                 int y = rectangleStart.y + (levelOffset * i);
-                int xShift = (i % 2 == 0 ? 0 : halfItem);
+                int xShift = (i % 2 == 0 ? 0 : halfItemSize);
                 for (int j = xStart; j < xEnd; j++) {
                     rectangleItems.addItemUnchecked(new Item(rectangleStart.x + (itemSize * j) + xShift, y, itemSize, currentItemType));
                 }
@@ -538,9 +537,9 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
                 if (mouseIsInMain(actualPoint)) {
                     if (paintingMode == 0) {
                         if (SwingUtilities.isRightMouseButton(me)) {
-                            removeFromLevelChecked(currentLevel, new Item(snapedPoint.x, snapedPoint.y, itemSize, currentItemType), true, true);
+                            removeFromLevelChecked(currentLevel, new Item(snapedPoint, itemSize, currentItemType), true, true);
                         } else if (SwingUtilities.isLeftMouseButton(me)) {
-                            addToLevelChecked(currentLevel, new Item(snapedPoint.x, snapedPoint.y, itemSize, currentItemType), true, true);
+                            addToLevelChecked(currentLevel, new Item(snapedPoint, itemSize, currentItemType), true, true);
                         }
                     } else if (paintingMode == 1) {
                         if (currentLevelObject != null && SwingUtilities.isLeftMouseButton(me)) {
@@ -575,21 +574,21 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
                 if (mouseIsInMain(actualPoint)) {
                     if (SwingUtilities.isRightMouseButton(me)) {
                         if (paintingMode == 0 || paintingMode == 1) {
-                            removeFromLevelChecked(currentLevel, new Item(snapedPoint.x, snapedPoint.y, itemSize, currentItemType), true, true);
+                            removeFromLevelChecked(currentLevel, new Item(snapedPoint, itemSize, currentItemType), true, true);
                         } else if (paintingMode == 2) {
                             rectangleStart = snapedPoint;
                             drawingRectangle = false;
                         }
                     } else if (SwingUtilities.isLeftMouseButton(me)) {
                         if (paintingMode == 0) {
-                            addToLevelChecked(currentLevel, new Item(snapedPoint.x, snapedPoint.y, itemSize, currentItemType), true, true);
+                            addToLevelChecked(currentLevel, new Item(snapedPoint, itemSize, currentItemType), true, true);
                         } else if (paintingMode == 1) {
-                            Item item = getFromLevelChecked(currentLevel, new Item(snapedPoint.x, snapedPoint.y, itemSize, currentItemType));
+                            Item item = getFromLevelChecked(currentLevel, new Item(snapedPoint, itemSize, currentItemType));
                             if (item != null) {
                                 currentItemType = item.getType();
                                 currentLevelObject = item;
                             } else {
-                                currentLevelObject = new Item(snapedPoint.x, snapedPoint.y, itemSize, currentItemType);
+                                currentLevelObject = new Item(snapedPoint, itemSize, currentItemType);
                             }
                         } else if (paintingMode == 2) {
                             rectangleStart = snapedPoint;
