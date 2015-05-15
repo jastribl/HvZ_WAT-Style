@@ -140,10 +140,14 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
                             levelToDraw.addItemChecked(currentLevelObject);
                         } else if (paintingMode == 2) {
                             for (int j = 0; j < rectangleItems.size(); j++) {
-                                if (drawingRectangle) {
-                                    levelToDraw.addItemChecked(rectangleItems.get(j));
-                                } else {
-                                    levelToDraw.removeItem(rectangleItems.get(j));
+                                Item item = rectangleItems.get(j);
+                                Point p = item.getLocation();
+                                if (p.x > menuWidth - itemSize && p.x < screenWidth && p.y > tabHeight - itemSize && p.y < screenHeight) {
+                                    if (drawingRectangle) {
+                                        levelToDraw.addItemChecked(item);
+                                    } else {
+                                        levelToDraw.removeItem(item);
+                                    }
                                 }
                             }
                         }
@@ -635,7 +639,9 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
 
     @Override
     public void mouseExited(MouseEvent me) {
-        if (paintingMode == 2) {
+        if (paintingMode == 1) {
+            currentLevelObject = null;
+        } else if (paintingMode == 2) {
             if (drawingRectangle) {
                 addRectangleToLevel();
             } else {
@@ -676,7 +682,7 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
             } else if (key == KeyEvent.VK_S) {
                 if (ke.isShiftDown()) {
                     saveAll();
-                } else {
+                } else if (worlds.size() > 0) {
                     worlds.get(currentWorld).save();
                 }
             } else if (key == KeyEvent.VK_TAB) {

@@ -54,9 +54,9 @@ public final class Item implements Comparable, Cloneable {
         fixLocation();
     }
 
-    public final void snap() {
-        location = snapToGrid(location);
-    }
+//    public final void snap() {
+//        location = snapToGrid(location);
+//    }
 
     public final void shiftLocation(int xShift, int yShift) {
         location.x += xShift;

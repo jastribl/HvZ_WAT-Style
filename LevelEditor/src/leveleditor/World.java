@@ -41,7 +41,7 @@ public final class World {
         int minX = 999999999, minY = 999999999, maxX = -999999999, maxY = -999999999;
         for (Level level : world) {
             for (Item item : level.getLevel()) {
-                item.snap();
+//                item.snap();
                 if (item.getX() < minX) {
                     minX = item.getX();
                 }
