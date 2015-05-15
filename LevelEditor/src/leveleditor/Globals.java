@@ -57,7 +57,7 @@ public class Globals {
             numberOfBlocks = reader.nextInt();
             for (int j = 0; j < numberOfBlocks; j++) {
                 type = reader.nextInt();
-                Point point = new Point((reader.nextInt() * (itemSize / 2)) + xShift, (reader.nextInt() * (levelOffset / 2)) + yShift);
+                Point point = new Point((reader.nextInt() * (itemSize / 2)) + xShift, (reader.nextInt() * (itemSize / 8)) + yShift);
                 point = snapToGrid(point);
                 reader.nextInt();
                 level.addItemUnchecked(new Item(point.x, point.y, itemSize, type));

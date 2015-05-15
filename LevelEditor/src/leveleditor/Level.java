@@ -31,19 +31,19 @@ public final class Level {
         level.add(i);
     }
 
-    public boolean addItemChecked(Item i) {
+    public boolean addItemChecked(Item item) {
         if (visible) {
             int comp;
-            for (Item item : level) {
-                comp = item.compareTo(i);
-                if (comp > 0) {
-                    break;
-                } else if (comp == 0) {
+            int i = 0;
+            for (; i < level.size(); i++) {
+                comp = item.compareTo(level.get(i));
+                if (comp == 0) {
                     return false;
+                } else if (comp < 0) {
+                    break;
                 }
             }
-            level.add(i);
-            Collections.sort(level);
+            level.add(i, item);
             return true;
         }
         return false;

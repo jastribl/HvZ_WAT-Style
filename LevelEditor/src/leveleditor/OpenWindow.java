@@ -67,7 +67,6 @@ public class OpenWindow extends JFrame {
             loadOne((String) mainListModel.get(selected[i]));
         }
         currentWorld = worlds.size() - 1;
-        drawOpen = true;
     }
 
     private void refreshWorldsList(ArrayList<World> worlds) {
