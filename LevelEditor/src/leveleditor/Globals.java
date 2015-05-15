@@ -51,7 +51,7 @@ public class Globals {
                     type = reader.nextInt();
                     Point point = snapToGrid(new Point((reader.nextInt() * halfItemSize) + xShift, (reader.nextInt() * (itemSize / 8)) + yShift));
                     reader.nextInt(); //for transparency
-                    level.addItemUnchecked(new Item(point, itemSize, type));
+                    level.addItemUnchecked(new Item(point.x, point.y, itemSize, type));
                 }
                 world.addLevelUnchecked(level);
             }

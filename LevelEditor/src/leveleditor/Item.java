@@ -8,13 +8,6 @@ public final class Item implements Comparable, Cloneable {
     private Point location;
     final int type, size;
 
-    public Item(Point p, int sizeGiven, int typeGiven) {
-        location = p;
-        fixLocation();
-        size = sizeGiven;
-        type = typeGiven;
-    }
-
     public Item(int x, int y, int sizeGiven, int typeGiven) {
         location = new Point(x, y);
         fixLocation();
@@ -24,8 +17,8 @@ public final class Item implements Comparable, Cloneable {
 
 //    for use in undo/redo caches
 //    doesn't shift the position to allign with the mouse click
-    public Item(Point p, int typeGiven) {
-        location = p;
+    public Item(int x, int y, int typeGiven) {
+        location = new Point(x, y);
         type = typeGiven;
         size = 0;
     }

@@ -54,15 +54,15 @@ public final class Level {
             int comp;
             for (int i = 0; i < level.size(); i++) {
                 comp = level.get(i).compareTo(item);
-                if (comp > 0) {
-                    return null;
-                } else if (comp == 0) {
+                if (comp == 0) {
                     try {
                         Item toBeReturned = (Item) level.get(i).clone();
                         level.remove(i);
                         return toBeReturned;
                     } catch (CloneNotSupportedException ex) {
                     }
+                } else if (comp > 0) {
+                    return null;
                 }
             }
         }
