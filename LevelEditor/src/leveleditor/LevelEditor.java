@@ -10,9 +10,18 @@ import static leveleditor.Globals.*;
 public final class LevelEditor extends JFrame implements MouseMotionListener, MouseListener, MouseWheelListener, KeyListener, WindowListener, ComponentListener {
 
     private final Image memoryImage;
-    private Point rectangleStart = null, rectangleEnd = null;
+    private final int tabHeight = 25, numberOfPaintingTools = 3, numberOfIcons = 5;
+    private int currentItemType = 0, currentLevel = 0, tabWidth = 0, paintingMode = 0;
+    private boolean drawingRectangle = true, canDraw = false;
+    private Item currentLevelObject = null;
     private Level rectangleItems = new Level();
-    private boolean addingRectangle = true;
+    private Point rectangleStart = null, rectangleEnd = null;
+    private final Item[] menuItems = new Item[numberOfItemsTypes];//make menu class//  
+    public final Image iconImages[] = new Image[numberOfIcons];
+    private final JPopupMenu tabsRightClickMenu = new JPopupMenu();
+    private final String[] tabsRightClickText = {"Close", "Close All", "Rename", "Save", "Save All", "Delete"};
+    private final JMenuItem tabsRightClickMenuItems[] = new JMenuItem[tabsRightClickText.length];
+    private final OpenWindow openWindow = new OpenWindow();
 
     LevelEditor() {
         MediaTracker imageTracker = new MediaTracker(this);
@@ -127,7 +136,7 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
                             levelToDraw.addItemChecked(currentLevelObject);
                         } else if (paintingMode == 2) {
                             for (int j = 0; j < rectangleItems.size(); j++) {
-                                if (addingRectangle) {
+                                if (drawingRectangle) {
                                     levelToDraw.addItemChecked(rectangleItems.get(j));
                                 } else {
                                     levelToDraw.removeItem(rectangleItems.get(j));
@@ -172,7 +181,7 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
             memoryGraphics.fillRect(menuWidth + (int) (count * tabWidth) + 1, tabHeight / 2, (int) tabWidth - 1, (tabHeight / 2) + 1);
             memoryGraphics.setColor(Color.black);
             if (worlds.get(i).hasChanges()) {
-                memoryGraphics.setFont(new Font(defaultFont.getFontName(), Font.BOLD, defaultFont.getSize() + 5));
+                memoryGraphics.setFont(new Font("default", Font.BOLD, defaultFont.getSize()));
             }
             Rectangle2D stringSize = memoryGraphics.getFontMetrics().getStringBounds(worlds.get(i).getName(), memoryGraphics);
             memoryGraphics.drawString(worlds.get(i).getName(), menuWidth + 1 + (count * tabWidth) + (int) ((tabWidth - stringSize.getWidth()) / 2), (tabHeight / 3) + (int) (stringSize.getHeight() / 2));

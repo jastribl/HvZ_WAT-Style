@@ -66,21 +66,21 @@ public final class Item implements Comparable, Cloneable {
     public final void drawFaded() {
         Composite savedComposite = ((Graphics2D) memoryGraphics).getComposite();
         ((Graphics2D) memoryGraphics).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f));
-        ((Graphics2D) memoryGraphics).drawImage(itemImages[type], location.x, location.y, null);
+        draw();
         ((Graphics2D) memoryGraphics).setComposite(savedComposite);
     }
 
     @Override
     public int compareTo(Object o) {
         Item o2 = (Item) o;
-        if (getY() == o2.getY()) {
-            if (getX() == o2.getX()) {
+        if (location.y == o2.getY()) {
+            if (location.x == o2.getX()) {
                 return 0;
             } else {
-                return getX() > o2.getX() ? 1 : -1;
+                return location.x > o2.getX() ? 1 : -1;
             }
         } else {
-            return getY() > o2.getY() ? 1 : -1;
+            return location.y > o2.getY() ? 1 : -1;
         }
     }
 }
