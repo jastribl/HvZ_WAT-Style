@@ -485,12 +485,12 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
     }
 
     private void exit() {
-//        if (JOptionPane.showConfirmDialog(null, "Are you sure you want to Quit?", "Quit?", JOptionPane.YES_NO_OPTION) == 0) {
-//            if (JOptionPane.showConfirmDialog(null, "Would you like to save your game?", "Save Game?", JOptionPane.YES_NO_OPTION) == 0) {
-//                saveAll();
-//            }
-//            System.exit(0);
-//        }
+        if (JOptionPane.showConfirmDialog(null, "Are you sure you want to Quit?", "Quit?", JOptionPane.YES_NO_OPTION) == 0) {
+            if (JOptionPane.showConfirmDialog(null, "Would you like to save your game?", "Save Game?", JOptionPane.YES_NO_OPTION) == 0) {
+                saveAll();
+            }
+            System.exit(0);
+        }
         System.exit(0);
     }
 
