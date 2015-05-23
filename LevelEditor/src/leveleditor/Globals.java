@@ -8,10 +8,14 @@ public class Globals {
 
     public static Graphics memoryGraphics = null;
     public static int screenWidth = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth(), screenHeight = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight(), currentWorld = 0;
-    public static final int itemSize = 32, halfItemSize = itemSize / 2, levelOffset = itemSize / 4, menuWidth = itemSize * 4, iconSize = 40, iconPadding = 5, bottomMenuHeight = iconSize + (iconPadding * 2), numberOfItemsTypes = 9;
+    public static final int itemSize = 32, halfItemSize = itemSize / 2, levelOffset = itemSize / 4, menuWidth = itemSize * 4, iconSize = 40, iconPadding = 5, bottomMenuHeight = iconSize + (iconPadding * 2), numberOfItemsTypes = 9, loadingSize = 140;
     public static ArrayList<World> worlds = new ArrayList();
     public static final ArrayList<String> allWorlds = new ArrayList();
     public static Image itemImages[] = new Image[numberOfItemsTypes];
+    public static final int UP = 0, DOWN = 1;
+    public static final int ADD = 0, REMOVE = 1;
+    public static final int PAINT = 0, POINT = 1, RECTANGLE = 2;
+    public static boolean loading = false;
 
     public static final Point snapToGrid(Point p) {
         int y = p.y / levelOffset * levelOffset + halfItemSize;

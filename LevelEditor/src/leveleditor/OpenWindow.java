@@ -1,16 +1,18 @@
 package leveleditor;
 
+import java.awt.Dialog;
 import java.awt.event.*;
 import java.util.ArrayList;
 import javax.swing.*;
 import static leveleditor.Globals.*;
 
-public class OpenWindow extends JFrame {
+public class OpenWindow extends JDialog implements WindowListener {
 
     private final DefaultListModel mainListModel = new DefaultListModel();
     private final JList mainList = new JList(mainListModel);
 
-    public OpenWindow() {
+    public OpenWindow(JFrame frame) {
+        super(frame, "", Dialog.ModalityType.APPLICATION_MODAL);
         mainList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         mainList.setVisibleRowCount(20);
         mainList.setPrototypeCellValue("                                                                     ");
@@ -50,6 +52,7 @@ public class OpenWindow extends JFrame {
                 open();
             }
         });
+        addWindowListener(this);
         pack();
         setLocationRelativeTo(null);
         setResizable(false);
@@ -85,5 +88,34 @@ public class OpenWindow extends JFrame {
         if (!mainListModel.isEmpty()) {
             mainList.setSelectedIndex(0);
         }
+    }
+
+    @Override
+    public void windowOpened(WindowEvent we) {
+    }
+
+    @Override
+    public void windowClosing(WindowEvent we) {
+        setVisible(false);
+    }
+
+    @Override
+    public void windowClosed(WindowEvent we) {
+    }
+
+    @Override
+    public void windowIconified(WindowEvent we) {
+    }
+
+    @Override
+    public void windowDeiconified(WindowEvent we) {
+    }
+
+    @Override
+    public void windowActivated(WindowEvent we) {
+    }
+
+    @Override
+    public void windowDeactivated(WindowEvent we) {
     }
 }

@@ -16,7 +16,7 @@ public final class Item implements Comparable, Cloneable {
     }
 
 //    for use in undo/redo caches
-//    doesn't shift the position to allign with the mouse click
+//    does not shift the position to allign with the mouse click
     public Item(int x, int y, int typeGiven) {
         location = new Point(x, y);
         type = typeGiven;
@@ -53,10 +53,6 @@ public final class Item implements Comparable, Cloneable {
         location = locationG;
         fixLocation();
     }
-
-//    public final void snap() {
-//        location = snapToGrid(location);
-//    }
 
     public final void shiftLocation(int xShift, int yShift) {
         location.x += xShift;
