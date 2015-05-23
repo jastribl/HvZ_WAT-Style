@@ -12,7 +12,7 @@ public class OpenWindow extends JDialog implements WindowListener {
     private final JList mainList = new JList(mainListModel);
 
     public OpenWindow(JFrame frame) {
-        super(frame, "", Dialog.ModalityType.APPLICATION_MODAL);
+        super(frame, Dialog.ModalityType.APPLICATION_MODAL);
         mainList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         mainList.setVisibleRowCount(20);
         mainList.setPrototypeCellValue("                                                                     ");
@@ -54,11 +54,12 @@ public class OpenWindow extends JDialog implements WindowListener {
         });
         addWindowListener(this);
         pack();
-        setLocationRelativeTo(null);
+        setLocationRelativeTo(frame);
         setResizable(false);
     }
 
-    public final void display(ArrayList<World> worlds) {
+    public final void display(ArrayList<World> worlds, JFrame frame) {
+        setLocationRelativeTo(frame);
         refreshWorldsList(worlds);
         setVisible(true);
     }

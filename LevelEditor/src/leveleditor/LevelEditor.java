@@ -16,23 +16,15 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
     private Item currentLevelObject = null;
     private Level rectangleItems = new Level();
     private Point rectangleStart = null, rectangleEnd = null;
-    private final Item[] menuItems = new Item[numberOfItemsTypes];//make menu class 
     private final Image iconImages[] = new Image[numberOfIcons];
     private final JPopupMenu tabsRightClickMenu = new JPopupMenu();
     private final String[] tabsRightClickText = {"Close", "Close All", "Rename", "Save", "Save All", "Delete"};
     private final JMenuItem tabsRightClickMenuItems[] = new JMenuItem[tabsRightClickText.length];
     private final OpenWindow openWindow = new OpenWindow(this);
+    private final ItemMenu itemMenu = new ItemMenu();
 
     LevelEditor() {
         MediaTracker imageTracker = new MediaTracker(this);
-        for (int i = 0; i < itemImages.length; i++) {
-            menuItems[i] = new Item(itemSize * ((i % 3) + 1), itemSize * ((i / 3) + 1), itemSize, i);
-            try {
-                itemImages[i] = new ImageIcon(getClass().getResource("/media/o" + i + ".png")).getImage().getScaledInstance(itemSize, itemSize, Image.SCALE_SMOOTH);
-                imageTracker.addImage(itemImages[i], 0);
-            } catch (Exception e) {
-            }
-        }
         for (int i = 0; i < iconImages.length; i++) {
             try {
                 iconImages[i] = new ImageIcon(getClass().getResource("/media/i" + i + ".png")).getImage().getScaledInstance(iconSize, iconSize, Image.SCALE_SMOOTH);
@@ -169,9 +161,7 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
         memoryGraphics.drawLine(menuWidth, 0, menuWidth, screenHeight);
         memoryGraphics.drawLine(0, screenHeight - bottomMenuHeight, screenWidth, screenHeight - bottomMenuHeight);
         if (worlds.size() > 0) {
-            for (Item item : menuItems) {
-                item.draw();
-            }
+            itemMenu.draw();
             memoryGraphics.setColor(Color.black);
             memoryGraphics.fillRect(menuWidth + 1, 0, screenWidth - menuWidth, tabHeight);
             tabWidth = (screenWidth - menuWidth) / worlds.size();
@@ -236,16 +226,6 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
             }
         }
         return null;
-    }
-
-    private int getSelectedMenuItemType(Point point) {
-        for (Item menuItem : menuItems) {
-            Rectangle rectangle = new Rectangle(menuItem.getX(), menuItem.getY(), itemSize, itemSize);
-            if (rectangle.contains(point)) {
-                return menuItem.getType();
-            }
-        }
-        return -1;
     }
 
     private void moveItems(int x, int y) {
@@ -597,7 +577,7 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
                 } else if (mouseIsInTabs(actualPoint)) {
                     selectTab(actualPoint);
                 } else if (mouseIsInSideMenu(actualPoint)) {
-                    int itemType = getSelectedMenuItemType(actualPoint);
+                    int itemType = itemMenu.getSelectedItem(actualPoint);
                     if (itemType >= 0) {
                         currentItemType = itemType;
                         currentLevelObject = new Item(snapedPoint.x, snapedPoint.y, itemSize, itemType);
@@ -610,15 +590,15 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
     @Override
     public void mouseReleased(MouseEvent me) {
         if (worlds.size() > 0) {
-            if (worlds.get(currentWorld).get(currentLevel).isVisible()) {
-                Point actualPoint = ((JFrame) me.getSource()).getContentPane().getMousePosition();
-                if (actualPoint != null) {
-                    if (mouseIsInTabs(actualPoint) && worlds.size() > 0) {
-                        if (me.isPopupTrigger()) {
-                            tabsRightClickMenu.setLocation(me.getPoint());
-                            tabsRightClickMenu.setVisible(true);
-                        }
-                    } else if (mouseIsInMain(actualPoint)) {
+            Point actualPoint = ((JFrame) me.getSource()).getContentPane().getMousePosition();
+            if (actualPoint != null) {
+                if (me.isPopupTrigger()) {
+                    if (mouseIsInTabs(actualPoint)) {
+                        tabsRightClickMenu.setLocation(me.getLocationOnScreen());
+                        tabsRightClickMenu.setVisible(true);
+                    }
+                } else if (mouseIsInMain(actualPoint)) {
+                    if (worlds.get(currentWorld).get(currentLevel).isVisible()) {
                         if (currentLevelObject != null && paintingMode == POINT) {
                             addToLevelChecked(currentLevel, currentLevelObject, true);
                             currentLevelObject = null;
@@ -632,6 +612,7 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
                     }
                 }
             }
+
         }
     }
 
@@ -694,7 +675,7 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
             } else if (key == KeyEvent.VK_F4) {
                 closeTab(currentWorld);
             } else if (key == KeyEvent.VK_O) {
-                openWindow.display(worlds);
+                openWindow.display(worlds, this);
             } else if (key == KeyEvent.VK_DELETE) {
                 removeWorld(currentWorld);
             }
@@ -717,12 +698,7 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
                 moveItems(0, amount);
             }
         } else if (mouseIsInSideMenu(actualPoint)) {
-            int amount = mwe.getWheelRotation() * 15;
-            if ((menuItems[0].getY() - amount > 0 || menuItems[menuItems.length - 1].getY() - amount > screenHeight - bottomMenuHeight) && (menuItems[menuItems.length - 1].getY() - amount + itemSize < screenHeight - bottomMenuHeight || menuItems[0].getY() - amount < 0)) {
-                for (Item item : menuItems) {
-                    item.shiftLocation(0, -amount);
-                }
-            }
+            itemMenu.scroll(mwe.getWheelRotation() * 15);
         }
     }
 
