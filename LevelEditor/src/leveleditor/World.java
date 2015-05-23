@@ -38,46 +38,39 @@ public final class World {
     }
 
     public final void save() {
-        loading = true;
-        (new Thread() {
-            @Override
-            public void run() {
-                int minX = 999999999, minY = 999999999, maxX = -999999999, maxY = -999999999;
-                for (Level level : world) {
-                    for (int i = 0; i < level.getLevel().size(); i++) {
-                        if (level.getLevel().get(i).getX() < minX) {
-                            minX = level.getLevel().get(i).getX();
-                        }
-                        if (level.getLevel().get(i).getX() > maxX) {
-                            maxX = level.getLevel().get(i).getX();
-                        }
-                        if (level.getLevel().get(i).getY() < minY) {
-                            minY = level.getLevel().get(i).getY();
-                        }
-                        if (level.getLevel().get(i).getY() > maxY) {
-                            maxY = level.getLevel().get(i).getY();
-                        }
-                    }
+        int minX = 999999999, minY = 999999999, maxX = -999999999, maxY = -999999999;
+        for (Level level : world) {
+            for (int i = 0; i < level.getLevel().size(); i++) {
+                if (level.getLevel().get(i).getX() < minX) {
+                    minX = level.getLevel().get(i).getX();
                 }
-                String levelText = String.valueOf((maxX - minX) + itemSize) + " " + String.valueOf((maxY - minY) + itemSize) + "\n" + String.valueOf(world.size()) + "\n";
-                for (Level level : world) {
-                    levelText += String.valueOf(level.size()) + "\n";
-                    int size = level.getLevel().size();
-                    for (int i = 0; i < size; i++) {
-                        int trans = 0;
-                        levelText += String.valueOf(level.getLevel().get(i).getType()) + " " + String.valueOf((level.getLevel().get(i).getX() - minX) / halfItemSize) + " " + String.valueOf((level.getLevel().get(i).getY() - minY) / (levelOffset / 2)) + " " + String.valueOf(trans) + "\n";
-                    }
+                if (level.getLevel().get(i).getX() > maxX) {
+                    maxX = level.getLevel().get(i).getX();
                 }
-                File file = new File(getName() + ".txt");
-                try (BufferedWriter output = new BufferedWriter(new FileWriter(file))) {
-                    output.write(levelText);
-                } catch (IOException ex) {
-                    return;
+                if (level.getLevel().get(i).getY() < minY) {
+                    minY = level.getLevel().get(i).getY();
                 }
-                isChanges = false;
-                loading = false;
+                if (level.getLevel().get(i).getY() > maxY) {
+                    maxY = level.getLevel().get(i).getY();
+                }
             }
-        }).start();
+        }
+        String levelText = String.valueOf((maxX - minX) + itemSize) + " " + String.valueOf((maxY - minY) + itemSize) + "\n" + String.valueOf(world.size()) + "\n";
+        for (Level level : world) {
+            levelText += String.valueOf(level.size()) + "\n";
+            int size = level.getLevel().size();
+            for (int i = 0; i < size; i++) {
+                int trans = 0;
+                levelText += String.valueOf(level.getLevel().get(i).getType()) + " " + String.valueOf((level.getLevel().get(i).getX() - minX) / halfItemSize) + " " + String.valueOf((level.getLevel().get(i).getY() - minY) / (levelOffset / 2)) + " " + String.valueOf(trans) + "\n";
+            }
+        }
+        File file = new File(getName() + ".txt");
+        try (BufferedWriter output = new BufferedWriter(new FileWriter(file))) {
+            output.write(levelText);
+        } catch (IOException ex) {
+            return;
+        }
+        isChanges = false;
     }
 
     public final void addLevelUnchecked(Level l) {

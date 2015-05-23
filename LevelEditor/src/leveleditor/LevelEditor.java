@@ -22,7 +22,6 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
     private final String[] tabsRightClickText = {"Close", "Close All", "Rename", "Save", "Save All", "Delete"};
     private final JMenuItem tabsRightClickMenuItems[] = new JMenuItem[tabsRightClickText.length];
     private final OpenWindow openWindow = new OpenWindow(this);
-    private final LoadingScreen loadingScreen = new LoadingScreen();
 
     LevelEditor() {
         MediaTracker imageTracker = new MediaTracker(this);
@@ -203,10 +202,6 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
             memoryGraphics.drawImage(iconImages[worlds.get(currentWorld).get(currentLevel).isVisible() ? 0 : 1], menuWidth + iconPadding, screenHeight - iconSize - iconPadding, this);
             memoryGraphics.drawImage(iconImages[paintingMode + 2], menuWidth + iconSize + (iconPadding * 2), screenHeight - iconSize - iconPadding, this);
         }
-        if (loading) {
-            loadingScreen.next();
-            loadingScreen.draw();
-        }
         getContentPane().getGraphics().drawImage(memoryImage, 0, 0, this);
         getContentPane().getGraphics().dispose();
     }
@@ -268,9 +263,7 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
         while (backup.level > currentLevel) {
             chengleLevel(UP);
         }
-        if (!worlds.get(currentWorld).get(currentLevel).isVisible()) {
-            worlds.get(currentWorld).get(currentLevel).switchVisibility();
-        }
+        worlds.get(currentWorld).get(currentLevel).setVisible(true);
         while (backup.location.x < menuWidth + itemSize) {
             moveItems(1, 0);
         }
@@ -339,7 +332,15 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
     }
 
     private void hideCurrentLevel() {
-        worlds.get(currentWorld).get(currentLevel).switchVisibility();
+        if (worlds.size() > 0) {
+            worlds.get(currentWorld).get(currentLevel).switchVisibility();
+        }
+    }
+
+    private void changePaintingMode() {
+        if (worlds.size() > 0) {
+            paintingMode = (paintingMode + 1) % (numberOfPaintingTools);
+        }
     }
 
     private void switchWorld(int direction) {
@@ -544,7 +545,7 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
                             currentLevelObject.setLocationAndFix(snapedPoint);
                         }
                     } else if (paintingMode == RECTANGLE) {
-                        if (rectangleStart != null && (SwingUtilities.isLeftMouseButton(me) || SwingUtilities.isRightMouseButton(me))) {
+                        if (rectangleStart != null) {
                             rectangleEnd = snapedPoint;
                             populateRectangle();
                         }
@@ -671,7 +672,7 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
         } else if (key == KeyEvent.VK_LEFT) {
             moveItems(1, 0);
         } else if (key == KeyEvent.VK_P) {
-            paintingMode = (paintingMode + 1) % (numberOfPaintingTools);
+            changePaintingMode();
         } else if (key == KeyEvent.VK_H) {
             hideCurrentLevel();
         }

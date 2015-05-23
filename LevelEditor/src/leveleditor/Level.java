@@ -11,6 +11,10 @@ public final class Level {
         return visible;
     }
 
+    public final void setVisible(boolean visibleGiven) {
+        visible = visibleGiven;
+    }
+
     public final void switchVisibility() {
         visible = !visible;
     }

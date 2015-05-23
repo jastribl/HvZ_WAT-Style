@@ -15,7 +15,8 @@ public class Globals {
     public static final int UP = 0, DOWN = 1;
     public static final int ADD = 0, REMOVE = 1;
     public static final int PAINT = 0, POINT = 1, RECTANGLE = 2;
-    public static boolean loading = false;
+//    public static boolean loading = false;
+//    public static final LoadingScreen loadingScreen = new LoadingScreen();
 
     public static final Point snapToGrid(Point p) {
         int y = p.y / levelOffset * levelOffset + halfItemSize;
