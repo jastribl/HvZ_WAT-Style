@@ -2,40 +2,20 @@ package leveleditor;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.Rectangle2D;
-import java.io.File;
 import javax.swing.*;
 import static leveleditor.Globals.*;
 
 public final class LevelEditor extends JFrame implements MouseMotionListener, MouseListener, MouseWheelListener, KeyListener, WindowListener, ComponentListener {
 
     private final Image memoryImage;
-    private final int tabHeight = 25, numberOfPaintingTools = 3, numberOfIcons = 5;
-    private int currentItemType = 0, currentLevel = 0, tabWidth = 0, paintingMode = 0;
-    private boolean drawingRectangle = true, canDraw = false;
-    private Item currentLevelObject = null;
-    private Level rectangleItems = new Level();
+    private final int numberOfPaintingTools = 3;
+    private int currentItemType = 0;
+    private boolean canDraw = false;
     private Point rectangleStart = null, rectangleEnd = null;
-    private final Image iconImages[] = new Image[numberOfIcons];
-    private final JPopupMenu tabsRightClickMenu = new JPopupMenu();
-    private final String[] tabsRightClickText = {"Close", "Close All", "Rename", "Save", "Save All", "Delete"};
-    private final JMenuItem tabsRightClickMenuItems[] = new JMenuItem[tabsRightClickText.length];
     private final OpenWindow openWindow = new OpenWindow(this);
-    private final ItemMenu itemMenu = new ItemMenu();
+    private final Menu menu = new Menu();
 
     LevelEditor() {
-        MediaTracker imageTracker = new MediaTracker(this);
-        for (int i = 0; i < iconImages.length; i++) {
-            try {
-                iconImages[i] = new ImageIcon(getClass().getResource("/media/i" + i + ".png")).getImage().getScaledInstance(iconSize, iconSize, Image.SCALE_SMOOTH);
-                imageTracker.addImage(iconImages[i], 0);
-            } catch (Exception e) {
-            }
-        }
-        try {
-            imageTracker.waitForID(0);
-        } catch (InterruptedException e) {
-        }
         setTitle("LevelUpGame - 2015 - Justin Stribling");
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setSize(999999999, 999999999);
@@ -50,51 +30,13 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
         addMouseListener(this);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setFocusTraversalKeysEnabled(false);
-        ActionListener tabsRightClickListener = new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                String command = ae.getActionCommand();
-                switch (command) {
-                    case "Close":
-                        closeTab(currentWorld);
-                        break;
-                    case "Close All":
-                        saveAll();
-                        worlds.clear();
-                        currentWorld = 0;
-                        break;
-                    case "Rename":
-                        renameWorld(currentWorld);
-                        break;
-                    case "Save":
-                        worlds.get(currentWorld).save();
-                        break;
-                    case "Save All":
-                        saveAll();
-                        break;
-                    case "Delete":
-                        removeWorld(currentWorld);
-                        break;
-                    default:
-                        return;
-                }
-                ((JMenuItem) ae.getSource()).getParent().setVisible(false);
-            }
-        };
-        for (int i = 0; i < tabsRightClickMenuItems.length; i++) {
-            tabsRightClickMenuItems[i] = new JMenuItem(tabsRightClickText[i]);
-            tabsRightClickMenuItems[i].setActionCommand(tabsRightClickText[i]);
-            tabsRightClickMenuItems[i].addActionListener(tabsRightClickListener);
-            tabsRightClickMenu.add(tabsRightClickMenuItems[i]);
-        }
         setVisible(true);
         memoryImage = createImage(getContentPane().getWidth(), getContentPane().getHeight());
         memoryGraphics = memoryImage.getGraphics();
         loadAll();
         canDraw = true;
         new Timer(20, (ActionEvent ae) -> {
-            drawGame();
+            draw();
         }).start();
     }
 
@@ -106,93 +48,23 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
     public void paint(Graphics g) {
         super.paint(g);
         if (canDraw) {
-            drawGame();
+            draw();
         }
     }
 
-    public final void drawGame() {
-        Font defaultFont = memoryGraphics.getFontMetrics().getFont();
+    public final void draw() {
         memoryGraphics.setColor(Color.black);
         memoryGraphics.fillRect(menuWidth, 0, screenWidth - menuWidth, screenHeight);
         if (worlds.size() > 0) {
-            World world = worlds.get(currentWorld);
-            for (int i = 0; i < world.size(); i++) {
-                Level level = world.get(i);
-                if (level.isVisible()) {
-                    Level levelToDraw = new Level();
-                    for (int j = 0; j < level.size(); j++) {
-                        Item item = level.get(j);
-                        Point p = item.getLocation();
-                        if (p.x > menuWidth - itemSize && p.x < screenWidth && p.y > tabHeight - itemSize && p.y < screenHeight) {
-                            levelToDraw.addItemUnchecked(item);
-                        }
-                    }
-                    if (currentLevel == i) {
-                        if ((paintingMode == PAINT || paintingMode == POINT) && currentLevelObject != null) {
-                            levelToDraw.addItemChecked(currentLevelObject);
-                        } else if (paintingMode == RECTANGLE) {
-                            for (int j = 0; j < rectangleItems.size(); j++) {
-                                Item item = rectangleItems.get(j);
-                                Point p = item.getLocation();
-                                if (p.x > menuWidth - itemSize && p.x < screenWidth && p.y > tabHeight - itemSize && p.y < screenHeight) {
-                                    if (drawingRectangle) {
-                                        levelToDraw.addItemChecked(item);
-                                    } else {
-                                        levelToDraw.removeItem(item);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    for (int j = 0; j < levelToDraw.size(); j++) {
-                        if (i == currentLevel) {
-                            levelToDraw.get(j).draw();
-                        } else {
-                            levelToDraw.get(j).drawFaded();
-                        }
-                    }
-                }
-            }
-        }
-        memoryGraphics.setColor(Color.gray);
-        memoryGraphics.fillRect(0, 0, menuWidth, screenHeight);
-        memoryGraphics.fillRect(0, screenHeight - bottomMenuHeight, screenWidth, screenHeight - bottomMenuHeight);
-        memoryGraphics.setColor(Color.white);
-        memoryGraphics.drawLine(menuWidth, 0, menuWidth, screenHeight);
-        memoryGraphics.drawLine(0, screenHeight - bottomMenuHeight, screenWidth, screenHeight - bottomMenuHeight);
-        if (worlds.size() > 0) {
-            itemMenu.draw();
-            memoryGraphics.setColor(Color.black);
-            memoryGraphics.fillRect(menuWidth + 1, 0, screenWidth - menuWidth, tabHeight);
+            worlds.get(currentWorld).draw();
+            menu.drawTabs();
+            menu.drawSideManu();
+            menu.drawBottomMenu();
             tabWidth = (screenWidth - menuWidth) / worlds.size();
         } else {
             tabWidth = 0;
         }
-        int count = 0;
-        for (int i = 0; i < worlds.size(); i++) {
-            if (currentWorld == i) {
-                memoryGraphics.setColor(Color.lightGray);
-            } else {
-                memoryGraphics.setColor(Color.gray);
-            }
-            memoryGraphics.fillRoundRect(menuWidth + (int) (count * tabWidth) + 1, 0, (int) tabWidth - 1, tabHeight, 10, 20);
-            memoryGraphics.fillRect(menuWidth + (int) (count * tabWidth) + 1, tabHeight / 2, (int) tabWidth - 1, (tabHeight / 2) + 1);
-            memoryGraphics.setColor(Color.black);
-            if (worlds.get(i).hasChanges()) {
-                memoryGraphics.setFont(new Font("default", Font.BOLD, defaultFont.getSize()));
-            }
-            Rectangle2D stringSize = memoryGraphics.getFontMetrics().getStringBounds(worlds.get(i).getName(), memoryGraphics);
-            memoryGraphics.drawString(worlds.get(i).getName(), menuWidth + 1 + (count * tabWidth) + (int) ((tabWidth - stringSize.getWidth()) / 2), (tabHeight / 3) + (int) (stringSize.getHeight() / 2));
-            memoryGraphics.setFont(defaultFont);
-            count++;
-        }
-        if (worlds.size() > 0) {
-            memoryGraphics.setColor(Color.black);
-            memoryGraphics.drawString("Level: " + String.valueOf(currentLevel), screenWidth - 60, screenHeight - (iconPadding * 2));
-            memoryGraphics.drawImage(iconImages[worlds.get(currentWorld).get(currentLevel).isVisible() ? 0 : 1], menuWidth + iconPadding, screenHeight - iconSize - iconPadding, this);
-            memoryGraphics.drawImage(iconImages[paintingMode + 2], menuWidth + iconSize + (iconPadding * 2), screenHeight - iconSize - iconPadding, this);
-        }
-        getContentPane().getGraphics().drawImage(memoryImage, 0, 0, this);
+        getContentPane().getGraphics().drawImage(memoryImage, 0, 0, null);
         getContentPane().getGraphics().dispose();
     }
 
@@ -341,30 +213,6 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
         }
     }
 
-    private String getNewWorldName() {
-        String name;
-        boolean bad;
-        do {
-            bad = false;
-            try {
-                name = JOptionPane.showInputDialog(this, "Name the new world", "New", JOptionPane.QUESTION_MESSAGE).replaceAll(" ", "_");
-                if (name.equals("")) {
-                    bad = true;
-                } else {
-                    for (String world : allWorlds) {
-                        if (world.equals(name)) {
-                            bad = true;
-                            break;
-                        }
-                    }
-                }
-            } catch (NullPointerException ex) {
-                return null;
-            }
-        } while (bad);
-        return name;
-    }
-
     private void addWorld() {
         String newWorldName = getNewWorldName();
         if (newWorldName != null) {
@@ -374,46 +222,6 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
             worlds.add(world);
             currentWorld = worlds.size() - 1;
             saveAll();
-        }
-    }
-
-    private void removeWorld(int index) {
-        if (JOptionPane.showConfirmDialog(null, "Are you sure you want to remove this World", "Remove?", JOptionPane.YES_NO_OPTION) == 0) {
-            saveAll();
-            new File(worlds.get(index).getName() + ".txt").delete();
-            allWorlds.remove(worlds.get(index).getName());
-            worlds.remove(index);
-            if (currentWorld == worlds.size()) {
-                currentWorld--;
-            }
-            saveAll();
-        }
-    }
-
-    private void renameWorld(int index) {
-        String newWorldName = getNewWorldName();
-        if (newWorldName != null) {
-            String oldWorldName = worlds.get(index).getName();
-            worlds.get(index).setName(newWorldName);
-            allWorlds.set(allWorlds.indexOf(oldWorldName), newWorldName);
-            new File(oldWorldName + ".txt").delete();
-            saveAll();
-        }
-    }
-
-    private void selectTab(Point point) {
-        if (!worlds.isEmpty()) {
-            currentWorld = (point.x - menuWidth) / tabWidth;
-        } else {
-            currentWorld = 0;
-        }
-    }
-
-    private void closeTab(int index) {
-        saveAll();
-        worlds.remove(index);
-        if (currentWorld == worlds.size()) {
-            currentWorld--;
         }
     }
 
@@ -503,10 +311,6 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
         return false;
     }
 
-    private void closeAllRightClickMenus() {
-        tabsRightClickMenu.setVisible(false);
-    }
-
     @Override
     public void mouseDragged(MouseEvent me) {
         if (worlds.size() > 0) {
@@ -545,7 +349,7 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
 
     @Override
     public void mousePressed(MouseEvent me) {
-        closeAllRightClickMenus();
+        menu.closeAllRightClickMenus();
         if (worlds.size() > 0) {
             if (worlds.get(currentWorld).get(currentLevel).isVisible()) {
                 Point actualPoint = ((JFrame) me.getSource()).getContentPane().getMousePosition();
@@ -575,9 +379,9 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
                         }
                     }
                 } else if (mouseIsInTabs(actualPoint)) {
-                    selectTab(actualPoint);
+                    menu.selectTabAt(actualPoint);
                 } else if (mouseIsInSideMenu(actualPoint)) {
-                    int itemType = itemMenu.getSelectedItem(actualPoint);
+                    int itemType = menu.getSelectedItem(actualPoint);
                     if (itemType >= 0) {
                         currentItemType = itemType;
                         currentLevelObject = new Item(snapedPoint.x, snapedPoint.y, itemSize, itemType);
@@ -594,8 +398,8 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
             if (actualPoint != null) {
                 if (me.isPopupTrigger()) {
                     if (mouseIsInTabs(actualPoint)) {
-                        tabsRightClickMenu.setLocation(me.getLocationOnScreen());
-                        tabsRightClickMenu.setVisible(true);
+//                        menu.showTabRightClickMenu(actualPoint);
+                        menu.showTabRightClickMenu(me.getLocationOnScreen());
                     }
                 } else if (mouseIsInMain(actualPoint)) {
                     if (worlds.get(currentWorld).get(currentLevel).isVisible()) {
@@ -698,7 +502,7 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
                 moveItems(0, amount);
             }
         } else if (mouseIsInSideMenu(actualPoint)) {
-            itemMenu.scroll(mwe.getWheelRotation() * 15);
+            menu.scroll(mwe.getWheelRotation() * 15);
         }
     }
 
@@ -725,17 +529,16 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
 
     @Override
     public void windowActivated(WindowEvent we) {
-        closeAllRightClickMenus();
     }
 
     @Override
     public void windowDeactivated(WindowEvent we) {
-        closeAllRightClickMenus();
+//        menu.closeAllRightClickMenus();
     }
 
     @Override
     public void componentResized(ComponentEvent ce) {
-        closeAllRightClickMenus();
+//        menu.closeAllRightClickMenus();
         screenWidth = getContentPane().getWidth();
         screenHeight = getContentPane().getHeight();
     }

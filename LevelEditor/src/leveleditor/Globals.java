@@ -3,20 +3,42 @@ package leveleditor;
 import java.awt.*;
 import java.io.*;
 import java.util.*;
+import javax.swing.JOptionPane;
 
 public class Globals {
 
     public static Graphics memoryGraphics = null;
-    public static int screenWidth = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth(), screenHeight = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight(), currentWorld = 0;
-    public static final int itemSize = 32, halfItemSize = itemSize / 2, levelOffset = itemSize / 4, menuWidth = itemSize * 4, iconSize = 40, iconPadding = 5, bottomMenuHeight = iconSize + (iconPadding * 2), numberOfMenuItems = 9, loadingSize = 140;
+    public static int screenWidth = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth();
+    public static int screenHeight = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight();
+    public static int currentWorld = 0;
+    public static int currentLevel = 0;
+    public static int paintingMode = 0;
+    public static int tabWidth = 0;
+    public static final int itemSize = 32;
+    public static final int halfItemSize = itemSize / 2;
+    public static final int levelOffset = itemSize / 4;
+    public static final int menuWidth = itemSize * 4;
+    public static final int iconSize = 40;
+    public static final int iconPadding = 5;
+    public static final int bottomMenuHeight = iconSize + (iconPadding * 2);
+    public static final int numberOfMenuItems = 9;
+    public static final int loadingSize = 140;
+    public static final int tabHeight = 25;
     public static ArrayList<World> worlds = new ArrayList();
     public static final ArrayList<String> allWorlds = new ArrayList();
     public static Image itemImages[] = new Image[numberOfMenuItems];
-    public static final int UP = 0, DOWN = 1;
-    public static final int ADD = 0, REMOVE = 1;
-    public static final int PAINT = 0, POINT = 1, RECTANGLE = 2;
-//    public static boolean loading = false;
-//    public static final LoadingScreen loadingScreen = new LoadingScreen();
+    public static Level rectangleItems = new Level();
+    public static Item currentLevelObject = null;
+    public static final int UP = 0;
+    public static final int DOWN = 1;
+    public static final int ADD = 0;
+    public static final int REMOVE = 1;
+    public static final int PAINT = 0;
+    public static final int POINT = 1;
+    public static final int RECTANGLE = 2;
+    public static boolean drawingRectangle = true;
+    //    public static boolean loading = false;
+    //    public static final LoadingScreen loadingScreen = new LoadingScreen();
 
     public static final Point snapToGrid(Point p) {
         int y = p.y / levelOffset * levelOffset + halfItemSize;
@@ -79,4 +101,54 @@ public class Globals {
         }
     }
 
+    public static final void closeTab(int index) {
+        saveAll();
+        worlds.remove(index);
+        if (currentWorld == worlds.size()) {
+            currentWorld--;
+        }
+    }
+
+    public static final void closeAllTabs() {
+        saveAll();
+        worlds.clear();
+        currentWorld = 0;
+    }
+
+    public static final void removeWorld(int index) {
+        if (JOptionPane.showConfirmDialog(null, "Are you sure you want to remove this World", "Remove?", JOptionPane.YES_NO_OPTION) == 0) {
+            saveAll();
+            new File(worlds.get(index).getName() + ".txt").delete();
+            allWorlds.remove(worlds.get(index).getName());
+            worlds.remove(index);
+            if (currentWorld == worlds.size()) {
+                currentWorld--;
+            }
+            saveAll();
+        }
+    }
+
+    public static final String getNewWorldName() {
+        String name;
+        boolean bad;
+        do {
+            bad = false;
+            try {
+                name = JOptionPane.showInputDialog(null, "Name the new world", "New", JOptionPane.QUESTION_MESSAGE).replaceAll(" ", "_");
+                if (name.equals("")) {
+                    bad = true;
+                } else {
+                    for (String world : allWorlds) {
+                        if (world.equals(name)) {
+                            bad = true;
+                            break;
+                        }
+                    }
+                }
+            } catch (NullPointerException ex) {
+                return null;
+            }
+        } while (bad);
+        return name;
+    }
 }

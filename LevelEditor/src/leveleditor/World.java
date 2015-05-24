@@ -1,5 +1,6 @@
 package leveleditor;
 
+import java.awt.Point;
 import java.io.*;
 import java.util.ArrayList;
 import static leveleditor.Globals.*;
@@ -87,9 +88,16 @@ public final class World {
         return name;
     }
 
-    public final void setName(String nameGiven) {
-        isChanges = true;
-        name = nameGiven;
+    public final void rename() {
+        String newWorldName = getNewWorldName();
+        if (newWorldName != null) {
+            String oldWorldName = name;
+            isChanges = true;
+            name = newWorldName;
+            allWorlds.set(allWorlds.indexOf(oldWorldName), newWorldName);
+            new File(oldWorldName + ".txt").delete();
+            saveAll();
+        }
     }
 
     public final void addUndo(ItemBackup itemBackup) {
@@ -151,6 +159,46 @@ public final class World {
         for (ItemBackup item : redo.getBackup()) {
             if (item.backupType == ADD || item.backupType == REMOVE) {
                 item.shiftLocation(x, y);
+            }
+        }
+    }
+
+    public final void draw() {
+        for (int i = 0; i < world.size(); i++) {
+            Level level = world.get(i);
+            if (level.isVisible()) {
+                Level levelToDraw = new Level();
+                for (int j = 0; j < level.size(); j++) {
+                    Item item = level.get(j);
+                    Point p = item.getLocation();
+                    if (p.x > menuWidth - itemSize && p.x < screenWidth && p.y > tabHeight - itemSize && p.y < screenHeight) {
+                        levelToDraw.addItemUnchecked(item);
+                    }
+                }
+                if (currentLevel == i) {
+                    if ((paintingMode == PAINT || paintingMode == POINT) && currentLevelObject != null) {
+                        levelToDraw.addItemChecked(currentLevelObject);
+                    } else if (paintingMode == RECTANGLE) {
+                        for (int j = 0; j < rectangleItems.size(); j++) {
+                            Item item = rectangleItems.get(j);
+                            Point p = item.getLocation();
+                            if (p.x > menuWidth - itemSize && p.x < screenWidth && p.y > tabHeight - itemSize && p.y < screenHeight) {
+                                if (drawingRectangle) {
+                                    levelToDraw.addItemChecked(item);
+                                } else {
+                                    levelToDraw.removeItem(item);
+                                }
+                            }
+                        }
+                    }
+                }
+                for (int j = 0; j < levelToDraw.size(); j++) {
+                    if (i == currentLevel) {
+                        levelToDraw.get(j).draw();
+                    } else {
+                        levelToDraw.get(j).drawFaded();
+                    }
+                }
             }
         }
     }
