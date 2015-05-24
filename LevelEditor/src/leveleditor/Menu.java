@@ -139,7 +139,7 @@ public class Menu implements ActionListener {
                 saveAll();
                 break;
             case "Delete":
-                removeWorld(currentWorld);
+                removeCurrentWorld();
                 break;
             default:
                 return;

@@ -8,7 +8,7 @@ import static leveleditor.Globals.*;
 
 public class OpenWindow extends JDialog implements WindowListener {
 
-    private final DefaultListModel mainListModel = new DefaultListModel();
+    private final DefaultListModel<String> mainListModel = new DefaultListModel();
     private final JList mainList = new JList(mainListModel);
 
     public OpenWindow(JFrame frame) {
@@ -68,9 +68,9 @@ public class OpenWindow extends JDialog implements WindowListener {
         setVisible(false);
         int[] selected = mainList.getSelectedIndices();
         for (int i = 0; i < selected.length; i++) {
-            loadOne((String) mainListModel.get(selected[i]));
+            worlds.add(new World(mainListModel.get(selected[i]), true));
+            currentWorld = worlds.size() - 1;
         }
-        currentWorld = worlds.size() - 1;
     }
 
     private void refreshWorldsList(ArrayList<World> worlds) {

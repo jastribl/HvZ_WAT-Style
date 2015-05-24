@@ -29,7 +29,7 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
         setVisible(true);
         memoryImage = createImage(getContentPane().getWidth(), getContentPane().getHeight());
         memoryGraphics = memoryImage.getGraphics();
-        loadAll();
+        preloadLevelNames();
         canDraw = true;
         new Timer(20, (ActionEvent ae) -> {
             draw();
@@ -98,11 +98,9 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
         String newWorldName = getNewWorldName();
         if (newWorldName != null) {
             allWorlds.add(newWorldName);
-            World world = new World(newWorldName);
-            world.addLevelUnchecked(new Level());
-            worlds.add(world);
+            worlds.add(new World(newWorldName, false));
             currentWorld = worlds.size() - 1;
-            saveAll();
+            saveLevelNames();
         }
     }
 
@@ -282,7 +280,7 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
         } else if (key == KeyEvent.VK_H) {
             hideCurrentLevel();
         } else if (key == KeyEvent.VK_DELETE) {
-            removeWorld(currentWorld);
+            removeCurrentWorld();
         }
         if (ke.isControlDown()) {
             if (key == KeyEvent.VK_Z) {

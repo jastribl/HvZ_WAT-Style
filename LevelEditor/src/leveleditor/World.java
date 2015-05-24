@@ -3,23 +3,42 @@ package leveleditor;
 import java.awt.Point;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Scanner;
 import static leveleditor.Globals.*;
 
 public final class World {
 
     private final ArrayList<Level> world = new ArrayList();
     private String name;
-    private final Backup undo, redo;
-    private boolean isChanges = false;
+    private final Backup undo = new Backup(), redo = new Backup();
+    private boolean isChanged = false;
 
-    public World(String nameGiven) {
+    public World(String nameGiven, boolean load) {
         name = nameGiven;
-        undo = new Backup();
-        redo = new Backup();
-    }
-
-    public final ArrayList<Level> getWorld() {
-        return world;
+        if (load) {
+            try {
+                Scanner reader = new Scanner(new File(name + ".txt"));
+                int xShift = screenWidth / 2 + menuWidth - reader.nextInt() / 2;
+                int yShift = screenHeight / 2 - reader.nextInt() / 2;
+                int numberOfLevels = reader.nextInt(), numberOfBlocks, type;
+                for (int i = 0; i < numberOfLevels; i++) {
+                    Level level = new Level();
+                    numberOfBlocks = reader.nextInt();
+                    for (int j = 0; j < numberOfBlocks; j++) {
+                        type = reader.nextInt();
+                        Point point = snapToGrid(new Point((reader.nextInt() * halfItemSize) + xShift, (reader.nextInt() * (itemSize / 8)) + yShift));
+                        int transparency = reader.nextInt();
+                        level.addItemUnchecked(new Item(point, type, true));
+                    }
+                    addLevelUnchecked(level);
+                }
+            } catch (IOException ex) {
+                addLevelUnchecked(new Level());
+            }
+        } else {
+            addLevelUnchecked(new Level());
+        }
+        isChanged = false;
     }
 
     public final int size() {
@@ -31,11 +50,7 @@ public final class World {
     }
 
     public final boolean hasChanges() {
-        return isChanges;
-    }
-
-    public final void setChages(boolean set) {
-        isChanges = set;
+        return isChanged;
     }
 
     public final void save() {
@@ -71,7 +86,7 @@ public final class World {
         } catch (IOException ex) {
             return;
         }
-        isChanges = false;
+        isChanged = false;
     }
 
     public final void addToLevelChecked(int level, Item item, boolean setUndo) {
@@ -122,12 +137,12 @@ public final class World {
     }
 
     public final void addLevelUnchecked(Level l) {
-        isChanges = true;
+        isChanged = true;
         world.add(l);
     }
 
     public final void remove(int i) {
-        isChanges = true;
+        isChanged = true;
         world.remove(i);
     }
 
@@ -139,16 +154,16 @@ public final class World {
         String newWorldName = getNewWorldName();
         if (newWorldName != null) {
             String oldWorldName = name;
-            isChanges = true;
+            isChanged = true;
             name = newWorldName;
             allWorlds.set(allWorlds.indexOf(oldWorldName), newWorldName);
             new File(oldWorldName + ".txt").delete();
-            saveAll();
+            saveLevelNames();
         }
     }
 
     public final void addUndo(ItemBackup itemBackup) {
-        isChanges = true;
+        isChanged = true;
         undo.add(itemBackup);
     }
 
@@ -165,17 +180,17 @@ public final class World {
     }
 
     public final ItemBackup popUndo() {
-        isChanges = true;
+        isChanged = true;
         return undo.pop();
     }
 
     public final void clearUndo() {
-        isChanges = true;
+        isChanged = true;
         undo.clear();
     }
 
     public final void addRedo(ItemBackup itemBackup) {
-        isChanges = true;
+        isChanged = true;
         redo.add(itemBackup);
     }
 
@@ -184,12 +199,12 @@ public final class World {
     }
 
     public final ItemBackup popRedo() {
-        isChanges = true;
+        isChanged = true;
         return redo.pop();
     }
 
     public final void clearRedo() {
-        isChanges = true;
+        isChanged = true;
         redo.clear();
     }
 
@@ -210,7 +225,7 @@ public final class World {
         }
         popUndo();
         if (undoSize() == 0) {
-            setChages(false);
+            isChanged = false;
         }
     }
 

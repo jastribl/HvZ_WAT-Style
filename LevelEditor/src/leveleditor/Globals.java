@@ -3,6 +3,7 @@ package leveleditor;
 import java.awt.*;
 import java.io.*;
 import java.util.*;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 public class Globals {
@@ -49,7 +50,7 @@ public class Globals {
         }
     }
 
-    public static final void loadAll() {
+    public static final void preloadLevelNames() {
         try {
             Scanner worldReader = new Scanner(new File("levels.txt"));
             while (worldReader.hasNext()) {
@@ -63,49 +64,25 @@ public class Globals {
         }
     }
 
-    public static final void loadOne(String name) {
-        worlds.add(new World(name));
-        World world = worlds.get(worlds.size() - 1);
-        try {
-            Scanner reader = new Scanner(new File(name + ".txt"));
-            int xShift = screenWidth / 2 + menuWidth - reader.nextInt() / 2;
-            int yShift = screenHeight / 2 - reader.nextInt() / 2;
-            int numberOfLevels = reader.nextInt(), numberOfBlocks, type;
-            for (int i = 0; i < numberOfLevels; i++) {
-                Level level = new Level();
-                numberOfBlocks = reader.nextInt();
-                for (int j = 0; j < numberOfBlocks; j++) {
-                    type = reader.nextInt();
-                    Point point = snapToGrid(new Point((reader.nextInt() * halfItemSize) + xShift, (reader.nextInt() * (itemSize / 8)) + yShift));
-                    reader.nextInt(); //for transparency
-                    level.addItemUnchecked(new Item(point, type, true));
-                }
-                world.addLevelUnchecked(level);
+    public static void saveLevelNames() {
+        try (BufferedWriter worldWriter = new BufferedWriter(new FileWriter(new File("levels.txt")))) {
+            for (String worldName : allWorlds) {
+                worldWriter.write(worldName + "\n");
             }
-            world.setChages(false);
         } catch (IOException ex) {
-            world.addLevelUnchecked(new Level());
         }
     }
 
     public static final void saveAll() {
-        File worldFile = new File("levels.txt");
-        try (BufferedWriter worldWriter = new BufferedWriter(new FileWriter(worldFile))) {
-            for (String worldName : allWorlds) {
-                worldWriter.write(worldName + "\n");
-            }
-            for (World world : worlds) {
-                world.save();
-            }
-        } catch (IOException ex) {
+        saveLevelNames();
+        for (World world : worlds) {
+            world.save();
         }
     }
 
     public static final void closeTab(int index) {
-        if (worlds.get(index).hasChanges()) {
-            if (JOptionPane.showConfirmDialog(null, "Would you like to save changes to \"" + worlds.get(index).getName() + "\"?", "Save Changes?", JOptionPane.YES_NO_OPTION) == 0) {
-                worlds.get(index).save();
-            }
+        if (worlds.get(index).hasChanges() && JOptionPane.showConfirmDialog(null, "Would you like to save changes to \"" + worlds.get(index).getName() + "\"?", "Save Changes?", JOptionPane.YES_NO_OPTION) == 0) {
+            worlds.get(index).save();
         }
         worlds.remove(index);
         if (currentWorld == worlds.size()) {
@@ -120,16 +97,15 @@ public class Globals {
         currentWorld = 0;
     }
 
-    public static final void removeWorld(int index) {
-        if (JOptionPane.showConfirmDialog(null, "Are you sure you want to remove this World", "Remove?", JOptionPane.YES_NO_OPTION) == 0) {
-            saveAll();
-            new File(worlds.get(index).getName() + ".txt").delete();
-            allWorlds.remove(worlds.get(index).getName());
-            worlds.remove(index);
+    public static final void removeCurrentWorld() {
+        if (worlds.size() > 0 && JOptionPane.showConfirmDialog(null, "Are you sure you want to remove this World", "Remove?", JOptionPane.YES_NO_OPTION) == 0) {
+            new File(worlds.get(currentWorld).getName() + ".txt").delete();
+            allWorlds.remove(worlds.get(currentWorld).getName());
+            worlds.remove(currentWorld);
             if (currentWorld == worlds.size()) {
                 currentWorld--;
             }
-            saveAll();
+            saveLevelNames();
         }
     }
 
