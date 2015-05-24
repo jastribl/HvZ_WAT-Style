@@ -110,31 +110,23 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
     }
 
     private boolean mouseIsInMain(Point point) {
-        if (point != null) {
-            return (point.x > menuWidth && point.x < screenWidth && point.y > tabHeight && point.y < screenHeight - bottomMenuHeight);
-        }
-        return false;
+        return (point.x > menuWidth && point.x < screenWidth && point.y > tabHeight && point.y < screenHeight - bottomMenuHeight);
     }
 
     private boolean mouseIsInSideMenu(Point point) {
-        if (point != null) {
-            return (point.x > 0 && point.x < menuWidth && point.y > 0 && point.y < screenHeight);
-        }
-        return false;
+        return (point.x > 0 && point.x < menuWidth && point.y > 0 && point.y < screenHeight);
     }
 
     private boolean mouseIsInBottomMenu(Point point) {
-        if (point != null) {
-            return (point.x > menuWidth && point.x < screenWidth && point.y > screenHeight - bottomMenuHeight && point.y < screenHeight);
-        }
-        return false;
+        return (point.x > menuWidth && point.x < screenWidth && point.y > screenHeight - bottomMenuHeight && point.y < screenHeight);
     }
 
     private boolean mouseIsInTabs(Point point) {
-        if (point != null) {
-            return (point.x > menuWidth && point.x < screenWidth && point.y > 0 && point.y < tabHeight);
-        }
-        return false;
+        return (point.x > menuWidth && point.x < screenWidth && point.y > 0 && point.y < tabHeight);
+    }
+
+    private boolean mouseIsOnScreenNotInMenu(Point point) {
+        return (point.x > menuWidth && point.x < screenWidth && point.y > 0 && point.y < screenHeight);
     }
 
     @Override
@@ -143,7 +135,7 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
             Point actualPoint = ((JFrame) me.getSource()).getContentPane().getMousePosition();
             if (worlds.get(currentWorld).get(currentLevel).isVisible() && actualPoint != null) {
                 Point snapedPoint = snapToGrid(actualPoint);
-                if (mouseIsInMain(actualPoint)) {
+                if (mouseIsOnScreenNotInMenu(actualPoint)) {
                     if (paintingMode == PAINT) {
                         Item newItem = new Item(snapedPoint, currentItemType, true);
                         if (SwingUtilities.isRightMouseButton(me)) {
@@ -177,9 +169,9 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
     @Override
     public void mousePressed(MouseEvent me) {
         menu.closeAllRightClickMenus();
-        if (worlds.size() > 0) {
-            if (worlds.get(currentWorld).get(currentLevel).isVisible()) {
-                Point actualPoint = ((JFrame) me.getSource()).getContentPane().getMousePosition();
+        if (worlds.size() > 0 && worlds.get(currentWorld).get(currentLevel).isVisible()) {
+            Point actualPoint = ((JFrame) me.getSource()).getContentPane().getMousePosition();
+            if (actualPoint != null) {
                 Point snapedPoint = snapToGrid(actualPoint);
                 if (mouseIsInMain(actualPoint)) {
                     Item newItem = new Item(snapedPoint, currentItemType, true);
@@ -230,7 +222,7 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
                     }
                 } else if (mouseIsInMain(actualPoint)) {
                     if (worlds.get(currentWorld).get(currentLevel).isVisible()) {
-                        if (currentLevelObject != null && paintingMode == POINT) {
+                        if (paintingMode == POINT && currentLevelObject != null) {
                             worlds.get(currentWorld).addToLevelChecked(currentLevel, currentLevelObject, true);
                             currentLevelObject = null;
                         } else if (paintingMode == RECTANGLE) {
@@ -313,15 +305,17 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
     @Override
     public void mouseWheelMoved(MouseWheelEvent mwe) {
         Point actualPoint = ((JFrame) mwe.getSource()).getContentPane().getMousePosition();
-        if (mouseIsInMain(actualPoint)) {
-            int amount = -mwe.getWheelRotation();
-            if (mwe.isControlDown()) {
-                worlds.get(currentWorld).moveItems(amount, 0);
-            } else {
-                worlds.get(currentWorld).moveItems(0, amount);
+        if (actualPoint != null) {
+            if (mouseIsInMain(actualPoint)) {
+                int amount = -mwe.getWheelRotation();
+                if (mwe.isControlDown()) {
+                    worlds.get(currentWorld).moveItems(amount, 0);
+                } else {
+                    worlds.get(currentWorld).moveItems(0, amount);
+                }
+            } else if (mouseIsInSideMenu(actualPoint)) {
+                menu.scroll(mwe.getWheelRotation() * 15);
             }
-        } else if (mouseIsInSideMenu(actualPoint)) {
-            menu.scroll(mwe.getWheelRotation() * 15);
         }
     }
 

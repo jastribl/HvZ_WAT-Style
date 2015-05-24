@@ -14,13 +14,6 @@ public final class ItemBackup {
         location = locationGiven;
     }
 
-    public ItemBackup(int backupTypeGiven) {
-        backupType = backupTypeGiven;
-        level = 0;
-        type = 0;
-        location = null;
-    }
-
     public final void shiftLocation(int xShift, int yShift) {
         location.x += xShift;
         location.y += yShift;

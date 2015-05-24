@@ -3,7 +3,6 @@ package leveleditor;
 import java.awt.*;
 import java.io.*;
 import java.util.*;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 public class Globals {

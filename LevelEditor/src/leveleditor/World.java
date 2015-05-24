@@ -2,8 +2,7 @@ package leveleditor;
 
 import java.awt.Point;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Scanner;
+import java.util.*;
 import static leveleditor.Globals.*;
 
 public final class World {
@@ -324,7 +323,7 @@ public final class World {
                     }
                 }
                 if (currentLevel == i) {
-                    if ((paintingMode == PAINT || paintingMode == POINT) && currentLevelObject != null) {
+                    if (paintingMode == POINT && currentLevelObject != null) {
                         levelToDraw.addItemChecked(currentLevelObject);
                     } else if (paintingMode == RECTANGLE) {
                         for (int j = 0; j < rectangleItems.size(); j++) {
