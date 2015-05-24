@@ -98,16 +98,6 @@ public class Menu implements ActionListener {
         }
     }
 
-    public final void drawSideManu() {
-        memoryGraphics.setColor(Color.gray);
-        memoryGraphics.fillRect(0, 0, menuWidth, screenHeight);
-        memoryGraphics.setColor(Color.white);
-        memoryGraphics.drawLine(menuWidth, 0, menuWidth, screenHeight);
-        for (Item item : menuItems) {
-            item.draw();
-        }
-    }
-
     public final void drawBottomMenu() {
         memoryGraphics.setColor(Color.gray);
         memoryGraphics.fillRect(menuWidth, screenHeight - bottomMenuHeight, screenWidth, screenHeight - bottomMenuHeight);
@@ -117,6 +107,16 @@ public class Menu implements ActionListener {
         memoryGraphics.drawString("Level: " + String.valueOf(currentLevel), screenWidth - 60, screenHeight - (iconPadding * 2));
         memoryGraphics.drawImage(iconImages[worlds.get(currentWorld).get(currentLevel).isVisible() ? 0 : 1], menuWidth + iconPadding, screenHeight - iconSize - iconPadding, null);
         memoryGraphics.drawImage(iconImages[paintingMode + 2], menuWidth + iconSize + (iconPadding * 2), screenHeight - iconSize - iconPadding, null);
+    }
+
+    public final void drawSideManu() {
+        memoryGraphics.setColor(Color.gray);
+        memoryGraphics.fillRect(0, 0, menuWidth, screenHeight);
+        memoryGraphics.setColor(Color.white);
+        memoryGraphics.drawLine(menuWidth, 0, menuWidth, screenHeight);
+        for (Item item : menuItems) {
+            item.draw();
+        }
     }
 
     @Override

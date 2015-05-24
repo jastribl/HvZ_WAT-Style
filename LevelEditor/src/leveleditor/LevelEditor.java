@@ -20,8 +20,6 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setSize(999999999, 999999999);
         getContentPane().setSize(99999999, 99999999);
-        setBackground(Color.black);
-        setFocusable(true);
         addMouseMotionListener(this);
         addKeyListener(this);
         addMouseWheelListener(this);
@@ -29,7 +27,6 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
         addComponentListener(this);
         addMouseListener(this);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
-        setFocusTraversalKeysEnabled(false);
         setVisible(true);
         memoryImage = createImage(getContentPane().getWidth(), getContentPane().getHeight());
         memoryGraphics = memoryImage.getGraphics();
@@ -54,12 +51,12 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
 
     public final void draw() {
         memoryGraphics.setColor(Color.black);
-        memoryGraphics.fillRect(menuWidth, 0, screenWidth - menuWidth, screenHeight);
+        memoryGraphics.fillRect(0, 0, screenWidth, screenHeight);
         if (worlds.size() > 0) {
             worlds.get(currentWorld).draw();
             menu.drawTabs();
-            menu.drawSideManu();
             menu.drawBottomMenu();
+            menu.drawSideManu();
             tabWidth = (screenWidth - menuWidth) / worlds.size();
         } else {
             tabWidth = 0;
