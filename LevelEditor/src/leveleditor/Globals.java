@@ -12,6 +12,7 @@ public class Globals {
     public static int screenHeight = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight();
     public static int currentWorld = 0;
     public static int currentLevel = 0;
+    public static int currentItemType = 0;
     public static int paintingMode = 0;
     public static int tabWidth = 0;
     public static final int itemSize = 32;
@@ -29,6 +30,7 @@ public class Globals {
     public static Image itemImages[] = new Image[numberOfMenuItems];
     public static Level rectangleItems = new Level();
     public static Item currentLevelObject = null;
+    public static Point rectangleStart = null, rectangleEnd = null;
     public static final int UP = 0;
     public static final int DOWN = 1;
     public static final int ADD = 0;
@@ -37,8 +39,6 @@ public class Globals {
     public static final int POINT = 1;
     public static final int RECTANGLE = 2;
     public static boolean drawingRectangle = true;
-    //    public static boolean loading = false;
-    //    public static final LoadingScreen loadingScreen = new LoadingScreen();
 
     public static final Point snapToGrid(Point p) {
         int y = p.y / levelOffset * levelOffset + halfItemSize;
@@ -78,7 +78,7 @@ public class Globals {
                     type = reader.nextInt();
                     Point point = snapToGrid(new Point((reader.nextInt() * halfItemSize) + xShift, (reader.nextInt() * (itemSize / 8)) + yShift));
                     reader.nextInt(); //for transparency
-                    level.addItemUnchecked(new Item(point.x, point.y, itemSize, type));
+                    level.addItemUnchecked(new Item(point, type, true));
                 }
                 world.addLevelUnchecked(level);
             }
@@ -102,7 +102,11 @@ public class Globals {
     }
 
     public static final void closeTab(int index) {
-        saveAll();
+        if (worlds.get(index).hasChanges()) {
+            if (JOptionPane.showConfirmDialog(null, "Would you like to save changes to \"" + worlds.get(index).getName() + "\"?", "Save Changes?", JOptionPane.YES_NO_OPTION) == 0) {
+                worlds.get(index).save();
+            }
+        }
         worlds.remove(index);
         if (currentWorld == worlds.size()) {
             currentWorld--;
@@ -110,8 +114,9 @@ public class Globals {
     }
 
     public static final void closeAllTabs() {
-        saveAll();
-        worlds.clear();
+        while (worlds.size() > 0) {
+            closeTab(currentWorld);
+        }
         currentWorld = 0;
     }
 
@@ -125,6 +130,37 @@ public class Globals {
                 currentWorld--;
             }
             saveAll();
+        }
+    }
+
+    public static final void populateRectangle() {
+        rectangleItems.clear();
+        try {
+            int xStop = (rectangleEnd.x - rectangleStart.x) / itemSize;
+            int yStop = (rectangleEnd.y - rectangleStart.y) / levelOffset;
+            int xStart, xEnd, yStart, yEnd;
+            if (rectangleEnd.x > rectangleStart.x) {
+                xStart = 0;
+                xEnd = xStop;
+            } else {
+                xStart = xStop;
+                xEnd = 0;
+            }
+            if (rectangleEnd.y > rectangleStart.y) {
+                yStart = 0;
+                yEnd = yStop;
+            } else {
+                yStart = yStop;
+                yEnd = 0;
+            }
+            for (int i = yStart; i < yEnd; i++) {
+                int y = rectangleStart.y + (levelOffset * i);
+                int xShift = (i % 2 == 0 ? 0 : halfItemSize);
+                for (int j = xStart; j < xEnd; j++) {
+                    rectangleItems.addItemUnchecked(new Item(rectangleStart.x + (itemSize * j) + xShift, y, currentItemType, true));
+                }
+            }
+        } catch (NullPointerException e) {
         }
     }
 

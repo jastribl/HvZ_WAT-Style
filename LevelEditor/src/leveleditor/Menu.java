@@ -19,7 +19,7 @@ public class Menu implements ActionListener {
     public Menu() {
         MediaTracker imageTracker = new MediaTracker(new JFrame());
         for (int i = 0; i < itemImages.length; i++) {
-            menuItems[i] = new Item(itemSize * ((i % 3) + 1), itemSize * ((i / 3) + 1), itemSize, i);
+            menuItems[i] = new Item(itemSize * ((i % 3) + 1), itemSize * ((i / 3) + 1), i, true);
             try {
                 itemImages[i] = new ImageIcon(getClass().getResource("/media/o" + i + ".png")).getImage().getScaledInstance(itemSize, itemSize, Image.SCALE_SMOOTH);
                 imageTracker.addImage(itemImages[i], 0);

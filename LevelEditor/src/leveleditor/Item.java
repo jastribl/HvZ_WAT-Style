@@ -6,21 +6,18 @@ import static leveleditor.Globals.*;
 public final class Item implements Comparable, Cloneable {
 
     private Point location;
-    final int type, size;
+    final int type;
 
-    public Item(int x, int y, int sizeGiven, int typeGiven) {
-        location = new Point(x, y);
-        fixLocation();
-        size = sizeGiven;
+    public Item(Point point, int typeGiven, boolean fixLocations) {
+        location = (Point) point.clone();
         type = typeGiven;
+        if (fixLocations) {
+            fixLocation();
+        }
     }
 
-//    for use in undo/redo caches
-//    does not shift the position to allign with the mouse click
-    public Item(int x, int y, int typeGiven) {
-        location = new Point(x, y);
-        type = typeGiven;
-        size = 0;
+    public Item(int x, int y, int typeGiven, boolean fixLocations) {
+        this(new Point(x, y), typeGiven, fixLocations);
     }
 
     @Override
@@ -29,8 +26,8 @@ public final class Item implements Comparable, Cloneable {
     }
 
     private void fixLocation() {
-        location.x -= size / 2;
-        location.y -= size / 2;
+        location.x -= halfItemSize;
+        location.y -= halfItemSize;
     }
 
     public final Point getLocation() {
