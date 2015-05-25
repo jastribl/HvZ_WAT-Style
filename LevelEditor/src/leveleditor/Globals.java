@@ -23,22 +23,17 @@ public class Globals {
     public static final int iconPadding = 5;
     public static final int bottomMenuHeight = iconSize + (iconPadding * 2);
     public static final int numberOfMenuItems = 9;
-    public static final int loadingSize = 140;
     public static final int tabHeight = 25;
     public static ArrayList<World> worlds = new ArrayList();
     public static final ArrayList<String> allWorlds = new ArrayList();
     public static Image itemImages[] = new Image[numberOfMenuItems];
-    public static Level rectangleItems = new Level();
+    public static Level gridItems = new Level();
     public static Item currentLevelObject = null;
-    public static Point rectangleStart = null, rectangleEnd = null;
-    public static final int UP = 0;
-    public static final int DOWN = 1;
-    public static final int ADD = 0;
-    public static final int REMOVE = 1;
-    public static final int PAINT = 0;
-    public static final int POINT = 1;
-    public static final int RECTANGLE = 2;
-    public static boolean drawingRectangle = true;
+    public static Point gridStart = null, gridEnd = null;
+    public static final int UP = 0, DOWN = 1;
+    public static final int ADD = 0, REMOVE = 1;
+    public static final int PAINT = 0, POINT = 1, RECTANGLE = 2, DIAMOND = 3;
+    public static boolean drawingGrid = true;
 
     public static final Point snapToGrid(Point p) {
         int y = p.y / levelOffset * levelOffset + halfItemSize;
@@ -108,34 +103,62 @@ public class Globals {
         }
     }
 
+    public static final void populateGrid() {
+        if (paintingMode == RECTANGLE) {
+            populateRectangle();
+        } else if (paintingMode == DIAMOND) {
+            populateDiamond();
+        }
+    }
+
     public static final void populateRectangle() {
-        rectangleItems.clear();
-        try {
-            int xStop = (rectangleEnd.x - rectangleStart.x) / itemSize;
-            int yStop = (rectangleEnd.y - rectangleStart.y) / levelOffset;
-            int xStart, xEnd, yStart, yEnd;
-            if (rectangleEnd.x > rectangleStart.x) {
-                xStart = 0;
-                xEnd = xStop;
-            } else {
-                xStart = xStop;
-                xEnd = 0;
+        gridItems.clear();
+        int xStop = (gridEnd.x - gridStart.x) / itemSize;
+        int yStop = (gridEnd.y - gridStart.y) / levelOffset;
+        int xStart, xEnd, yStart, yEnd;
+        if (gridEnd.x > gridStart.x) {
+            xStart = 0;
+            xEnd = xStop;
+        } else {
+            xStart = xStop;
+            xEnd = 0;
+        }
+        if (gridEnd.y > gridStart.y) {
+            yStart = 0;
+            yEnd = yStop;
+        } else {
+            yStart = yStop;
+            yEnd = 0;
+        }
+        for (int i = yStart; i < yEnd; i++) {
+            int y = gridStart.y + (levelOffset * i);
+            int xShift = (i % 2 == 0 ? 0 : halfItemSize);
+            for (int j = xStart; j < xEnd; j++) {
+                gridItems.addItemUnchecked(new Item(gridStart.x + (itemSize * j) + xShift, y, currentItemType, true));
             }
-            if (rectangleEnd.y > rectangleStart.y) {
-                yStart = 0;
-                yEnd = yStop;
-            } else {
-                yStart = yStop;
-                yEnd = 0;
+        }
+    }
+
+    public static final void populateDiamond() {
+        gridItems.clear();
+        Point top = (Point) (gridStart.y < gridEnd.y ? gridStart : gridEnd).clone();
+        Point bottom = (Point) (gridStart.y >= gridEnd.y ? gridStart : gridEnd).clone();
+        int heightInHalves = (bottom.y - top.y) / levelOffset;
+        int widthInHalves = (top.x - bottom.x) / halfItemSize;
+        int topRightDiagonal = (heightInHalves - widthInHalves) / 2;
+        int bottomRightDiagonal = (heightInHalves - topRightDiagonal);
+        Point point = new Point();
+        int iAdd = (bottomRightDiagonal > 0 ? 1 : -1);
+        int jAdd = (topRightDiagonal > 0 ? 1 : -1);
+        for (int i = 1; i != bottomRightDiagonal + iAdd; i += iAdd) {
+            point.x = top.x - (i * halfItemSize);
+            point.y = top.y + (i * levelOffset);
+            for (int j = 1; j != topRightDiagonal + jAdd; j += jAdd) {
+                point.x += jAdd * halfItemSize;
+                point.y += jAdd * levelOffset;
+                Point the = ((Point) point.clone());
+                gridItems.addItemUnchecked(new Item(the.x, the.y, currentItemType, true));
             }
-            for (int i = yStart; i < yEnd; i++) {
-                int y = rectangleStart.y + (levelOffset * i);
-                int xShift = (i % 2 == 0 ? 0 : halfItemSize);
-                for (int j = xStart; j < xEnd; j++) {
-                    rectangleItems.addItemUnchecked(new Item(rectangleStart.x + (itemSize * j) + xShift, y, currentItemType, true));
-                }
-            }
-        } catch (NullPointerException e) {
         }
     }
 

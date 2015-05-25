@@ -37,7 +37,7 @@ public final class World {
         } else {
             addLevelUnchecked(new Level());
         }
-        isChanged = false;
+        save();
     }
 
     public final int size() {
@@ -88,20 +88,20 @@ public final class World {
         isChanged = false;
     }
 
-    public final void addToLevelChecked(int level, Item item, boolean setUndo) {
-        if (get(level).addItemChecked(item)) {
+    public final void addToCurrentLevelChecked(Item item, boolean setUndo) {
+        if (get(currentLevel).addItemChecked(item)) {
             if (setUndo) {
-                addUndo(new ItemBackup(ADD, level, item.getType(), (Point) item.getLocation().clone()));
+                addUndo(new ItemBackup(ADD, currentLevel, item.getType(), (Point) item.getLocation().clone()));
                 clearRedo();
             }
         }
     }
 
-    public final void removeFromLevelChecked(int level, Item item, boolean setUndo) {
-        Item removedItem = get(level).removeItem(item);
+    public final void removeFromCurrentLevelChecked(Item item, boolean setUndo) {
+        Item removedItem = get(currentLevel).removeItem(item);
         if (removedItem != null) {
             if (setUndo) {
-                addUndo(new ItemBackup(REMOVE, level, removedItem.getType(), (Point) removedItem.getLocation().clone()));
+                addUndo(new ItemBackup(REMOVE, currentLevel, removedItem.getType(), (Point) removedItem.getLocation().clone()));
                 clearRedo();
             }
         }
@@ -120,19 +120,19 @@ public final class World {
         return null;
     }
 
-    public final void applyRectangle() {
-        if (drawingRectangle == true) {
-            for (Item item : rectangleItems.getLevel()) {
-                addToLevelChecked(currentLevel, item, true);
+    public final void applyGrid() {
+        if (drawingGrid == true) {
+            for (Item item : gridItems.getLevel()) {
+                addToCurrentLevelChecked(item, true);
             }
         } else {
-            for (Item item : rectangleItems.getLevel()) {
-                removeFromLevelChecked(currentLevel, item, true);
+            for (Item item : gridItems.getLevel()) {
+                removeFromCurrentLevelChecked(item, true);
             }
         }
-        rectangleItems.clear();
-        rectangleStart = null;
-        rectangleEnd = null;
+        gridItems.clear();
+        gridStart = null;
+        gridEnd = null;
     }
 
     public final void addLevelUnchecked(Level l) {
@@ -153,56 +153,56 @@ public final class World {
         String newWorldName = getNewWorldName();
         if (newWorldName != null) {
             String oldWorldName = name;
-            isChanged = true;
             name = newWorldName;
             allWorlds.set(allWorlds.indexOf(oldWorldName), newWorldName);
             new File(oldWorldName + ".txt").delete();
             saveLevelNames();
+            save();
         }
     }
 
-    public final void addUndo(ItemBackup itemBackup) {
+    private void addUndo(ItemBackup itemBackup) {
         isChanged = true;
         undo.add(itemBackup);
     }
 
-    public final int undoSize() {
+    private int undoSize() {
         return undo.getBackupSize();
     }
 
-    public final int redoSize() {
+    private int redoSize() {
         return redo.getBackupSize();
     }
 
-    public final ItemBackup peekUndo() {
+    private ItemBackup peekUndo() {
         return undo.peek();
     }
 
-    public final ItemBackup popUndo() {
+    private ItemBackup popUndo() {
         isChanged = true;
         return undo.pop();
     }
 
-    public final void clearUndo() {
+    private void clearUndo() {
         isChanged = true;
         undo.clear();
     }
 
-    public final void addRedo(ItemBackup itemBackup) {
+    private void addRedo(ItemBackup itemBackup) {
         isChanged = true;
         redo.add(itemBackup);
     }
 
-    public final ItemBackup peekRedo() {
+    private ItemBackup peekRedo() {
         return redo.peek();
     }
 
-    public final ItemBackup popRedo() {
+    private ItemBackup popRedo() {
         isChanged = true;
         return redo.pop();
     }
 
-    public final void clearRedo() {
+    private void clearRedo() {
         isChanged = true;
         redo.clear();
     }
@@ -217,9 +217,9 @@ public final class World {
             addRedo(new ItemBackup(backup.backupType, backup.level, backup.type, backup.location));
             Item newItem = new Item(backup.location, backup.type, false);
             if (backup.backupType == REMOVE) {
-                addToLevelChecked(backup.level, newItem, false);
+                addToCurrentLevelChecked(newItem, false);
             } else {
-                removeFromLevelChecked(backup.level, newItem, false);
+                removeFromCurrentLevelChecked(newItem, false);
             }
         }
         popUndo();
@@ -238,9 +238,9 @@ public final class World {
             addUndo(new ItemBackup(backup.backupType, backup.level, backup.type, backup.location));
             Item newItem = new Item(backup.location, backup.type, false);
             if (backup.backupType == ADD) {
-                addToLevelChecked(backup.level, newItem, false);
+                addToCurrentLevelChecked(newItem, false);
             } else {
-                removeFromLevelChecked(backup.level, newItem, false);
+                removeFromCurrentLevelChecked(newItem, false);
             }
         }
         popRedo();
@@ -282,9 +282,9 @@ public final class World {
 
     public final void moveItems(int x, int y) {
         shiftItems(x * itemSize, y * halfItemSize);
-        if (paintingMode == RECTANGLE && rectangleStart != null) {
-            rectangleStart.translate(x * itemSize, y * itemSize);
-            populateRectangle();
+        if ((paintingMode == RECTANGLE || paintingMode == DIAMOND) && gridStart != null) {
+            gridStart.translate(x * itemSize, y * itemSize);
+            populateGrid();
         }
     }
 
@@ -325,12 +325,12 @@ public final class World {
                 if (currentLevel == i) {
                     if (paintingMode == POINT && currentLevelObject != null) {
                         levelToDraw.addItemChecked(currentLevelObject);
-                    } else if (paintingMode == RECTANGLE) {
-                        for (int j = 0; j < rectangleItems.size(); j++) {
-                            Item item = rectangleItems.get(j);
+                    } else if (paintingMode == RECTANGLE || paintingMode == DIAMOND) {
+                        for (int j = 0; j < gridItems.size(); j++) {
+                            Item item = gridItems.get(j);
                             Point p = item.getLocation();
                             if (p.x > menuWidth - itemSize && p.x < screenWidth && p.y > tabHeight - itemSize && p.y < screenHeight) {
-                                if (drawingRectangle) {
+                                if (drawingGrid) {
                                     levelToDraw.addItemChecked(item);
                                 } else {
                                     levelToDraw.removeItem(item);

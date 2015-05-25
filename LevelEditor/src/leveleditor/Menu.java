@@ -8,7 +8,8 @@ import static leveleditor.Globals.*;
 
 public class Menu implements ActionListener {
 
-    private final int numberOfIcons = 5;
+    private final int numberOfPaintingTools = 4, numberOfVisibilityIcons = 2;
+    private final int numberOfIcons = numberOfPaintingTools + numberOfVisibilityIcons;
     private final Image iconImages[] = new Image[numberOfIcons];
     private final Item[] menuItems = new Item[numberOfMenuItems];
     private final String[] tabsRightClickText = {"Close", "Close All", "Rename", "Save", "Save All", "Delete"};
@@ -44,7 +45,17 @@ public class Menu implements ActionListener {
         }
     }
 
-    public final int getSelectedItem(Point point) {
+    public final void changePaintingMode(int direction) {
+        if (worlds.size() > 0) {
+            if (direction == UP) {
+                paintingMode = (paintingMode + 1) % (numberOfPaintingTools);
+            } else if (direction == DOWN) {
+                paintingMode += (paintingMode == 0 ? numberOfPaintingTools - 1 : -1);
+            }
+        }
+    }
+
+    public final int getSelectedMenuItem(Point point) {
         for (Item menuItem : menuItems) {
             Rectangle rectangle = new Rectangle(menuItem.getX(), menuItem.getY(), itemSize, itemSize);
             if (rectangle.contains(point)) {

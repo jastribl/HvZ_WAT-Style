@@ -15,11 +15,11 @@ public class Backup {
     }
 
     public final ItemBackup peek() {
-        return (!backup.isEmpty() ? null : backup.peek());
+        return (backup.isEmpty() ? null : backup.peek());
     }
 
     public final ItemBackup pop() {
-        return (!backup.isEmpty() ? null : backup.pop());
+        return (backup.isEmpty() ? null : backup.pop());
     }
 
     public final int getBackupSize() {
