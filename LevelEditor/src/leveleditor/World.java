@@ -89,33 +89,31 @@ public final class World {
     }
 
     public final void addToCurrentLevelChecked(Item item, boolean setUndo) {
-        if (get(currentLevel).addItemChecked(item)) {
+        int index = get(currentLevel).addItemChecked(item);
+        if (index != -1) {
             if (setUndo) {
-                addUndo(new ItemBackup(ADD, currentLevel, item.getType(), (Point) item.getLocation().clone()));
+                addUndo(new ItemBackup(ADD, currentLevel, item.getType(), index, item.getLocation()));
                 clearRedo();
             }
         }
     }
 
     public final void removeFromCurrentLevelChecked(Item item, boolean setUndo) {
-        Item removedItem = get(currentLevel).removeItem(item);
+        ItemBackup removedItem = get(currentLevel).removeItem(item);
         if (removedItem != null) {
             if (setUndo) {
-                addUndo(new ItemBackup(REMOVE, currentLevel, removedItem.getType(), (Point) removedItem.getLocation().clone()));
+                addUndo(removedItem);
                 clearRedo();
             }
         }
     }
 
     public final Item getFromCurrentLevel(Item item) {
-        Item removedItem = get(currentLevel).removeItem(item);
+        ItemBackup removedItem = get(currentLevel).removeItem(item);
         if (removedItem != null) {
-            addUndo(new ItemBackup(REMOVE, currentLevel, removedItem.getType(), (Point) removedItem.getLocation().clone()));
+            addUndo(removedItem);
             clearRedo();
-            try {
-                return (Item) removedItem.clone();
-            } catch (CloneNotSupportedException ex) {
-            }
+            return new Item(removedItem.location, removedItem.type, false);
         }
         return null;
     }
@@ -162,20 +160,8 @@ public final class World {
     }
 
     private void addUndo(ItemBackup itemBackup) {
-        isChanged = true;
         undo.add(itemBackup);
-    }
-
-    private int undoSize() {
-        return undo.getBackupSize();
-    }
-
-    private int redoSize() {
-        return redo.getBackupSize();
-    }
-
-    private ItemBackup peekUndo() {
-        return undo.peek();
+        isChanged = true;
     }
 
     private ItemBackup popUndo() {
@@ -183,18 +169,9 @@ public final class World {
         return undo.pop();
     }
 
-    private void clearUndo() {
-        isChanged = true;
-        undo.clear();
-    }
-
     private void addRedo(ItemBackup itemBackup) {
-        isChanged = true;
         redo.add(itemBackup);
-    }
-
-    private ItemBackup peekRedo() {
-        return redo.peek();
+        isChanged = true;
     }
 
     private ItemBackup popRedo() {
@@ -203,44 +180,44 @@ public final class World {
     }
 
     private void clearRedo() {
-        isChanged = true;
         redo.clear();
+        isChanged = true;
     }
 
     public final void undo() {
-        ItemBackup backup = peekUndo();
+        ItemBackup backup = undo.peek();
         if (backup == null) {
             return;
         } else if (backup.backupType == ADD || backup.backupType == REMOVE) {
             locate(backup);
-            backup = peekUndo();
-            addRedo(new ItemBackup(backup.backupType, backup.level, backup.type, backup.location));
+            backup = undo.peek();
+            addRedo(new ItemBackup(backup.backupType, backup.level, backup.type, backup.arrayIndex, backup.location));
             Item newItem = new Item(backup.location, backup.type, false);
             if (backup.backupType == REMOVE) {
-                addToCurrentLevelChecked(newItem, false);
+                get(currentLevel).addItemUncheckedAt(newItem, backup.arrayIndex);
             } else {
-                removeFromCurrentLevelChecked(newItem, false);
+                get(currentLevel).removeItemUncheckedAt(backup.arrayIndex);
             }
         }
         popUndo();
-        if (undoSize() == 0) {
+        if (undo.getBackupSize() == 0) {
             isChanged = false;
         }
     }
 
     public final void redo() {
-        ItemBackup backup = peekRedo();
+        ItemBackup backup = redo.peek();
         if (backup == null) {
             return;
         } else if (backup.backupType == ADD || backup.backupType == REMOVE) {
             locate(backup);
-            backup = peekRedo();
-            addUndo(new ItemBackup(backup.backupType, backup.level, backup.type, backup.location));
+            backup = redo.peek();
+            addUndo(new ItemBackup(backup.backupType, backup.level, backup.type, backup.arrayIndex, backup.location));
             Item newItem = new Item(backup.location, backup.type, false);
             if (backup.backupType == ADD) {
-                addToCurrentLevelChecked(newItem, false);
+                get(currentLevel).addItemUncheckedAt(newItem, backup.arrayIndex);
             } else {
-                removeFromCurrentLevelChecked(newItem, false);
+                get(currentLevel).removeItemUncheckedAt(backup.arrayIndex);
             }
         }
         popRedo();
@@ -282,7 +259,7 @@ public final class World {
 
     public final void moveItems(int x, int y) {
         shiftItems(x * itemSize, y * halfItemSize);
-        if ((paintingMode == RECTANGLE || paintingMode == DIAMOND) && gridStart != null) {
+        if ((paintingMode == RECTANGLE || paintingMode == DIAMOND) && gridStart != null && gridEnd != null) {
             gridStart.translate(x * itemSize, y * itemSize);
             populateGrid();
         }

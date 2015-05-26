@@ -1,6 +1,8 @@
 package leveleditor;
 
 import java.util.*;
+import static leveleditor.Globals.REMOVE;
+import static leveleditor.Globals.currentLevel;
 
 public final class Level {
 
@@ -35,25 +37,29 @@ public final class Level {
         level.add(i);
     }
 
-    public boolean addItemChecked(Item item) {
+    public void addItemUncheckedAt(Item item, int i) {
+        level.add(i, item);
+    }
+
+    public int addItemChecked(Item item) {
         if (visible) {
             int comp;
             int i = 0;
             for (; i < level.size(); i++) {
                 comp = item.compareTo(level.get(i));
                 if (comp == 0) {
-                    return false;
+                    return -1;
                 } else if (comp < 0) {
                     break;
                 }
             }
             level.add(i, item);
-            return true;
+            return i;
         }
-        return false;
+        return -1;
     }
 
-    public final Item removeItem(Item item) {
+    public final ItemBackup removeItem(Item item) {
         if (visible) {
             int comp;
             for (int i = 0; i < level.size(); i++) {
@@ -62,7 +68,7 @@ public final class Level {
                     try {
                         Item toBeReturned = (Item) level.get(i).clone();
                         level.remove(i);
-                        return toBeReturned;
+                        return new ItemBackup(REMOVE, currentLevel, toBeReturned.getType(), i, toBeReturned.getLocation());
                     } catch (CloneNotSupportedException ex) {
                     }
                 } else if (comp > 0) {
@@ -71,6 +77,10 @@ public final class Level {
             }
         }
         return null;
+    }
+
+    public void removeItemUncheckedAt(int i) {
+        level.remove(i);
     }
 
     public final void clear() {
