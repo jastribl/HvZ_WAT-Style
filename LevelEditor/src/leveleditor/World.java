@@ -88,23 +88,19 @@ public final class World {
         isChanged = false;
     }
 
-    public final void addToCurrentLevelChecked(Item item, boolean setUndo) {
+    public final void addToCurrentLevelChecked(Item item) {
         int index = get(currentLevel).addItemChecked(item);
         if (index != -1) {
-            if (setUndo) {
-                addUndo(new ItemBackup(ADD, currentLevel, item.getType(), index, item.getLocation()));
-                clearRedo();
-            }
+            addUndo(new ItemBackup(ADD, currentLevel, item.getType(), index, item.getLocation()));
+            clearRedo();
         }
     }
 
-    public final void removeFromCurrentLevelChecked(Item item, boolean setUndo) {
+    public final void removeFromCurrentLevelChecked(Item item) {
         ItemBackup removedItem = get(currentLevel).removeItem(item);
         if (removedItem != null) {
-            if (setUndo) {
-                addUndo(removedItem);
-                clearRedo();
-            }
+            addUndo(removedItem);
+            clearRedo();
         }
     }
 
@@ -121,11 +117,11 @@ public final class World {
     public final void applyGrid() {
         if (drawingGrid == true) {
             for (Item item : gridItems.getLevel()) {
-                addToCurrentLevelChecked(item, true);
+                addToCurrentLevelChecked(item);
             }
         } else {
             for (Item item : gridItems.getLevel()) {
-                removeFromCurrentLevelChecked(item, true);
+                removeFromCurrentLevelChecked(item);
             }
         }
         gridItems.clear();

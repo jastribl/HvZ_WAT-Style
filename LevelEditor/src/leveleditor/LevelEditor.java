@@ -124,9 +124,9 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
                     if (paintingMode == PAINT) {
                         Item newItem = new Item(snapedPoint, currentItemType, true);
                         if (SwingUtilities.isRightMouseButton(me)) {
-                            worlds.get(currentWorld).removeFromCurrentLevelChecked(newItem, true);
+                            worlds.get(currentWorld).removeFromCurrentLevelChecked(newItem);
                         } else if (SwingUtilities.isLeftMouseButton(me)) {
-                            worlds.get(currentWorld).addToCurrentLevelChecked(newItem, true);
+                            worlds.get(currentWorld).addToCurrentLevelChecked(newItem);
                         }
                     } else if (paintingMode == POINT) {
                         if (currentLevelObject != null && SwingUtilities.isLeftMouseButton(me)) {
@@ -162,14 +162,14 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
                     Item newItem = new Item(snapedPoint, currentItemType, true);
                     if (SwingUtilities.isRightMouseButton(me)) {
                         if (paintingMode == PAINT || paintingMode == POINT) {
-                            worlds.get(currentWorld).removeFromCurrentLevelChecked(newItem, true);
+                            worlds.get(currentWorld).removeFromCurrentLevelChecked(newItem);
                         } else if (paintingMode == RECTANGLE || paintingMode == DIAMOND) {
                             gridStart = snapedPoint;
                             drawingGrid = false;
                         }
                     } else if (SwingUtilities.isLeftMouseButton(me)) {
                         if (paintingMode == PAINT) {
-                            worlds.get(currentWorld).addToCurrentLevelChecked(newItem, true);
+                            worlds.get(currentWorld).addToCurrentLevelChecked(newItem);
                         } else if (paintingMode == POINT) {
                             Item item = worlds.get(currentWorld).getFromCurrentLevel(newItem);
                             if (item != null) {
@@ -208,7 +208,7 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
                 } else if (mouseIsInMain(actualPoint)) {
                     if (worlds.get(currentWorld).get(currentLevel).isVisible()) {
                         if (paintingMode == POINT && currentLevelObject != null) {
-                            worlds.get(currentWorld).addToCurrentLevelChecked(currentLevelObject, true);
+                            worlds.get(currentWorld).addToCurrentLevelChecked(currentLevelObject);
                             currentLevelObject = null;
                         } else if (paintingMode == RECTANGLE || paintingMode == DIAMOND) {
                             worlds.get(currentWorld).applyGrid();
