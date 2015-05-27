@@ -191,8 +191,8 @@ public final class World {
             return;
         } else if (backup.backupType == ADD || backup.backupType == REMOVE) {
             int number = backup.number;
+            locateUndo();
             for (int i = 0; i < number; i++) {
-                locateUndo();
                 backup = undo.peek();
                 addRedo(new ItemBackup(backup.backupType, backup.level, backup.type, backup.arrayIndex, 1, backup.location));
                 Item newItem = new Item(backup.location, backup.type, false);
