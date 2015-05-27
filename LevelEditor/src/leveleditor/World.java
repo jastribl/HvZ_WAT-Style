@@ -12,8 +12,6 @@ public final class World {
     private final Backup undo = new Backup(), redo = new Backup();
     private boolean isChanged = false;
 
-    private boolean moving = false;
-
     public World(String nameGiven, boolean load) {
         name = nameGiven;
         if (load) {
@@ -194,7 +192,7 @@ public final class World {
         } else if (backup.backupType == ADD || backup.backupType == REMOVE) {
             int number = backup.number;
             for (int i = 0; i < number; i++) {
-                locate(backup);
+                locateUndo();
                 backup = undo.peek();
                 addRedo(new ItemBackup(backup.backupType, backup.level, backup.type, backup.arrayIndex, 1, backup.location));
                 Item newItem = new Item(backup.location, backup.type, false);
@@ -219,7 +217,7 @@ public final class World {
         } else if (backup.backupType == ADD || backup.backupType == REMOVE) {
             int number = backup.number;
             for (int i = 0; i < number; i++) {
-                locate(backup);
+                locateRedo();
                 backup = redo.peek();
                 addUndo(new ItemBackup(backup.backupType, backup.level, backup.type, backup.arrayIndex, 1, backup.location));
                 Item newItem = new Item(backup.location, backup.type, false);
@@ -276,28 +274,48 @@ public final class World {
         }
     }
 
-    public final void locate(ItemBackup backup) {
-        moving = true;
-        while (backup.level < currentLevel) {
+    public final void locateUndo() {
+        while (undo.peek().level < currentLevel) {
             chengleLevel(DOWN);
         }
-        while (backup.level > currentLevel) {
+        while (undo.peek().level > currentLevel) {
             chengleLevel(UP);
         }
         get(currentLevel).setVisible(true);
-        while (backup.location.x < menuWidth + itemSize) {
+        while (undo.peek().location.x < menuWidth + itemSize) {
             moveItems(1, 0);
         }
-        while (backup.location.x > screenWidth - itemSize) {
+        while (undo.peek().location.x > screenWidth - itemSize) {
             moveItems(-1, 0);
         }
-        while (backup.location.y < tabHeight + itemSize) {
+        while (undo.peek().location.y < tabHeight + itemSize) {
             moveItems(0, 1);
         }
-        while (backup.location.y > screenHeight - itemSize - bottomMenuHeight) {
+        while (undo.peek().location.y > screenHeight - itemSize - bottomMenuHeight) {
             moveItems(0, -1);
         }
-        moving = false;
+    }
+
+    public final void locateRedo() {
+        while (redo.peek().level < currentLevel) {
+            chengleLevel(DOWN);
+        }
+        while (redo.peek().level > currentLevel) {
+            chengleLevel(UP);
+        }
+        get(currentLevel).setVisible(true);
+        while (redo.peek().location.x < menuWidth + itemSize) {
+            moveItems(1, 0);
+        }
+        while (redo.peek().location.x > screenWidth - itemSize) {
+            moveItems(-1, 0);
+        }
+        while (redo.peek().location.y < tabHeight + itemSize) {
+            moveItems(0, 1);
+        }
+        while (redo.peek().location.y > screenHeight - itemSize - bottomMenuHeight) {
+            moveItems(0, -1);
+        }
     }
 
     public final void draw() {
