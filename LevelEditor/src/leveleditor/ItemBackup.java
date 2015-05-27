@@ -4,14 +4,15 @@ import java.awt.Point;
 
 public final class ItemBackup {
 
-    public int backupType, type, level;
+    public int backupType, type, level, arrayIndex;
     public Point location;
 
-    public ItemBackup(int backupTypeGiven, int levelGiven, int typeGiven, Point locationGiven) {
+    public ItemBackup(int backupTypeGiven, int levelGiven, int typeGiven, int arrayIndexGiven, Point locationGiven) {
         backupType = backupTypeGiven;
         level = levelGiven;
         type = typeGiven;
-        location = locationGiven;
+        arrayIndex = arrayIndexGiven;
+        location = (Point) locationGiven.clone();
     }
 
     public final void shiftLocation(int xShift, int yShift) {

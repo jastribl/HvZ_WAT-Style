@@ -141,8 +141,8 @@ public class Globals {
 
     public static final void populateDiamond() {
         gridItems.clear();
-        Point top = (Point) (gridStart.y < gridEnd.y ? gridStart : gridEnd).clone();
-        Point bottom = (Point) (gridStart.y >= gridEnd.y ? gridStart : gridEnd).clone();
+        Point top = (gridStart.y < gridEnd.y ? gridStart : gridEnd);
+        Point bottom = (gridStart.y >= gridEnd.y ? gridStart : gridEnd);
         int heightInHalves = (bottom.y - top.y) / levelOffset;
         int widthInHalves = (top.x - bottom.x) / halfItemSize;
         int topRightDiagonal = (heightInHalves - widthInHalves) / 2;
@@ -156,8 +156,7 @@ public class Globals {
             for (int j = 1; j != topRightDiagonal + jAdd; j += jAdd) {
                 point.x += jAdd * halfItemSize;
                 point.y += jAdd * levelOffset;
-                Point the = ((Point) point.clone());
-                gridItems.addItemUnchecked(new Item(the.x, the.y, currentItemType, true));
+                gridItems.addItemUnchecked(new Item(point, currentItemType, true));
             }
         }
     }
