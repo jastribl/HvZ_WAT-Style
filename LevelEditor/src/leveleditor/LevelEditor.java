@@ -198,6 +198,7 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
 
     @Override
     public void mouseReleased(MouseEvent me) {
+        //testing
         if (worlds.size() > 0) {
             Point actualPoint = ((JFrame) me.getSource()).getContentPane().getMousePosition();
             if (actualPoint != null) {
@@ -294,9 +295,9 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
             if (mouseIsInMain(actualPoint)) {
                 int amount = -mwe.getWheelRotation();
                 if (mwe.isControlDown()) {
-                    worlds.get(currentWorld).moveItems(amount, 0);
+                    worlds.get(currentWorld).shiftItems(amount, 0);
                 } else {
-                    worlds.get(currentWorld).moveItems(0, amount);
+                    worlds.get(currentWorld).shiftItems(0, amount);
                 }
             } else if (mouseIsInSideMenu(actualPoint)) {
                 menu.scroll(mwe.getWheelRotation() * 15);

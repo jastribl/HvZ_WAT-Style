@@ -33,6 +33,12 @@ public final class Level {
         return level.get(i);
     }
 
+    public final void shiftLevel(int x, int y) {
+        for (Item item : level) {
+            item.shiftLocation(x, y);
+        }
+    }
+
     public void addItemUnchecked(Item i) {
         level.add(i);
     }
@@ -65,12 +71,8 @@ public final class Level {
             for (int i = 0; i < level.size(); i++) {
                 comp = level.get(i).compareTo(item);
                 if (comp == 0) {
-                    try {
-                        Item toBeReturned = (Item) level.get(i).clone();
-                        level.remove(i);
-                        return new ItemBackup(REMOVE, currentLevel, toBeReturned.getType(), i, toBeReturned.getLocation());
-                    } catch (CloneNotSupportedException ex) {
-                    }
+                    Item toBeReturned = level.remove(i);
+                    return new ItemBackup(REMOVE, currentLevel, toBeReturned.getType(), i, 1, toBeReturned.getLocation());
                 } else if (comp > 0) {
                     return null;
                 }

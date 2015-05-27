@@ -52,6 +52,7 @@ public class Menu implements ActionListener {
             } else if (direction == DOWN) {
                 paintingMode += (paintingMode == 0 ? numberOfPaintingTools - 1 : -1);
             }
+            currentLevelObject = null;
         }
     }
 
