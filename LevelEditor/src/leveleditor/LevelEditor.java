@@ -198,7 +198,6 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
 
     @Override
     public void mouseReleased(MouseEvent me) {
-        //testing
         if (worlds.size() > 0) {
             Point actualPoint = ((JFrame) me.getSource()).getContentPane().getMousePosition();
             if (actualPoint != null) {
