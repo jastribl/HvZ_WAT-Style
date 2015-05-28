@@ -33,6 +33,7 @@ public class Globals {
     public static final int UP = 0, DOWN = 1;
     public static final int ADD = 0, REMOVE = 1;
     public static final int PAINT = 0, POINT = 1, RECTANGLE = 2, DIAMOND = 3;
+    public static final int UNDO = 0, REDO = 1;
     public static boolean drawingGrid = true;
 
     public static final Point snapToGrid(Point p) {
@@ -46,20 +47,21 @@ public class Globals {
 
     public static final void preloadLevelNames() {
         try {
-            Scanner worldReader = new Scanner(new File("levels.txt"));
+            Scanner worldReader = new Scanner(new File("Worlds/levels.txt"));
             while (worldReader.hasNext()) {
                 allWorlds.add(worldReader.next());
             }
         } catch (IOException ex) {
             try {
-                new File("levels.txt").createNewFile();
+                new File("Worlds").mkdir();
+                new File("Worlds/levels.txtw").createNewFile();
             } catch (IOException ex1) {
             }
         }
     }
 
     public static void saveLevelNames() {
-        try (BufferedWriter worldWriter = new BufferedWriter(new FileWriter(new File("levels.txt")))) {
+        try (BufferedWriter worldWriter = new BufferedWriter(new FileWriter(new File("worlds/levels.txt")))) {
             for (String worldName : allWorlds) {
                 worldWriter.write(worldName + "\n");
             }
@@ -92,8 +94,8 @@ public class Globals {
     }
 
     public static final void removeCurrentWorld() {
-        if (worlds.size() > 0 && JOptionPane.showConfirmDialog(null, "Are you sure you want to remove this World", "Remove?", JOptionPane.YES_NO_OPTION) == 0) {
-            new File(worlds.get(currentWorld).getName() + ".txt").delete();
+        if (JOptionPane.showConfirmDialog(null, "Are you sure you want to remove this World", "Remove?", JOptionPane.YES_NO_OPTION) == 0) {
+            new File("Worlds/" + worlds.get(currentWorld).getName() + ".txt").delete();
             allWorlds.remove(worlds.get(currentWorld).getName());
             worlds.remove(currentWorld);
             if (currentWorld == worlds.size()) {

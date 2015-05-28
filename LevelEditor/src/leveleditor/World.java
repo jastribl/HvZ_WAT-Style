@@ -16,7 +16,7 @@ public final class World {
         name = nameGiven;
         if (load) {
             try {
-                Scanner reader = new Scanner(new File(name + ".txt"));
+                Scanner reader = new Scanner(new File("Worlds/" + name + ".txt"));
                 int xShift = screenWidth / 2 + menuWidth - reader.nextInt() / 2;
                 int yShift = screenHeight / 2 - reader.nextInt() / 2;
                 int numberOfLevels = reader.nextInt(), numberOfBlocks, type;
@@ -79,7 +79,7 @@ public final class World {
                 levelText += String.valueOf(level.getLevel().get(i).getType()) + " " + String.valueOf((level.getLevel().get(i).getX() - minX) / halfItemSize) + " " + String.valueOf((level.getLevel().get(i).getY() - minY) / (levelOffset / 2)) + " " + String.valueOf(trans) + "\n";
             }
         }
-        File file = new File(getName() + ".txt");
+        File file = new File("Worlds/" + getName() + ".txt");
         try (BufferedWriter output = new BufferedWriter(new FileWriter(file))) {
             output.write(levelText);
         } catch (IOException ex) {
@@ -147,52 +147,54 @@ public final class World {
             String oldWorldName = name;
             name = newWorldName;
             allWorlds.set(allWorlds.indexOf(oldWorldName), newWorldName);
-            new File(oldWorldName + ".txt").delete();
+            new File("Worlds/" + oldWorldName + ".txt").delete();
             saveLevelNames();
             save();
         }
     }
 
-    public final void undo() {
-        ItemBackup backup = undo.peek();
+    public final void Do(int type) {
+        Backup source, other;
+        if (type == UNDO) {
+            source = undo;
+            other = redo;
+        } else if (type == REDO) {
+            source = redo;
+            other = undo;
+        } else {
+            return;
+        }
+        ItemBackup backup = source.peek();
         if (backup != null && (backup.backupType == ADD || backup.backupType == REMOVE)) {
             int number = backup.number;
-            locateFirstInBackup(undo);
+            locateBackup(source.peek());
             for (int i = 0; i < number; i++) {
-                backup = undo.peek();
-                redo.add(new ItemBackup(backup.backupType, backup.level, backup.type, backup.arrayIndex, 1, backup.location));
+                backup = source.peek();
+                other.add(new ItemBackup(backup.backupType, backup.level, backup.type, backup.arrayIndex, 1, backup.location));
                 Item newItem = new Item(backup.location, backup.type, false);
-                if (backup.backupType == REMOVE) {
+                if (backup.backupType == (type == UNDO ? REMOVE : ADD)) {
                     get(currentLevel).addItemUncheckedAt(newItem, backup.arrayIndex);
                 } else {
                     get(currentLevel).removeItemUncheckedAt(backup.arrayIndex);
                 }
-                undo.pop();
+                source.pop();
             }
-            redo.getBackup().get(redo.getBackupSize() - 1).number = number;
-            isChanged = (undo.getBackupSize() != 0);
+            if (type == UNDO) {
+                other.getBackup().get(other.getBackupSize() - 1).number = number;
+            }
+            isChanged = (source.getBackupSize() != 0);
         }
     }
 
-    public final void redo() {
-        ItemBackup backup = redo.peek();
-        if (backup != null && (backup.backupType == ADD || backup.backupType == REMOVE)) {
-            int number = backup.number;
-            locateFirstInBackup(redo);
-            for (int i = 0; i < number; i++) {
-                backup = redo.peek();
-                undo.add(new ItemBackup(backup.backupType, backup.level, backup.type, backup.arrayIndex, 1, backup.location));
-                Item newItem = new Item(backup.location, backup.type, false);
-                if (backup.backupType == ADD) {
-                    get(currentLevel).addItemUncheckedAt(newItem, backup.arrayIndex);
-                } else {
-                    get(currentLevel).removeItemUncheckedAt(backup.arrayIndex);
-                }
-                redo.pop();
-            }
-            undo.getBackup().get(undo.getBackupSize() - 1).number = number;
-            isChanged = true;
+    private void locateBackup(ItemBackup backup) {
+        while (backup.level < currentLevel) {
+            chengleLevel(DOWN);
         }
+        while (backup.level > currentLevel) {
+            chengleLevel(UP);
+        }
+        get(currentLevel).setVisible(true);
+        findLocation(backup.location);
     }
 
     public final void shiftItems(int x, int y) {
@@ -216,7 +218,7 @@ public final class World {
     public final void moveItems(int x, int y) {
         shiftItems(x * itemSize, y * halfItemSize);
         if ((paintingMode == RECTANGLE || paintingMode == DIAMOND) && gridStart != null && gridEnd != null) {
-            gridStart.translate(x * itemSize, y * itemSize);
+            gridStart.translate(x * itemSize, y * halfItemSize);
             populateGrid();
         }
     }
@@ -237,25 +239,26 @@ public final class World {
         }
     }
 
-    public final void locateFirstInBackup(Backup backup) {
-        while (backup.peek().level < currentLevel) {
-            chengleLevel(DOWN);
-        }
-        while (backup.peek().level > currentLevel) {
-            chengleLevel(UP);
-        }
-        get(currentLevel).setVisible(true);
-        while (backup.peek().location.x < menuWidth + itemSize) {
+    private void findLocation(Point location) {
+        while (location.x < menuWidth + itemSize) {
             moveItems(1, 0);
         }
-        while (backup.peek().location.x > screenWidth - itemSize) {
+        while (location.x > screenWidth - itemSize) {
             moveItems(-1, 0);
         }
-        while (backup.peek().location.y < tabHeight + itemSize) {
+        while (location.y < tabHeight + halfItemSize) {
             moveItems(0, 1);
         }
-        while (backup.peek().location.y > screenHeight - itemSize - bottomMenuHeight) {
+        while (location.y > screenHeight - itemSize - bottomMenuHeight) {
             moveItems(0, -1);
+        }
+    }
+
+    public final void findFirstItem() {
+        get(currentLevel).setVisible(true);
+        if (get(currentLevel).size() > 0) {
+            Item item = get(currentLevel).get(0);
+            findLocation(item.getLocation());
         }
     }
 

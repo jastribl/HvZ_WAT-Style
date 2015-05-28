@@ -46,14 +46,12 @@ public class Menu implements ActionListener {
     }
 
     public final void changePaintingMode(int direction) {
-        if (worlds.size() > 0) {
-            if (direction == UP) {
-                paintingMode = (paintingMode + 1) % (numberOfPaintingTools);
-            } else if (direction == DOWN) {
-                paintingMode += (paintingMode == 0 ? numberOfPaintingTools - 1 : -1);
-            }
-            currentLevelObject = null;
+        if (direction == UP) {
+            paintingMode = (paintingMode + 1) % (numberOfPaintingTools);
+        } else if (direction == DOWN) {
+            paintingMode += (paintingMode == 0 ? numberOfPaintingTools - 1 : -1);
         }
+        currentLevelObject = null;
     }
 
     public final int getSelectedMenuItem(Point point) {

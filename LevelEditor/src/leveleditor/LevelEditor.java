@@ -63,12 +63,6 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
         getContentPane().getGraphics().dispose();
     }
 
-    private void hideCurrentLevel() {
-        if (worlds.size() > 0) {
-            worlds.get(currentWorld).get(currentLevel).switchVisibility();
-        }
-    }
-
     private void switchWorld(int direction) {
         if (worlds.size() > 0) {
             if (direction == UP) {
@@ -240,42 +234,49 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
     @Override
     public void keyPressed(KeyEvent ke) {
         int key = ke.getKeyCode();
-        if (key == KeyEvent.VK_PAGE_UP) {
-            worlds.get(currentWorld).chengleLevel(UP);
-        } else if (key == KeyEvent.VK_PAGE_DOWN) {
-            worlds.get(currentWorld).chengleLevel(DOWN);
-        } else if (key == KeyEvent.VK_UP) {
-            worlds.get(currentWorld).moveItems(0, 1);
-        } else if (key == KeyEvent.VK_RIGHT) {
-            worlds.get(currentWorld).moveItems(-1, 0);
-        } else if (key == KeyEvent.VK_DOWN) {
-            worlds.get(currentWorld).moveItems(0, -1);
-        } else if (key == KeyEvent.VK_LEFT) {
-            worlds.get(currentWorld).moveItems(1, 0);
-        } else if (key == KeyEvent.VK_P) {
-            menu.changePaintingMode(ke.isControlDown() ? DOWN : UP);
-        } else if (key == KeyEvent.VK_H) {
-            hideCurrentLevel();
-        } else if (key == KeyEvent.VK_DELETE) {
-            removeCurrentWorld();
+        if (!worlds.isEmpty()) {
+            if (key == KeyEvent.VK_PAGE_UP) {
+                worlds.get(currentWorld).chengleLevel(UP);
+            } else if (key == KeyEvent.VK_PAGE_DOWN) {
+                worlds.get(currentWorld).chengleLevel(DOWN);
+            } else if (key == KeyEvent.VK_UP) {
+                worlds.get(currentWorld).moveItems(0, 1);
+            } else if (key == KeyEvent.VK_RIGHT) {
+                worlds.get(currentWorld).moveItems(-1, 0);
+            } else if (key == KeyEvent.VK_DOWN) {
+                worlds.get(currentWorld).moveItems(0, -1);
+            } else if (key == KeyEvent.VK_LEFT) {
+                worlds.get(currentWorld).moveItems(1, 0);
+            } else if (key == KeyEvent.VK_P) {
+                menu.changePaintingMode(ke.isControlDown() ? DOWN : UP);
+            } else if (key == KeyEvent.VK_H) {
+                worlds.get(currentWorld).get(currentLevel).switchVisibility();
+            } else if (key == KeyEvent.VK_DELETE) {
+                removeCurrentWorld();
+            } else if (key == KeyEvent.VK_L) {
+                worlds.get(currentWorld).findFirstItem();
+            }
         }
         if (ke.isControlDown()) {
-            if (key == KeyEvent.VK_Z) {
-                worlds.get(currentWorld).undo();
-            } else if (key == KeyEvent.VK_Y) {
-                worlds.get(currentWorld).redo();
-            } else if (key == KeyEvent.VK_S) {
-                if (ke.isShiftDown()) {
-                    saveAll();
-                } else if (worlds.size() > 0) {
-                    worlds.get(currentWorld).save();
+            if (!worlds.isEmpty()) {
+                if (key == KeyEvent.VK_Z) {
+                    worlds.get(currentWorld).Do(UNDO);
+                } else if (key == KeyEvent.VK_Y) {
+                    worlds.get(currentWorld).Do(REDO);
+                } else if (key == KeyEvent.VK_S) {
+                    if (ke.isShiftDown()) {
+                        saveAll();
+                    } else if (worlds.size() > 0) {
+                        worlds.get(currentWorld).save();
+                    }
+                } else if (key == KeyEvent.VK_TAB) {
+                    switchWorld(ke.isShiftDown() ? DOWN : UP);
+                } else if (key == KeyEvent.VK_F4) {
+                    closeTab(currentWorld);
                 }
-            } else if (key == KeyEvent.VK_TAB) {
-                switchWorld(ke.isShiftDown() ? DOWN : UP);
-            } else if (key == KeyEvent.VK_N) {
+            }
+            if (key == KeyEvent.VK_N) {
                 addWorld();
-            } else if (key == KeyEvent.VK_F4) {
-                closeTab(currentWorld);
             } else if (key == KeyEvent.VK_O) {
                 openWindow.display(worlds, this);
             }
@@ -294,9 +295,9 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
             if (mouseIsInMain(actualPoint)) {
                 int amount = -mwe.getWheelRotation();
                 if (mwe.isControlDown()) {
-                    worlds.get(currentWorld).shiftItems(amount, 0);
+                    worlds.get(currentWorld).moveItems(amount, 0);
                 } else {
-                    worlds.get(currentWorld).shiftItems(0, amount);
+                    worlds.get(currentWorld).moveItems(0, amount);
                 }
             } else if (mouseIsInSideMenu(actualPoint)) {
                 menu.scroll(mwe.getWheelRotation() * 15);
