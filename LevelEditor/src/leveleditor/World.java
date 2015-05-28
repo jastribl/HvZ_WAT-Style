@@ -232,7 +232,7 @@ public final class World {
         } else {
             if (currentLevel > 0) {
                 if (get(currentLevel).size() == 0) {
-                    worlds.remove(currentLevel);
+                    world.remove(currentLevel);
                 }
                 currentLevel--;
             }
