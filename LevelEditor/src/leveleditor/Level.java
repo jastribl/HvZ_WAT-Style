@@ -1,5 +1,6 @@
 package leveleditor;
 
+import java.awt.Point;
 import java.util.*;
 import static leveleditor.Globals.REMOVE;
 import static leveleditor.Globals.currentLevel;

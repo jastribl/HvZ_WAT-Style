@@ -16,15 +16,14 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
         setTitle("LevelUpGame - 2015 - Justin Stribling");
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setFocusTraversalKeysEnabled(false);
-        setSize(999999999, 999999999);
-        getContentPane().setSize(99999999, 99999999);
+        setSize(5000, 5000);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
         addMouseMotionListener(this);
         addKeyListener(this);
         addMouseWheelListener(this);
         addWindowListener(this);
         addComponentListener(this);
         addMouseListener(this);
-        setExtendedState(JFrame.MAXIMIZED_BOTH);
         setVisible(true);
         memoryImage = createImage(getContentPane().getWidth(), getContentPane().getHeight());
         memoryGraphics = memoryImage.getGraphics();
