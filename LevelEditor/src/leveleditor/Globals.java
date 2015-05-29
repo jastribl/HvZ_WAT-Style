@@ -55,7 +55,7 @@ public class Globals {
         } catch (IOException ex) {
             try {
                 new File("Worlds").mkdir();
-                new File("Worlds/levels.txtw").createNewFile();
+                new File("Worlds/levels.txt").createNewFile();
             } catch (IOException ex1) {
             }
         }
