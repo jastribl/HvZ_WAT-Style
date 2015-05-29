@@ -1,5 +1,6 @@
-package leveleditor;
+package UI;
 
+import Structures.World;
 import java.awt.Dialog;
 import java.awt.event.*;
 import java.util.ArrayList;

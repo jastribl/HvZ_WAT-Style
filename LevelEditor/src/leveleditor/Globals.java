@@ -1,5 +1,6 @@
 package leveleditor;
 
+import Structures.*;
 import java.awt.*;
 import java.io.*;
 import java.util.*;
@@ -8,14 +9,14 @@ import javax.swing.JOptionPane;
 public class Globals {
 
     public static Graphics memoryGraphics = null;
+
     public static int screenWidth = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth();
     public static int screenHeight = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight();
-    public static int currentWorld = 0;
-    public static int currentLevel = 0;
-    public static int currentItemType = 0;
-    public static int paintingMode = 0;
+
+    public static int currentWorld = 0, currentLevel = 0, currentItemType = 0, currentDrawingMode = 0;
+
     public static int tabWidth = 0;
-    public static final int itemSize = 32; // must be divisable by and greater than 8
+    public static final int itemSize = 32;
     public static final int halfItemSize = itemSize / 2;
     public static final int levelOffset = itemSize / 4;
     public static final int menuWidth = itemSize * 4;
@@ -106,59 +107,50 @@ public class Globals {
     }
 
     public static final void populateGrid() {
-        if (paintingMode == RECTANGLE) {
-            populateRectangle();
-        } else if (paintingMode == DIAMOND) {
-            populateDiamond();
-        }
-    }
-
-    public static final void populateRectangle() {
         gridItems.clear();
-        int xStop = (gridEnd.x - gridStart.x) / itemSize;
-        int yStop = (gridEnd.y - gridStart.y) / levelOffset;
-        int xStart, xEnd, yStart, yEnd;
-        if (gridEnd.x > gridStart.x) {
-            xStart = 0;
-            xEnd = xStop;
-        } else {
-            xStart = xStop;
-            xEnd = 0;
-        }
-        if (gridEnd.y > gridStart.y) {
-            yStart = 0;
-            yEnd = yStop;
-        } else {
-            yStart = yStop;
-            yEnd = 0;
-        }
-        for (int i = yStart; i < yEnd; i++) {
-            int y = gridStart.y + (levelOffset * i);
-            int xShift = (i % 2 == 0 ? 0 : halfItemSize);
-            for (int j = xStart; j < xEnd; j++) {
-                gridItems.addItemUnchecked(new Item(gridStart.x + (itemSize * j) + xShift, y, currentItemType, true));
+        if (currentDrawingMode == RECTANGLE) {
+            int xStop = (gridEnd.x - gridStart.x) / itemSize;
+            int yStop = (gridEnd.y - gridStart.y) / levelOffset;
+            int xStart, xEnd, yStart, yEnd;
+            if (gridEnd.x > gridStart.x) {
+                xStart = 0;
+                xEnd = xStop;
+            } else {
+                xStart = xStop;
+                xEnd = 0;
             }
-        }
-    }
-
-    public static final void populateDiamond() {
-        gridItems.clear();
-        Point top = (gridStart.y < gridEnd.y ? gridStart : gridEnd);
-        Point bottom = (gridStart.y >= gridEnd.y ? gridStart : gridEnd);
-        int heightInHalves = (bottom.y - top.y) / levelOffset;
-        int widthInHalves = (top.x - bottom.x) / halfItemSize;
-        int topRightDiagonal = (heightInHalves - widthInHalves) / 2;
-        int bottomRightDiagonal = (heightInHalves - topRightDiagonal);
-        Point point = new Point();
-        int iAdd = (bottomRightDiagonal > 0 ? 1 : -1);
-        int jAdd = (topRightDiagonal > 0 ? 1 : -1);
-        for (int i = 1; i != bottomRightDiagonal + iAdd; i += iAdd) {
-            point.x = top.x - (i * halfItemSize);
-            point.y = top.y + (i * levelOffset);
-            for (int j = 1; j != topRightDiagonal + jAdd; j += jAdd) {
-                point.x += jAdd * halfItemSize;
-                point.y += jAdd * levelOffset;
-                gridItems.addItemUnchecked(new Item(point, currentItemType, true));
+            if (gridEnd.y > gridStart.y) {
+                yStart = 0;
+                yEnd = yStop;
+            } else {
+                yStart = yStop;
+                yEnd = 0;
+            }
+            for (int i = yStart; i < yEnd; i++) {
+                int y = gridStart.y + (levelOffset * i);
+                int xShift = (i % 2 == 0 ? 0 : halfItemSize);
+                for (int j = xStart; j < xEnd; j++) {
+                    gridItems.addItemUnchecked(new Item(currentItemType, gridStart.x + (itemSize * j) + xShift, y, true));
+                }
+            }
+        } else if (currentDrawingMode == DIAMOND) {
+            Point top = (gridStart.y < gridEnd.y ? gridStart : gridEnd);
+            Point bottom = (gridStart.y >= gridEnd.y ? gridStart : gridEnd);
+            int heightInHalves = (bottom.y - top.y) / levelOffset;
+            int widthInHalves = (top.x - bottom.x) / halfItemSize;
+            int topRightDiagonal = (heightInHalves - widthInHalves) / 2;
+            int bottomRightDiagonal = (heightInHalves - topRightDiagonal);
+            Point point = new Point();
+            int iAdd = (bottomRightDiagonal > 0 ? 1 : -1);
+            int jAdd = (topRightDiagonal > 0 ? 1 : -1);
+            for (int i = 1; i != bottomRightDiagonal + iAdd; i += iAdd) {
+                point.x = top.x - (i * halfItemSize);
+                point.y = top.y + (i * levelOffset);
+                for (int j = 1; j != topRightDiagonal + jAdd; j += jAdd) {
+                    point.x += jAdd * halfItemSize;
+                    point.y += jAdd * levelOffset;
+                    gridItems.addItemUnchecked(new Item(currentItemType, point, true));
+                }
             }
         }
     }

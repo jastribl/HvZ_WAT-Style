@@ -1,7 +1,7 @@
-package leveleditor;
+package Structures;
 
-import java.awt.Point;
 import java.util.*;
+import Cache.BackupItem;
 import static leveleditor.Globals.REMOVE;
 import static leveleditor.Globals.currentLevel;
 
@@ -66,14 +66,14 @@ public final class Level {
         return -1;
     }
 
-    public final ItemBackup removeItem(Item item) {
+    public final BackupItem removeItem(Item item) {
         if (visible) {
             int comp;
             for (int i = 0; i < level.size(); i++) {
                 comp = level.get(i).compareTo(item);
                 if (comp == 0) {
                     Item toBeReturned = level.remove(i);
-                    return new ItemBackup(REMOVE, currentLevel, toBeReturned.getType(), i, 1, toBeReturned.getLocation());
+                    return new BackupItem(REMOVE, currentLevel, toBeReturned.getType(), i, 1, toBeReturned.getLocation());
                 } else if (comp > 0) {
                     return null;
                 }

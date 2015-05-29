@@ -1,28 +1,23 @@
-package leveleditor;
+package Structures;
 
 import java.awt.*;
 import static leveleditor.Globals.*;
 
-public final class Item implements Comparable, Cloneable {
+public final class Item implements Comparable {
 
-    private Point location, lastLocation = new Point();
-    final int type;
+    private final int type;
+    private Point location;
 
-    public Item(Point point, int typeGiven, boolean fixLocations) {
-        location = (Point) point.clone();
-        type = typeGiven;
-        if (fixLocations) {
+    public Item(int typeG, Point locationG, boolean fixLocation) {
+        type = typeG;
+        location = (Point) locationG.clone();
+        if (fixLocation) {
             fixLocation();
         }
     }
 
-    public Item(int x, int y, int typeGiven, boolean fixLocations) {
-        this(new Point(x, y), typeGiven, fixLocations);
-    }
-
-    @Override
-    protected Object clone() throws CloneNotSupportedException {
-        return super.clone();
+    public Item(int typeGiven, int x, int y, boolean fixLocations) {
+        this(typeGiven, new Point(x, y), fixLocations);
     }
 
     private void fixLocation() {

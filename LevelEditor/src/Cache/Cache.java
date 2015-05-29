@@ -1,24 +1,24 @@
-package leveleditor;
+package Cache;
 
 import java.util.*;
 
-public class Backup {
+public class Cache {
 
-    private final Stack<ItemBackup> backup = new Stack();
+    private final Stack<BackupItem> backup = new Stack();
 
-    public final void add(ItemBackup item) {
+    public final void add(BackupItem item) {
         backup.add(item);
     }
 
-    public final Stack<ItemBackup> getBackup() {
+    public final Stack<BackupItem> getCache() {
         return backup;
     }
 
-    public final ItemBackup peek() {
+    public final BackupItem peek() {
         return (backup.isEmpty() ? null : backup.peek());
     }
 
-    public final ItemBackup pop() {
+    public final BackupItem pop() {
         return (backup.isEmpty() ? null : backup.pop());
     }
 

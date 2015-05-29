@@ -1,15 +1,17 @@
-package leveleditor;
+package Structures;
 
 import java.awt.Point;
 import java.io.*;
 import java.util.*;
+import Cache.BackupItem;
+import Cache.Cache;
 import static leveleditor.Globals.*;
 
 public final class World {
 
     private final ArrayList<Level> world = new ArrayList();
     private String name;
-    private final Backup undo = new Backup(), redo = new Backup();
+    private final Cache undo = new Cache(), redo = new Cache();
     private boolean isChanged = false;
 
     public World(String nameGiven, boolean load) {
@@ -27,7 +29,7 @@ public final class World {
                         type = reader.nextInt();
                         Point point = snapToGrid(new Point((reader.nextInt() * halfItemSize) + xShift, (reader.nextInt() * (itemSize / 8)) + yShift));
                         int transparency = reader.nextInt();
-                        level.addItemUnchecked(new Item(point, type, true));
+                        level.addItemUnchecked(new Item(type, point, true));
                     }
                     world.add(level);
                 }
@@ -91,14 +93,14 @@ public final class World {
     public final void addToCurrentLevelChecked(Item item) {
         int index = get(currentLevel).addItemChecked(item);
         if (index != -1) {
-            undo.add(new ItemBackup(ADD, currentLevel, item.getType(), index, 1, item.getLocation()));
+            undo.add(new BackupItem(ADD, currentLevel, item.getType(), index, 1, item.getLocation()));
             isChanged = true;
             redo.clear();
         }
     }
 
     public final void removeFromCurrentLevelChecked(Item item) {
-        ItemBackup removedItem = get(currentLevel).removeItem(item);
+        BackupItem removedItem = get(currentLevel).removeItem(item);
         if (removedItem != null) {
             undo.add(removedItem);
             isChanged = true;
@@ -107,12 +109,12 @@ public final class World {
     }
 
     public final Item getFromCurrentLevel(Item item) {
-        ItemBackup removedItem = get(currentLevel).removeItem(item);
+        BackupItem removedItem = get(currentLevel).removeItem(item);
         if (removedItem != null) {
             undo.add(removedItem);
             isChanged = true;
             redo.clear();
-            return new Item(removedItem.location, removedItem.type, false);
+            return new Item(removedItem.type, removedItem.location, false);
         }
         return null;
     }
@@ -130,7 +132,7 @@ public final class World {
         }
         int diff = Math.abs(undo.getBackupSize() - startingSize);
         if (diff > 0) {
-            undo.getBackup().get(undo.getBackupSize() - 1).number = diff;
+            undo.getCache().get(undo.getBackupSize() - 1).setRepeats(diff);
         }
         gridItems.clear();
         gridStart = null;
@@ -154,7 +156,7 @@ public final class World {
     }
 
     public final void Do(int type) {
-        Backup source, other;
+        Cache source, other;
         if (type == UNDO) {
             source = undo;
             other = redo;
@@ -164,14 +166,14 @@ public final class World {
         } else {
             return;
         }
-        ItemBackup backup = source.peek();
+        BackupItem backup = source.peek();
         if (backup != null && (backup.backupType == ADD || backup.backupType == REMOVE)) {
-            int number = backup.number;
+            int number = backup.getRepeats();
             locateBackup(source.peek());
             for (int i = 0; i < number; i++) {
                 backup = source.peek();
-                other.add(new ItemBackup(backup.backupType, backup.level, backup.type, backup.arrayIndex, 1, backup.location));
-                Item newItem = new Item(backup.location, backup.type, false);
+                other.add(new BackupItem(backup.backupType, backup.level, backup.type, backup.arrayIndex, 1, backup.location));
+                Item newItem = new Item(backup.type, backup.location, false);
                 if (backup.backupType == (type == UNDO ? REMOVE : ADD)) {
                     get(currentLevel).addItemUncheckedAt(newItem, backup.arrayIndex);
                 } else {
@@ -180,13 +182,13 @@ public final class World {
                 source.pop();
             }
             if (type == UNDO) {
-                other.getBackup().get(other.getBackupSize() - 1).number = number;
+                other.getCache().get(other.getBackupSize() - 1).setRepeats(number);
             }
             isChanged = (source.getBackupSize() != 0);
         }
     }
 
-    private void locateBackup(ItemBackup backup) {
+    private void locateBackup(BackupItem backup) {
         while (backup.level < currentLevel) {
             chengleLevel(DOWN);
         }
@@ -203,12 +205,12 @@ public final class World {
                 item.shiftLocation(x, y);
             }
         }
-        for (ItemBackup item : undo.getBackup()) {
+        for (BackupItem item : undo.getCache()) {
             if (item.backupType == ADD || item.backupType == REMOVE) {
                 item.shiftLocation(x, y);
             }
         }
-        for (ItemBackup item : redo.getBackup()) {
+        for (BackupItem item : redo.getCache()) {
             if (item.backupType == ADD || item.backupType == REMOVE) {
                 item.shiftLocation(x, y);
             }
@@ -217,7 +219,7 @@ public final class World {
 
     public final void moveItems(int x, int y) {
         shiftItems(x * itemSize, y * halfItemSize);
-        if ((paintingMode == RECTANGLE || paintingMode == DIAMOND) && gridStart != null && gridEnd != null) {
+        if ((currentDrawingMode == RECTANGLE || currentDrawingMode == DIAMOND) && gridStart != null && gridEnd != null) {
             gridStart.translate(x * itemSize, y * halfItemSize);
             populateGrid();
         }
@@ -275,9 +277,9 @@ public final class World {
                     }
                 }
                 if (currentLevel == i) {
-                    if (paintingMode == POINT && currentLevelObject != null) {
+                    if (currentDrawingMode == POINT && currentLevelObject != null) {
                         levelToDraw.addItemChecked(currentLevelObject);
-                    } else if (paintingMode == RECTANGLE || paintingMode == DIAMOND) {
+                    } else if (currentDrawingMode == RECTANGLE || currentDrawingMode == DIAMOND) {
                         for (int j = 0; j < gridItems.size(); j++) {
                             Item item = gridItems.get(j);
                             Point p = item.getLocation();

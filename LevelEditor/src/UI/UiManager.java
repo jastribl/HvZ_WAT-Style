@@ -1,12 +1,13 @@
-package leveleditor;
+package UI;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
 import javax.swing.*;
+import Structures.Item;
 import static leveleditor.Globals.*;
 
-public class Menu implements ActionListener {
+public class UiManager implements ActionListener {
 
     private final int numberOfPaintingTools = 4, numberOfVisibilityIcons = 2;
     private final int numberOfIcons = numberOfPaintingTools + numberOfVisibilityIcons;
@@ -16,20 +17,20 @@ public class Menu implements ActionListener {
     private final JMenuItem tabsRightClickMenuItems[] = new JMenuItem[tabsRightClickText.length];
     private final JPopupMenu tabsRightClickMenu = new JPopupMenu();
 
-    public Menu() {
+    public UiManager() {
         MediaTracker imageTracker = new MediaTracker(new JFrame());
-        for (int i = 0; i < itemImages.length; i++) {
-            menuItems[i] = new Item(itemSize * ((i % 3) + 1), itemSize * ((i / 3) + 1), i, true);
+        for (int item = 0; item < itemImages.length; item++) {
+            menuItems[item] = new Item(item, itemSize * ((item % 3) + 1), itemSize * ((item / 3) + 1), true);
             try {
-                itemImages[i] = new ImageIcon(getClass().getResource("/media/o" + i + ".png")).getImage().getScaledInstance(itemSize, itemSize, Image.SCALE_SMOOTH);
-                imageTracker.addImage(itemImages[i], 0);
+                itemImages[item] = new ImageIcon(getClass().getResource("/media/block" + item + ".png")).getImage().getScaledInstance(itemSize, itemSize, Image.SCALE_SMOOTH);
+                imageTracker.addImage(itemImages[item], 0);
             } catch (Exception e) {
             }
         }
-        for (int i = 0; i < iconImages.length; i++) {
+        for (int icon = 0; icon < iconImages.length; icon++) {
             try {
-                iconImages[i] = new ImageIcon(getClass().getResource("/media/i" + i + ".png")).getImage().getScaledInstance(iconSize, iconSize, Image.SCALE_SMOOTH);
-                imageTracker.addImage(iconImages[i], 0);
+                iconImages[icon] = new ImageIcon(getClass().getResource("/media/icon" + icon + ".png")).getImage().getScaledInstance(iconSize, iconSize, Image.SCALE_SMOOTH);
+                imageTracker.addImage(iconImages[icon], 0);
             } catch (Exception e) {
             }
         }
@@ -47,9 +48,9 @@ public class Menu implements ActionListener {
 
     public final void changePaintingMode(int direction) {
         if (direction == UP) {
-            paintingMode = (paintingMode + 1) % (numberOfPaintingTools);
+            currentDrawingMode = (currentDrawingMode + 1) % (numberOfPaintingTools);
         } else if (direction == DOWN) {
-            paintingMode += (paintingMode == 0 ? numberOfPaintingTools - 1 : -1);
+            currentDrawingMode += (currentDrawingMode == 0 ? numberOfPaintingTools - 1 : -1);
         }
         currentLevelObject = null;
     }
@@ -115,7 +116,7 @@ public class Menu implements ActionListener {
         memoryGraphics.setColor(Color.black);
         memoryGraphics.drawString("Level: " + String.valueOf(currentLevel), screenWidth - 60, screenHeight - (iconPadding * 2));
         memoryGraphics.drawImage(iconImages[worlds.get(currentWorld).get(currentLevel).isVisible() ? 0 : 1], menuWidth + iconPadding, screenHeight - iconSize - iconPadding, null);
-        memoryGraphics.drawImage(iconImages[paintingMode + 2], menuWidth + iconSize + (iconPadding * 2), screenHeight - iconSize - iconPadding, null);
+        memoryGraphics.drawImage(iconImages[currentDrawingMode + 2], menuWidth + iconSize + (iconPadding * 2), screenHeight - iconSize - iconPadding, null);
     }
 
     public final void drawSideManu() {
