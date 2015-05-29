@@ -15,7 +15,7 @@ public class Globals {
     public static int currentItemType = 0;
     public static int paintingMode = 0;
     public static int tabWidth = 0;
-    public static final int itemSize = 32;
+    public static final int itemSize = 32; // must be divisable by and greater than 8
     public static final int halfItemSize = itemSize / 2;
     public static final int levelOffset = itemSize / 4;
     public static final int menuWidth = itemSize * 4;

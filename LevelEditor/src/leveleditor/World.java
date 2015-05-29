@@ -72,11 +72,11 @@ public final class World {
         }
         String levelText = String.valueOf((maxX - minX) + itemSize) + " " + String.valueOf((maxY - minY) + itemSize) + "\n" + String.valueOf(world.size()) + "\n";
         for (Level level : world) {
-            levelText += String.valueOf(level.size()) + "\n";
-            int size = level.getLevel().size();
+            int size = level.size();
+            levelText += String.valueOf(size) + "\n";
             for (int i = 0; i < size; i++) {
-                int trans = 0;
-                levelText += String.valueOf(level.getLevel().get(i).getType()) + " " + String.valueOf((level.getLevel().get(i).getX() - minX) / halfItemSize) + " " + String.valueOf((level.getLevel().get(i).getY() - minY) / (levelOffset / 2)) + " " + String.valueOf(trans) + "\n";
+                int transparency = 0;
+                levelText += String.valueOf(level.getLevel().get(i).getType()) + " " + String.valueOf((level.getLevel().get(i).getX() - minX) / halfItemSize) + " " + String.valueOf((level.getLevel().get(i).getY() - minY) / (levelOffset / 2)) + " " + String.valueOf(transparency) + "\n";
             }
         }
         File file = new File("Worlds/" + getName() + ".txt");

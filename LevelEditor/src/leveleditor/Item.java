@@ -5,7 +5,7 @@ import static leveleditor.Globals.*;
 
 public final class Item implements Comparable, Cloneable {
 
-    private Point location;
+    private Point location, lastLocation = new Point();
     final int type;
 
     public Item(Point point, int typeGiven, boolean fixLocations) {
