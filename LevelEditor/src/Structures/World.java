@@ -21,15 +21,16 @@ public final class World {
                 Scanner reader = new Scanner(new File("Worlds/" + name + ".txt"));
                 int xShift = screenWidth / 2 + menuWidth - reader.nextInt() / 2;
                 int yShift = screenHeight / 2 - reader.nextInt() / 2;
-                int numberOfLevels = reader.nextInt(), numberOfBlocks, type;
+                int numberOfLevels = reader.nextInt(), numberOfBlocks, group, type;
                 for (int i = 0; i < numberOfLevels; i++) {
                     Level level = new Level();
                     numberOfBlocks = reader.nextInt();
                     for (int j = 0; j < numberOfBlocks; j++) {
+                        group = reader.nextInt();
                         type = reader.nextInt();
                         Point point = snapToGrid(new Point((reader.nextInt() * halfItemSize) + xShift, (reader.nextInt() * (itemSize / 8)) + yShift));
                         int transparency = reader.nextInt();
-                        level.addItemUnchecked(new Item(0, type, point, true));//need to save group
+                        level.addItemUnchecked(new Item(group, type, point, true));//need to save group
                     }
                     world.add(level);
                 }
@@ -78,7 +79,7 @@ public final class World {
             levelText += String.valueOf(size) + "\n";
             for (int i = 0; i < size; i++) {
                 int transparency = 0;
-                levelText += String.valueOf(level.getLevel().get(i).getType()) + " " + String.valueOf((level.getLevel().get(i).getX() - minX) / halfItemSize) + " " + String.valueOf((level.getLevel().get(i).getY() - minY) / (levelOffset / 2)) + " " + String.valueOf(transparency) + "\n";
+                levelText += String.valueOf(level.getLevel().get(i).getGroup()) + " " + String.valueOf(level.getLevel().get(i).getType()) + " " + String.valueOf((level.getLevel().get(i).getX() - minX) / halfItemSize) + " " + String.valueOf((level.getLevel().get(i).getY() - minY) / (levelOffset / 2)) + " " + String.valueOf(transparency) + "\n";
             }
         }
         File file = new File("Worlds/" + getName() + ".txt");
