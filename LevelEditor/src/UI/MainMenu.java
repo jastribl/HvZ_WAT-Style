@@ -24,24 +24,13 @@ public class MainMenu {
             } catch (Exception e) {
             }
         }
-//        menuItems.add(new Item[numberOfSpecials]);
-//        itemImages.add(new Image[numberOfSpecials]);
-//        for (int special = 0; special < numberOfSpecials; special++) {
-//            menuItems.get(1)[special] = new Item(1, special, menuTabHeight + (itemSize * ((special % 3) + 1)), itemSize * ((special / 3) + 1), true);
-//            try {
-//                itemImages.get(1)[special] = new ImageIcon(getClass().getResource("/media/special" + special + ".png")).getImage().getScaledInstance(itemSize, itemSize, Image.SCALE_SMOOTH);
-//                imageTracker.addImage(itemImages.get(1)[special], 0);
-//            } catch (Exception e) {
-//            }
-//        }
-        menuItems.add(new Item[100]);
-        itemImages.add(new Image[100]);
-
-        for (int i = 0; i < 100; i++) {
-            menuItems.get(1)[i] = new Item(1, 0, menuTabHeight + (itemSize * ((i % 3) + 1)), itemSize * ((i / 3) + 1), true);
+        menuItems.add(new Item[numberOfSpecials]);
+        itemImages.add(new Image[numberOfSpecials]);
+        for (int special = 0; special < numberOfSpecials; special++) {
+            menuItems.get(1)[special] = new Item(1, special, menuTabHeight + (itemSize * ((special % 3) + 1)), itemSize * ((special / 3) + 1), true);
             try {
-                itemImages.get(1)[i] = new ImageIcon(getClass().getResource("/media/block" + 0 + ".png")).getImage().getScaledInstance(itemSize, itemSize, Image.SCALE_SMOOTH);
-                imageTracker.addImage(itemImages.get(1)[i], 0);
+                itemImages.get(1)[special] = new ImageIcon(getClass().getResource("/media/special" + special + ".png")).getImage().getScaledInstance(itemSize, itemSize, Image.SCALE_SMOOTH);
+                imageTracker.addImage(itemImages.get(1)[special], 0);
             } catch (Exception e) {
             }
         }
