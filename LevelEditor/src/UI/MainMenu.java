@@ -8,6 +8,7 @@ import static leveleditor.Globals.*;
 
 public class MainMenu {
 
+    public static final int numberOfGroups = 2;
     private static final int numberOfBlocks = 9, numberOfSpecials = 4;
     public static ArrayList<Image[]> itemImages = new ArrayList();
     private final ArrayList<Item[]> menuItems = new ArrayList();
@@ -17,7 +18,7 @@ public class MainMenu {
         menuItems.add(new Item[numberOfBlocks]);
         itemImages.add(new Image[numberOfBlocks]);
         for (int item = 0; item < numberOfBlocks; item++) {
-            menuItems.get(0)[item] = new Item(0, item, itemSize * ((item % 3) + 1), itemSize * ((item / 3) + 1), true);
+            menuItems.get(0)[item] = new Item(0, item, menuTabHeight + (itemSize * ((item % 3) + 1)), itemSize * ((item / 3) + 1), true);
             try {
                 itemImages.get(0)[item] = new ImageIcon(getClass().getResource("/media/block" + item + ".png")).getImage().getScaledInstance(itemSize, itemSize, Image.SCALE_SMOOTH);
                 imageTracker.addImage(itemImages.get(0)[item], 0);
@@ -27,7 +28,7 @@ public class MainMenu {
         menuItems.add(new Item[numberOfSpecials]);
         itemImages.add(new Image[numberOfSpecials]);
         for (int special = 0; special < numberOfSpecials; special++) {
-            menuItems.get(1)[special] = new Item(1, special, itemSize * ((special % 3) + 1), itemSize * ((special / 3) + 1), true);
+            menuItems.get(1)[special] = new Item(1, special, menuTabHeight + (itemSize * ((special % 3) + 1)), itemSize * ((special / 3) + 1), true);
             try {
                 itemImages.get(1)[special] = new ImageIcon(getClass().getResource("/media/special" + special + ".png")).getImage().getScaledInstance(itemSize, itemSize, Image.SCALE_SMOOTH);
                 imageTracker.addImage(itemImages.get(1)[special], 0);
@@ -58,12 +59,9 @@ public class MainMenu {
         }
     }
 
-    public void changeTab() {
-        if (currentItemGroup == 0) {
-            currentItemGroup = 1;
-        } else if (currentItemGroup == 1) {
-            currentItemGroup = 0;
-        }
+    public void selectMenuTabAt(Point point) {
+        currentItemGroup = point.y / menuTabWidth;
+        currentItemType = 0;
     }
 
     public final void draw() {
@@ -73,6 +71,18 @@ public class MainMenu {
         memoryGraphics.drawLine(menuWidth, 0, menuWidth, screenHeight);
         for (Item item : menuItems.get(currentItemGroup)) {
             item.draw();
+        }
+        for (int i = 0; i < numberOfGroups; i++) {
+            if (currentItemGroup == i) {
+                memoryGraphics.setColor(Color.darkGray);
+            } else {
+                memoryGraphics.setColor(Color.lightGray);
+            }
+            memoryGraphics.fillRoundRect(0, i * menuTabWidth, menuTabHeight, menuTabWidth - 1, 20, 20);
+            memoryGraphics.fillRect(menuTabHeight / 2, i * menuTabWidth, (menuTabHeight / 2) + 1, menuTabWidth - 1);
+//            memoryGraphics.setColor(Color.black);
+//            Rectangle2D stringSize = memoryGraphics.getFontMetrics().getStringBounds(worlds.get(i).getName(), memoryGraphics);
+//            memoryGraphics.drawString(worlds.get(i).getName(), menuWidth + 1 + (i * worldTabWidth) + (int) ((worldTabWidth - stringSize.getWidth()) / 2), (worldTabHeight / 3) + (int) (stringSize.getHeight() / 2));
         }
     }
 }

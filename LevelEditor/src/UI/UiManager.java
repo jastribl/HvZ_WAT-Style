@@ -1,7 +1,6 @@
 package UI;
 
 import java.awt.*;
-import java.awt.geom.Rectangle2D;
 import static leveleditor.Globals.*;
 
 public class UiManager {
@@ -19,7 +18,7 @@ public class UiManager {
     }
 
     public final void selectWorldTabAt(Point point) {
-        currentWorld = (worlds.isEmpty() ? 0 : (point.x - menuWidth) / tabWidth);
+        currentWorld = (worlds.isEmpty() ? 0 : (point.x - menuWidth) / worldTabWidth);
     }
 
     public final void scrollMainMenu(int amount) {
@@ -30,41 +29,16 @@ public class UiManager {
         rightClickManager.closeAll();
     }
 
-    public void changeMenuTab() {
-        mainMenu.changeTab();
+    public void selectMenuTabAt(Point point) {
+        mainMenu.selectMenuTabAt(point);
     }
 
     public final void showTabRightClickMenu(Point point) {
         rightClickManager.showTabMenu(point);
     }
 
-    public final void drawWorldTabs() {
-        Font defaultFont = memoryGraphics.getFontMetrics().getFont();
-        int count = 0;
-        for (int i = 0; i < worlds.size(); i++) {
-            if (currentWorld == i) {
-                memoryGraphics.setColor(Color.lightGray);
-            } else {
-                memoryGraphics.setColor(Color.gray);
-            }
-            memoryGraphics.fillRoundRect(menuWidth + (count * tabWidth) + 1, 0, tabWidth - 1, tabHeight, 10, 20);
-            memoryGraphics.fillRect(menuWidth + (count * tabWidth) + 1, tabHeight / 2, tabWidth - 1, (tabHeight / 2) + 1);
-            memoryGraphics.setColor(Color.black);
-            if (worlds.get(i).hasChanges()) {
-                memoryGraphics.setFont(new Font("default", Font.BOLD, defaultFont.getSize()));
-            }
-            Rectangle2D stringSize = memoryGraphics.getFontMetrics().getStringBounds(worlds.get(i).getName(), memoryGraphics);
-            memoryGraphics.drawString(worlds.get(i).getName(), menuWidth + 1 + (count * tabWidth) + (int) ((tabWidth - stringSize.getWidth()) / 2), (tabHeight / 3) + (int) (stringSize.getHeight() / 2));
-            memoryGraphics.setFont(defaultFont);
-            count++;
-        }
-    }
-
-    public final void drawBottomMenu() {
+    public final void draw() {
         bottomMenu.draw();
-    }
-
-    public final void drawMainManu() {
         mainMenu.draw();
     }
 }

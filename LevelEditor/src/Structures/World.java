@@ -1,10 +1,10 @@
 package Structures;
 
-import java.awt.Point;
 import java.io.*;
 import java.util.*;
-import Cache.BackupItem;
-import Cache.Cache;
+import Cache.*;
+import java.awt.*;
+import java.awt.geom.Rectangle2D;
 import static leveleditor.Globals.*;
 
 public final class World {
@@ -248,7 +248,7 @@ public final class World {
         while (location.x > screenWidth - itemSize) {
             moveItems(-1, 0);
         }
-        while (location.y < tabHeight + halfItemSize) {
+        while (location.y < worldTabHeight + halfItemSize) {
             moveItems(0, 1);
         }
         while (location.y > screenHeight - itemSize - bottomMenuHeight) {
@@ -272,7 +272,7 @@ public final class World {
                 for (int j = 0; j < level.size(); j++) {
                     Item item = level.get(j);
                     Point p = item.getLocation();
-                    if (p.x > menuWidth - itemSize && p.x < screenWidth && p.y > tabHeight - itemSize && p.y < screenHeight) {
+                    if (p.x > menuWidth - itemSize && p.x < screenWidth && p.y > worldTabHeight - itemSize && p.y < screenHeight) {
                         levelToDraw.addItemUnchecked(item);
                     }
                 }
@@ -283,7 +283,7 @@ public final class World {
                         for (int j = 0; j < gridItems.size(); j++) {
                             Item item = gridItems.get(j);
                             Point p = item.getLocation();
-                            if (p.x > menuWidth - itemSize && p.x < screenWidth && p.y > tabHeight - itemSize && p.y < screenHeight) {
+                            if (p.x > menuWidth - itemSize && p.x < screenWidth && p.y > worldTabHeight - itemSize && p.y < screenHeight) {
                                 if (drawingGrid) {
                                     levelToDraw.addItemChecked(item);
                                 } else {
@@ -301,6 +301,25 @@ public final class World {
                     }
                 }
             }
+        }
+        Font defaultFont = memoryGraphics.getFontMetrics().getFont();
+        int count = 0;
+        for (int i = 0; i < worlds.size(); i++) {
+            if (currentWorld == i) {
+                memoryGraphics.setColor(Color.lightGray);
+            } else {
+                memoryGraphics.setColor(Color.gray);
+            }
+            memoryGraphics.fillRoundRect(menuWidth + (count * worldTabWidth) + 1, 0, worldTabWidth - 1, worldTabHeight, 10, 20);
+            memoryGraphics.fillRect(menuWidth + (count * worldTabWidth) + 1, worldTabHeight / 2, worldTabWidth - 1, (worldTabHeight / 2) + 1);
+            memoryGraphics.setColor(Color.black);
+            if (worlds.get(i).hasChanges()) {
+                memoryGraphics.setFont(new Font("default", Font.BOLD, defaultFont.getSize()));
+            }
+            Rectangle2D stringSize = memoryGraphics.getFontMetrics().getStringBounds(worlds.get(i).getName(), memoryGraphics);
+            memoryGraphics.drawString(worlds.get(i).getName(), menuWidth + 1 + (count * worldTabWidth) + (int) ((worldTabWidth - stringSize.getWidth()) / 2), (worldTabHeight / 3) + (int) (stringSize.getHeight() / 2));
+            memoryGraphics.setFont(defaultFont);
+            count++;
         }
     }
 }

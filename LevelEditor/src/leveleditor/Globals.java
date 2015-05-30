@@ -15,15 +15,15 @@ public class Globals {
 
     public static int currentWorld = 0, currentLevel = 0, currentItemGroup = 0, currentItemType = 0, currentDrawingMode = 0;
 
-    public static int tabWidth = 0;
+    public static final int worldTabHeight = 25, menuTabHeight = 25;
+    public static int worldTabWidth = 0, menuTabWidth = 0;
     public static final int itemSize = 32;
     public static final int halfItemSize = itemSize / 2;
     public static final int levelOffset = itemSize / 4;
-    public static final int menuWidth = itemSize * 4;
+    public static final int menuWidth = (itemSize * 4) + menuTabHeight;
     public static final int iconSize = 40;
     public static final int iconPadding = 5;
     public static final int bottomMenuHeight = iconSize + (iconPadding * 2);
-    public static final int tabHeight = 25;
     public static ArrayList<World> worlds = new ArrayList();
     public static final ArrayList<String> allWorlds = new ArrayList();
     public static Level gridItems = new Level();

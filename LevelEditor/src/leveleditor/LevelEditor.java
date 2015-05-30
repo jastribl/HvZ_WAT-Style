@@ -2,6 +2,7 @@ package leveleditor;
 
 import UI.*;
 import Structures.*;
+import static UI.MainMenu.numberOfGroups;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -53,12 +54,12 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
         memoryGraphics.fillRect(0, 0, screenWidth, screenHeight);
         if (worlds.size() > 0) {
             worlds.get(currentWorld).draw();
-            uiManager.drawWorldTabs();
-            uiManager.drawBottomMenu();
-            uiManager.drawMainManu();
-            tabWidth = (screenWidth - menuWidth) / worlds.size();
+            uiManager.draw();
+            worldTabWidth = (screenWidth - menuWidth) / worlds.size();
+            menuTabWidth = (screenHeight) / numberOfGroups;
         } else {
-            tabWidth = 0;
+            worldTabWidth = 0;
+            menuTabWidth = 0;
         }
         getContentPane().getGraphics().drawImage(memoryImage, 0, 0, null);
         getContentPane().getGraphics().dispose();
@@ -90,11 +91,19 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
     }
 
     private boolean mouseIsInMain(Point point) {
-        return (point.x > menuWidth && point.x < screenWidth && point.y > tabHeight && point.y < screenHeight - bottomMenuHeight);
+        return (point.x > menuWidth && point.x < screenWidth && point.y > worldTabHeight && point.y < screenHeight - bottomMenuHeight);
     }
 
     private boolean mouseIsInMainMenu(Point point) {
         return (point.x > 0 && point.x < menuWidth && point.y > 0 && point.y < screenHeight);
+    }
+
+    private boolean mouseIsInMenuTabs(Point point) {
+        return (point.x < worldTabHeight);
+    }
+
+    private boolean mouseIsInMenuItems(Point point) {
+        return (point.x > worldTabHeight);
     }
 
     private boolean mouseIsInBottomMenu(Point point) {
@@ -102,7 +111,7 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
     }
 
     private boolean mouseIsInTabs(Point point) {
-        return (point.x > menuWidth && point.x < screenWidth && point.y > 0 && point.y < tabHeight);
+        return (point.x > menuWidth && point.x < screenWidth && point.y > 0 && point.y < worldTabHeight);
     }
 
     @Override
@@ -182,10 +191,14 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
                 } else if (mouseIsInTabs(actualPoint)) {
                     uiManager.selectWorldTabAt(actualPoint);
                 } else if (mouseIsInMainMenu(actualPoint)) {
-                    int itemType = uiManager.getSelectedGroupAndType(actualPoint);
-                    if (itemType >= 0) {
-                        currentItemType = itemType;
-                        currentLevelObject = new Item(currentItemGroup, itemType, snapedPoint, true);
+                    if (mouseIsInMenuTabs(actualPoint)) {
+                        uiManager.selectMenuTabAt(actualPoint);
+                    } else if (mouseIsInMenuItems(actualPoint)) {
+                        int itemType = uiManager.getSelectedGroupAndType(actualPoint);
+                        if (itemType >= 0) {
+                            currentItemType = itemType;
+                            currentLevelObject = new Item(currentItemGroup, itemType, snapedPoint, true);
+                        }
                     }
                 }
             }
@@ -255,8 +268,6 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
                 removeCurrentWorld();
             } else if (key == KeyEvent.VK_L) {
                 worlds.get(currentWorld).findFirstItem();
-            } else if (key == KeyEvent.VK_J) {
-                uiManager.changeMenuTab();
             }
         }
         if (ke.isControlDown()) {
