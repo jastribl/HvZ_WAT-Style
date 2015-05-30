@@ -15,6 +15,8 @@ public class Globals {
 
     public static int currentWorld = 0, currentLevel = 0, currentItemGroup = 0, currentItemType = 0, currentDrawingMode = 0;
 
+    public static final int numberOfMenuGroups = 2;
+    public static final int numberOfBlocks = 9, numberOfSpecials = 4;
     public static final int worldTabHeight = 25, menuTabHeight = 25;
     public static int worldTabWidth = 0, menuTabWidth = 0;
     public static final int itemSize = 32;

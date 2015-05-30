@@ -4,9 +4,9 @@ import java.awt.Point;
 
 public final class BackupItem {
 
-    public final int backupType, level, group, type, arrayIndex;
+    private final int backupType, level, group, type, arrayIndex;
     private int repeats;
-    public final Point location;
+    private final Point location;
 
     public BackupItem(int backupTypeG, int levelG, int groupG, int typeG, int arrayIndexG, int repeatsG, Point locationG) {
         backupType = backupTypeG;
@@ -18,8 +18,32 @@ public final class BackupItem {
         location = (Point) locationG.clone();
     }
 
+    public final int getBackupType() {
+        return backupType;
+    }
+
+    public final int getLevel() {
+        return level;
+    }
+
+    public final int getGroup() {
+        return group;
+    }
+
+    public final int getType() {
+        return type;
+    }
+
+    public final int getArrayIndex() {
+        return arrayIndex;
+    }
+
     public final int getRepeats() {
         return repeats;
+    }
+
+    public final Point getLocation() {
+        return location;
     }
 
     public final void setRepeats(int repeatsG) {

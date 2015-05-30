@@ -8,8 +8,7 @@ import static leveleditor.Globals.*;
 
 public class MainMenu {
 
-    public static final int numberOfGroups = 2;
-    private static final int numberOfBlocks = 9, numberOfSpecials = 4;
+    private final String[] groupNames = new String[]{"Blocks", "Specials"};
     public static ArrayList<Image[]> itemImages = new ArrayList();
     private final ArrayList<Item[]> menuItems = new ArrayList();
 
@@ -25,13 +24,24 @@ public class MainMenu {
             } catch (Exception e) {
             }
         }
-        menuItems.add(new Item[numberOfSpecials]);
-        itemImages.add(new Image[numberOfSpecials]);
-        for (int special = 0; special < numberOfSpecials; special++) {
-            menuItems.get(1)[special] = new Item(1, special, menuTabHeight + (itemSize * ((special % 3) + 1)), itemSize * ((special / 3) + 1), true);
+//        menuItems.add(new Item[numberOfSpecials]);
+//        itemImages.add(new Image[numberOfSpecials]);
+//        for (int special = 0; special < numberOfSpecials; special++) {
+//            menuItems.get(1)[special] = new Item(1, special, menuTabHeight + (itemSize * ((special % 3) + 1)), itemSize * ((special / 3) + 1), true);
+//            try {
+//                itemImages.get(1)[special] = new ImageIcon(getClass().getResource("/media/special" + special + ".png")).getImage().getScaledInstance(itemSize, itemSize, Image.SCALE_SMOOTH);
+//                imageTracker.addImage(itemImages.get(1)[special], 0);
+//            } catch (Exception e) {
+//            }
+//        }
+        menuItems.add(new Item[100]);
+        itemImages.add(new Image[100]);
+
+        for (int i = 0; i < 100; i++) {
+            menuItems.get(1)[i] = new Item(1, 0, menuTabHeight + (itemSize * ((i % 3) + 1)), itemSize * ((i / 3) + 1), true);
             try {
-                itemImages.get(1)[special] = new ImageIcon(getClass().getResource("/media/special" + special + ".png")).getImage().getScaledInstance(itemSize, itemSize, Image.SCALE_SMOOTH);
-                imageTracker.addImage(itemImages.get(1)[special], 0);
+                itemImages.get(1)[i] = new ImageIcon(getClass().getResource("/media/block" + 0 + ".png")).getImage().getScaledInstance(itemSize, itemSize, Image.SCALE_SMOOTH);
+                imageTracker.addImage(itemImages.get(1)[i], 0);
             } catch (Exception e) {
             }
         }
@@ -72,7 +82,7 @@ public class MainMenu {
         for (Item item : menuItems.get(currentItemGroup)) {
             item.draw();
         }
-        for (int i = 0; i < numberOfGroups; i++) {
+        for (int i = 0; i < numberOfMenuGroups; i++) {
             if (currentItemGroup == i) {
                 memoryGraphics.setColor(Color.darkGray);
             } else {
@@ -80,9 +90,6 @@ public class MainMenu {
             }
             memoryGraphics.fillRoundRect(0, i * menuTabWidth, menuTabHeight, menuTabWidth - 1, 20, 20);
             memoryGraphics.fillRect(menuTabHeight / 2, i * menuTabWidth, (menuTabHeight / 2) + 1, menuTabWidth - 1);
-//            memoryGraphics.setColor(Color.black);
-//            Rectangle2D stringSize = memoryGraphics.getFontMetrics().getStringBounds(worlds.get(i).getName(), memoryGraphics);
-//            memoryGraphics.drawString(worlds.get(i).getName(), menuWidth + 1 + (i * worldTabWidth) + (int) ((worldTabWidth - stringSize.getWidth()) / 2), (worldTabHeight / 3) + (int) (stringSize.getHeight() / 2));
         }
     }
 }
