@@ -29,7 +29,7 @@ public final class World {
                         type = reader.nextInt();
                         Point point = snapToGrid(new Point((reader.nextInt() * halfItemSize) + xShift, (reader.nextInt() * (itemSize / 8)) + yShift));
                         int transparency = reader.nextInt();
-                        level.addItemUnchecked(new Item(type, point, true));
+                        level.addItemUnchecked(new Item(0, type, point, true));//need to save group
                     }
                     world.add(level);
                 }
@@ -93,7 +93,7 @@ public final class World {
     public final void addToCurrentLevelChecked(Item item) {
         int index = get(currentLevel).addItemChecked(item);
         if (index != -1) {
-            undo.add(new BackupItem(ADD, currentLevel, item.getType(), index, 1, item.getLocation()));
+            undo.add(new BackupItem(ADD, currentLevel, item.getGroup(), item.getType(), index, 1, item.getLocation()));
             isChanged = true;
             redo.clear();
         }
@@ -114,7 +114,7 @@ public final class World {
             undo.add(removedItem);
             isChanged = true;
             redo.clear();
-            return new Item(removedItem.type, removedItem.location, false);
+            return new Item(removedItem.group, removedItem.type, removedItem.location, false);
         }
         return null;
     }
@@ -172,8 +172,8 @@ public final class World {
             locateBackup(source.peek());
             for (int i = 0; i < number; i++) {
                 backup = source.peek();
-                other.add(new BackupItem(backup.backupType, backup.level, backup.type, backup.arrayIndex, 1, backup.location));
-                Item newItem = new Item(backup.type, backup.location, false);
+                other.add(new BackupItem(backup.backupType, backup.level, backup.group, backup.type, backup.arrayIndex, 1, backup.location));
+                Item newItem = new Item(backup.group, backup.type, backup.location, false);
                 if (backup.backupType == (type == UNDO ? REMOVE : ADD)) {
                     get(currentLevel).addItemUncheckedAt(newItem, backup.arrayIndex);
                 } else {

@@ -13,7 +13,7 @@ public class Globals {
     public static int screenWidth = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth();
     public static int screenHeight = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight();
 
-    public static int currentWorld = 0, currentLevel = 0, currentItemType = 0, currentDrawingMode = 0;
+    public static int currentWorld = 0, currentLevel = 0, currentItemGroup = 0, currentItemType = 0, currentDrawingMode = 0;
 
     public static int tabWidth = 0;
     public static final int itemSize = 32;
@@ -23,11 +23,9 @@ public class Globals {
     public static final int iconSize = 40;
     public static final int iconPadding = 5;
     public static final int bottomMenuHeight = iconSize + (iconPadding * 2);
-    public static final int numberOfMenuItems = 9;
     public static final int tabHeight = 25;
     public static ArrayList<World> worlds = new ArrayList();
     public static final ArrayList<String> allWorlds = new ArrayList();
-    public static Image itemImages[] = new Image[numberOfMenuItems];
     public static Level gridItems = new Level();
     public static Item currentLevelObject = null;
     public static Point gridStart = null, gridEnd = null;
@@ -130,7 +128,7 @@ public class Globals {
                 int y = gridStart.y + (levelOffset * i);
                 int xShift = (i % 2 == 0 ? 0 : halfItemSize);
                 for (int j = xStart; j < xEnd; j++) {
-                    gridItems.addItemUnchecked(new Item(currentItemType, gridStart.x + (itemSize * j) + xShift, y, true));
+                    gridItems.addItemUnchecked(new Item(currentItemGroup, currentItemType, gridStart.x + (itemSize * j) + xShift, y, true));
                 }
             }
         } else if (currentDrawingMode == DIAMOND) {
@@ -149,7 +147,7 @@ public class Globals {
                 for (int j = 1; j != topRightDiagonal + jAdd; j += jAdd) {
                     point.x += jAdd * halfItemSize;
                     point.y += jAdd * levelOffset;
-                    gridItems.addItemUnchecked(new Item(currentItemType, point, true));
+                    gridItems.addItemUnchecked(new Item(currentItemGroup, currentItemType, point, true));
                 }
             }
         }

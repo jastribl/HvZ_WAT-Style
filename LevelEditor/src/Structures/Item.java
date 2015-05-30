@@ -1,23 +1,25 @@
 package Structures;
 
+import static UI.MainMenu.itemImages;
 import java.awt.*;
 import static leveleditor.Globals.*;
 
 public final class Item implements Comparable {
 
-    private final int type;
+    private final int group, type;
     private Point location;
 
-    public Item(int typeG, Point locationG, boolean fixLocation) {
+    public Item(int groupG, int typeG, Point locationG, boolean fixLocation) {
         type = typeG;
+        group = groupG;
         location = (Point) locationG.clone();
         if (fixLocation) {
             fixLocation();
         }
     }
 
-    public Item(int typeGiven, int x, int y, boolean fixLocations) {
-        this(typeGiven, new Point(x, y), fixLocations);
+    public Item(int groupG, int typeGiven, int x, int y, boolean fixLocations) {
+        this(groupG, typeGiven, new Point(x, y), fixLocations);
     }
 
     private void fixLocation() {
@@ -37,6 +39,10 @@ public final class Item implements Comparable {
         return location.y;
     }
 
+    public final int getGroup() {
+        return group;
+    }
+
     public final int getType() {
         return type;
     }
@@ -52,7 +58,7 @@ public final class Item implements Comparable {
     }
 
     public final void draw() {
-        memoryGraphics.drawImage(itemImages[type], location.x, location.y, null);
+        memoryGraphics.drawImage(itemImages.get(group)[type], location.x, location.y, null);
     }
 
     public final void drawFaded() {

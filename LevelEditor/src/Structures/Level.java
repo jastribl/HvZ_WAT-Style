@@ -73,7 +73,7 @@ public final class Level {
                 comp = level.get(i).compareTo(item);
                 if (comp == 0) {
                     Item toBeReturned = level.remove(i);
-                    return new BackupItem(REMOVE, currentLevel, toBeReturned.getType(), i, 1, toBeReturned.getLocation());
+                    return new BackupItem(REMOVE, currentLevel, toBeReturned.getGroup(), toBeReturned.getType(), i, 1, toBeReturned.getLocation());
                 } else if (comp > 0) {
                     return null;
                 }

@@ -14,7 +14,7 @@ public class UiManager {
         bottomMenu.changePaintingMode(direction);
     }
 
-    public final int getSelectedMenuItem(Point point) {
+    public final int getSelectedGroupAndType(Point point) {
         return mainMenu.getItemAt(point);
     }
 
@@ -30,11 +30,15 @@ public class UiManager {
         rightClickManager.closeAll();
     }
 
+    public void changeMenuTab() {
+        mainMenu.changeTab();
+    }
+
     public final void showTabRightClickMenu(Point point) {
         rightClickManager.showTabMenu(point);
     }
 
-    public final void drawTabs() {
+    public final void drawWorldTabs() {
         Font defaultFont = memoryGraphics.getFontMetrics().getFont();
         int count = 0;
         for (int i = 0; i < worlds.size(); i++) {
