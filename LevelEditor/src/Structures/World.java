@@ -1,10 +1,10 @@
 package Structures;
 
-import java.io.*;
-import java.util.*;
 import Cache.*;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
+import java.io.*;
+import java.util.*;
 import static leveleditor.Globals.*;
 
 public final class World {
@@ -114,7 +114,7 @@ public final class World {
             undo.add(removedItem);
             isChanged = true;
             redo.clear();
-            return new Item(removedItem.group, removedItem.type, removedItem.location, false);
+            return new Item(removedItem.getGroup(), removedItem.getType(), removedItem.getLocation(), false);
         }
         return null;
     }
@@ -167,17 +167,17 @@ public final class World {
             return;
         }
         BackupItem backup = source.peek();
-        if (backup != null && (backup.backupType == ADD || backup.backupType == REMOVE)) {
+        if (backup != null && (backup.getBackupType() == ADD || backup.getBackupType() == REMOVE)) {
             int number = backup.getRepeats();
             locateBackup(source.peek());
             for (int i = 0; i < number; i++) {
                 backup = source.peek();
-                other.add(new BackupItem(backup.backupType, backup.level, backup.group, backup.type, backup.arrayIndex, 1, backup.location));
-                Item newItem = new Item(backup.group, backup.type, backup.location, false);
-                if (backup.backupType == (type == UNDO ? REMOVE : ADD)) {
-                    get(currentLevel).addItemUncheckedAt(newItem, backup.arrayIndex);
+                other.add(new BackupItem(backup.getBackupType(), backup.getLevel(), backup.getGroup(), backup.getType(), backup.getArrayIndex(), 1, backup.getLocation()));
+                Item newItem = new Item(backup.getGroup(), backup.getType(), backup.getLocation(), false);
+                if (backup.getBackupType() == (type == UNDO ? REMOVE : ADD)) {
+                    get(currentLevel).addItemUncheckedAt(newItem, backup.getArrayIndex());
                 } else {
-                    get(currentLevel).removeItemUncheckedAt(backup.arrayIndex);
+                    get(currentLevel).removeItemUncheckedAt(backup.getArrayIndex());
                 }
                 source.pop();
             }
@@ -189,14 +189,14 @@ public final class World {
     }
 
     private void locateBackup(BackupItem backup) {
-        while (backup.level < currentLevel) {
+        while (backup.getLevel() < currentLevel) {
             chengleLevel(DOWN);
         }
-        while (backup.level > currentLevel) {
+        while (backup.getLevel() > currentLevel) {
             chengleLevel(UP);
         }
         get(currentLevel).setVisible(true);
-        findLocation(backup.location);
+        findLocation(backup.getLocation());
     }
 
     public final void shiftItems(int x, int y) {
@@ -206,12 +206,12 @@ public final class World {
             }
         }
         for (BackupItem item : undo.getCache()) {
-            if (item.backupType == ADD || item.backupType == REMOVE) {
+            if (item.getBackupType() == ADD || item.getBackupType() == REMOVE) {
                 item.shiftLocation(x, y);
             }
         }
         for (BackupItem item : redo.getCache()) {
-            if (item.backupType == ADD || item.backupType == REMOVE) {
+            if (item.getBackupType() == ADD || item.getBackupType() == REMOVE) {
                 item.shiftLocation(x, y);
             }
         }

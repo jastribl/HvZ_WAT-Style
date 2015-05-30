@@ -1,9 +1,8 @@
 package Structures;
 
-import java.util.*;
 import Cache.BackupItem;
-import static leveleditor.Globals.REMOVE;
-import static leveleditor.Globals.currentLevel;
+import java.util.ArrayList;
+import static leveleditor.Globals.*;
 
 public final class Level {
 

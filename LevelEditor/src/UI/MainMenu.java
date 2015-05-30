@@ -8,8 +8,7 @@ import static leveleditor.Globals.*;
 
 public class MainMenu {
 
-    public static final int numberOfGroups = 2;
-    private static final int numberOfBlocks = 9, numberOfSpecials = 4;
+    private final String[] groupNames = new String[]{"Blocks", "Specials"};
     public static ArrayList<Image[]> itemImages = new ArrayList();
     private final ArrayList<Item[]> menuItems = new ArrayList();
 
@@ -72,7 +71,7 @@ public class MainMenu {
         for (Item item : menuItems.get(currentItemGroup)) {
             item.draw();
         }
-        for (int i = 0; i < numberOfGroups; i++) {
+        for (int i = 0; i < numberOfMenuGroups; i++) {
             if (currentItemGroup == i) {
                 memoryGraphics.setColor(Color.darkGray);
             } else {
@@ -80,9 +79,6 @@ public class MainMenu {
             }
             memoryGraphics.fillRoundRect(0, i * menuTabWidth, menuTabHeight, menuTabWidth - 1, 20, 20);
             memoryGraphics.fillRect(menuTabHeight / 2, i * menuTabWidth, (menuTabHeight / 2) + 1, menuTabWidth - 1);
-//            memoryGraphics.setColor(Color.black);
-//            Rectangle2D stringSize = memoryGraphics.getFontMetrics().getStringBounds(worlds.get(i).getName(), memoryGraphics);
-//            memoryGraphics.drawString(worlds.get(i).getName(), menuWidth + 1 + (i * worldTabWidth) + (int) ((worldTabWidth - stringSize.getWidth()) / 2), (worldTabHeight / 3) + (int) (stringSize.getHeight() / 2));
         }
     }
 }
