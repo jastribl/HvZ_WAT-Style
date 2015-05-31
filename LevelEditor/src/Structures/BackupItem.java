@@ -1,4 +1,4 @@
-package Cache;
+package Structures;
 
 import java.awt.Point;
 

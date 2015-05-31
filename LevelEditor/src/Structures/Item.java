@@ -4,27 +4,19 @@ import static UI.MainMenu.itemImages;
 import java.awt.*;
 import static leveleditor.Globals.*;
 
-public final class Item implements Comparable {
+public class Item implements Comparable {
 
     private final int group, type;
     private Point location;
 
-    public Item(int groupG, int typeG, Point locationG, boolean fixLocation) {
+    public Item(int groupG, int typeG, Point locationG) {
         type = typeG;
         group = groupG;
         location = (Point) locationG.clone();
-        if (fixLocation) {
-            fixLocation();
-        }
     }
 
-    public Item(int groupG, int typeGiven, int x, int y, boolean fixLocations) {
-        this(groupG, typeGiven, new Point(x, y), fixLocations);
-    }
-
-    private void fixLocation() {
-        location.x -= halfItemSize;
-        location.y -= halfItemSize;
+    public Item(int groupG, int typeGiven, int x, int y) {
+        this(groupG, typeGiven, new Point(x, y));
     }
 
     public final Point getLocation() {
@@ -47,9 +39,8 @@ public final class Item implements Comparable {
         return type;
     }
 
-    public final void setLocationAndFix(Point locationG) {
+    public final void setLocation(Point locationG) {
         location = locationG;
-        fixLocation();
     }
 
     public final void shiftLocation(int xShift, int yShift) {
@@ -58,7 +49,7 @@ public final class Item implements Comparable {
     }
 
     public final void draw() {
-        memoryGraphics.drawImage(itemImages.get(group)[type], location.x, location.y, null);
+        memoryGraphics.drawImage(itemImages.get(group)[type], location.x - halfItemSize, location.y - halfItemSize, null);
     }
 
     public final void drawFaded() {

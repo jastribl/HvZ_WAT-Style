@@ -1,6 +1,7 @@
 package leveleditor;
 
 import Structures.*;
+import UI.BottomMenu;
 import java.awt.*;
 import java.io.*;
 import java.util.*;
@@ -16,26 +17,38 @@ public class Globals {
     public static int currentWorld = 0, currentLevel = 0, currentItemGroup = 0, currentItemType = 0, currentDrawingMode = 0;
 
     public static final int numberOfMenuGroups = 2;
-    public static final int numberOfBlocks = 9, numberOfSpecials = 4;
+    public static final int numberOfBlocks = 9, numberOfSpecials = 1;
+
     public static final int worldTabHeight = 25, menuTabHeight = 25;
     public static int worldTabWidth = 0, menuTabWidth = 0;
+
     public static final int itemSize = 32;
     public static final int halfItemSize = itemSize / 2;
     public static final int levelOffset = itemSize / 4;
+
     public static final int menuWidth = (itemSize * 4) + menuTabHeight;
+
     public static final int iconSize = 40;
     public static final int iconPadding = 5;
+
     public static final int bottomMenuHeight = iconSize + (iconPadding * 2);
+
     public static ArrayList<World> worlds = new ArrayList();
     public static final ArrayList<String> allWorlds = new ArrayList();
     public static Level gridItems = new Level();
+
     public static Item currentLevelObject = null;
     public static Point gridStart = null, gridEnd = null;
+
     public static final int UP = 0, DOWN = 1;
     public static final int ADD = 0, REMOVE = 1;
     public static final int PAINT = 0, POINT = 1, RECTANGLE = 2, DIAMOND = 3;
-    public static final int UNDO = 0, REDO = 1;
+    public static final int BLOCKS = 0, SPECIALS = 1;
+    public static final int PORTAL = 0;
+
     public static boolean drawingGrid = true;
+
+    public static final BottomMenu bottomMenu = new BottomMenu();
 
     public static final Point snapToGrid(Point p) {
         int y = p.y / levelOffset * levelOffset + halfItemSize;
@@ -130,7 +143,7 @@ public class Globals {
                 int y = gridStart.y + (levelOffset * i);
                 int xShift = (i % 2 == 0 ? 0 : halfItemSize);
                 for (int j = xStart; j < xEnd; j++) {
-                    gridItems.addItemUnchecked(new Item(currentItemGroup, currentItemType, gridStart.x + (itemSize * j) + xShift, y, true));
+                    gridItems.addItemUnchecked(new Item(currentItemGroup, currentItemType, gridStart.x + (itemSize * j) + xShift, y));
                 }
             }
         } else if (currentDrawingMode == DIAMOND) {
@@ -149,7 +162,7 @@ public class Globals {
                 for (int j = 1; j != topRightDiagonal + jAdd; j += jAdd) {
                     point.x += jAdd * halfItemSize;
                     point.y += jAdd * levelOffset;
-                    gridItems.addItemUnchecked(new Item(currentItemGroup, currentItemType, point, true));
+                    gridItems.addItemUnchecked(new Item(currentItemGroup, currentItemType, point));
                 }
             }
         }

@@ -1,6 +1,5 @@
 package Structures;
 
-import Cache.*;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.io.*;
@@ -13,6 +12,7 @@ public final class World {
     private String name;
     private final Cache undo = new Cache(), redo = new Cache();
     private boolean isChanged = false;
+    private final int UNDO = 0, REDO = 1;
 
     public World(String nameGiven, boolean load) {
         name = nameGiven;
@@ -30,7 +30,7 @@ public final class World {
                         type = reader.nextInt();
                         Point point = snapToGrid(new Point((reader.nextInt() * halfItemSize) + xShift, (reader.nextInt() * (itemSize / 8)) + yShift));
                         int transparency = reader.nextInt();
-                        level.addItemUnchecked(new Item(group, type, point, true));//need to save group
+                        level.addItemUnchecked(new Item(group, type, point));
                     }
                     world.add(level);
                 }
@@ -115,7 +115,7 @@ public final class World {
             undo.add(removedItem);
             isChanged = true;
             redo.clear();
-            return new Item(removedItem.getGroup(), removedItem.getType(), removedItem.getLocation(), false);
+            return new Item(removedItem.getGroup(), removedItem.getType(), removedItem.getLocation());
         }
         return null;
     }
@@ -156,7 +156,15 @@ public final class World {
         }
     }
 
-    public final void Do(int type) {
+    public final void undo() {
+        Do(UNDO);
+    }
+
+    public final void redo() {
+        Do(REDO);
+    }
+
+    private void Do(int type) {
         Cache source, other;
         if (type == UNDO) {
             source = undo;
@@ -174,7 +182,7 @@ public final class World {
             for (int i = 0; i < number; i++) {
                 backup = source.peek();
                 other.add(new BackupItem(backup.getBackupType(), backup.getLevel(), backup.getGroup(), backup.getType(), backup.getArrayIndex(), 1, backup.getLocation()));
-                Item newItem = new Item(backup.getGroup(), backup.getType(), backup.getLocation(), false);
+                Item newItem = new Item(backup.getGroup(), backup.getType(), backup.getLocation());
                 if (backup.getBackupType() == (type == UNDO ? REMOVE : ADD)) {
                     get(currentLevel).addItemUncheckedAt(newItem, backup.getArrayIndex());
                 } else {
