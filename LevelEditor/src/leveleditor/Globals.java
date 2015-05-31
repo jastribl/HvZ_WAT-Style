@@ -14,7 +14,7 @@ public class Globals {
     public static int screenWidth = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth();
     public static int screenHeight = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight();
 
-    public static int currentWorld = 0, currentLevel = 0, currentItemGroup = 0, currentItemType = 0, currentDrawingMode = 0;
+    public static int currentWorld = 0, currentLevel = 0, currentGroup = 0, currentType = 0, currentDrawingMode = 0;
 
     public static final int numberOfMenuGroups = 2;
     public static final int numberOfBlocks = 9, numberOfSpecials = 1;
@@ -22,11 +22,11 @@ public class Globals {
     public static final int worldTabHeight = 25, menuTabHeight = 25;
     public static int worldTabWidth = 0, menuTabWidth = 0;
 
-    public static final int itemSize = 32;
-    public static final int halfItemSize = itemSize / 2;
-    public static final int levelOffset = itemSize / 4;
+    public static final int objectSize = 32;
+    public static final int halfObjectSize = objectSize / 2;
+    public static final int levelOffset = objectSize / 4;
 
-    public static final int menuWidth = (itemSize * 4) + menuTabHeight;
+    public static final int menuWidth = (objectSize * 4) + menuTabHeight;
 
     public static final int iconSize = 40;
     public static final int iconPadding = 5;
@@ -35,15 +35,15 @@ public class Globals {
 
     public static ArrayList<World> worlds = new ArrayList();
     public static final ArrayList<String> allWorlds = new ArrayList();
-    public static Level gridItems = new Level();
+    public static Level grid = new Level();
 
-    public static Item currentLevelObject = null;
+    public static BaseObject currentLevelObject = null;
     public static Point gridStart = null, gridEnd = null;
 
     public static final int UP = 0, DOWN = 1;
     public static final int ADD = 0, REMOVE = 1;
     public static final int PAINT = 0, POINT = 1, RECTANGLE = 2, DIAMOND = 3;
-    public static final int BLOCKS = 0, SPECIALS = 1;
+    public static final int BLOCK = 0, SPECIAL = 1;
     public static final int PORTAL = 0;
 
     public static boolean drawingGrid = true;
@@ -51,11 +51,11 @@ public class Globals {
     public static final BottomMenu bottomMenu = new BottomMenu();
 
     public static final Point snapToGrid(Point p) {
-        int y = p.y / levelOffset * levelOffset + halfItemSize;
+        int y = p.y / levelOffset * levelOffset + halfObjectSize;
         if ((y / levelOffset) % 2 == 0) {
-            return new Point(((p.x + halfItemSize) / itemSize * itemSize), y);
+            return new Point(((p.x + halfObjectSize) / objectSize * objectSize), y);
         } else {
-            return new Point((p.x / itemSize * itemSize) + halfItemSize, y);
+            return new Point((p.x / objectSize * objectSize) + halfObjectSize, y);
         }
     }
 
@@ -120,9 +120,9 @@ public class Globals {
     }
 
     public static final void populateGrid() {
-        gridItems.clear();
+        grid.clear();
         if (currentDrawingMode == RECTANGLE) {
-            int xStop = (gridEnd.x - gridStart.x) / itemSize;
+            int xStop = (gridEnd.x - gridStart.x) / objectSize;
             int yStop = (gridEnd.y - gridStart.y) / levelOffset;
             int xStart, xEnd, yStart, yEnd;
             if (gridEnd.x > gridStart.x) {
@@ -141,28 +141,28 @@ public class Globals {
             }
             for (int i = yStart; i < yEnd; i++) {
                 int y = gridStart.y + (levelOffset * i);
-                int xShift = (i % 2 == 0 ? 0 : halfItemSize);
+                int xShift = (i % 2 == 0 ? 0 : halfObjectSize);
                 for (int j = xStart; j < xEnd; j++) {
-                    gridItems.addItemUnchecked(new Item(currentItemGroup, currentItemType, gridStart.x + (itemSize * j) + xShift, y));
+                    grid.addUnchecked(new BaseObject(currentGroup, currentType, gridStart.x + (objectSize * j) + xShift, y));
                 }
             }
         } else if (currentDrawingMode == DIAMOND) {
             Point top = (gridStart.y < gridEnd.y ? gridStart : gridEnd);
             Point bottom = (gridStart.y >= gridEnd.y ? gridStart : gridEnd);
             int heightInHalves = (bottom.y - top.y) / levelOffset;
-            int widthInHalves = (top.x - bottom.x) / halfItemSize;
+            int widthInHalves = (top.x - bottom.x) / halfObjectSize;
             int topRightDiagonal = (heightInHalves - widthInHalves) / 2;
             int bottomRightDiagonal = (heightInHalves - topRightDiagonal);
             Point point = new Point();
             int iAdd = (bottomRightDiagonal > 0 ? 1 : -1);
             int jAdd = (topRightDiagonal > 0 ? 1 : -1);
             for (int i = 1; i != bottomRightDiagonal + iAdd; i += iAdd) {
-                point.x = top.x - (i * halfItemSize);
+                point.x = top.x - (i * halfObjectSize);
                 point.y = top.y + (i * levelOffset);
                 for (int j = 1; j != topRightDiagonal + jAdd; j += jAdd) {
-                    point.x += jAdd * halfItemSize;
+                    point.x += jAdd * halfObjectSize;
                     point.y += jAdd * levelOffset;
-                    gridItems.addItemUnchecked(new Item(currentItemGroup, currentItemType, point));
+                    grid.addUnchecked(new BaseObject(currentGroup, currentType, point));
                 }
             }
         }

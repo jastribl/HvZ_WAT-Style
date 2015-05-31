@@ -1,6 +1,6 @@
 package UI;
 
-import Structures.Item;
+import Structures.*;
 import java.awt.*;
 import java.util.ArrayList;
 import javax.swing.*;
@@ -9,30 +9,28 @@ import static leveleditor.Globals.*;
 public class MainMenu {
 
     private final String[] groupNames = new String[]{"Blocks", "Specials"};
-    public static ArrayList<Image[]> itemImages = new ArrayList();
-    private final ArrayList<Item[]> menuItems = new ArrayList();
+    public static ArrayList<Image[]> ObjectImages = new ArrayList();
+    private final ArrayList<BaseObject[]> menuObjects = new ArrayList();
 
     public MainMenu() {
         MediaTracker imageTracker = new MediaTracker(new JFrame());
-        menuItems.add(new Item[numberOfBlocks]);
-        itemImages.add(new Image[numberOfBlocks]);
-        for (int item = 0; item < numberOfBlocks; item++) {
-            menuItems.get(0)[item] = new Item(0, item, menuTabHeight + (itemSize * ((item % 3) + 1)), itemSize * ((item / 3) + 1));
+        menuObjects.add(new BaseObject[numberOfBlocks]);
+        ObjectImages.add(new Image[numberOfBlocks]);
+        for (int i = 0; i < numberOfBlocks; i++) {
+            menuObjects.get(0)[i] = new BaseObject(0, i, menuTabHeight + (objectSize * ((i % 3) + 1)), objectSize * ((i / 3) + 1));
             try {
-                itemImages.get(0)[item] = new ImageIcon(getClass().getResource("/media/block" + item + ".png")).getImage().getScaledInstance(itemSize, itemSize, Image.SCALE_SMOOTH);
-                imageTracker.addImage(itemImages.get(0)[item], 0);
+                ObjectImages.get(0)[i] = new ImageIcon(getClass().getResource("/media/block" + i + ".png")).getImage().getScaledInstance(objectSize, objectSize, Image.SCALE_SMOOTH);
+                imageTracker.addImage(ObjectImages.get(0)[i], 0);
             } catch (Exception e) {
             }
         }
-        menuItems.add(new Item[numberOfSpecials]);
-        itemImages.add(new Image[numberOfSpecials]);
-        for (int special = 0; special < numberOfSpecials; special++) {
-            menuItems.get(1)[special] = new Item(1, special, menuTabHeight + (itemSize * ((special % 3) + 1)), itemSize * ((special / 3) + 1));
-            try {
-                itemImages.get(1)[special] = new ImageIcon(getClass().getResource("/media/special" + special + ".png")).getImage().getScaledInstance(itemSize, itemSize, Image.SCALE_SMOOTH);
-                imageTracker.addImage(itemImages.get(1)[special], 0);
-            } catch (Exception e) {
-            }
+        menuObjects.add(new BaseObject[numberOfSpecials]);
+        ObjectImages.add(new Image[numberOfSpecials]);
+        menuObjects.get(1)[0] = new BaseObject(1, 0, menuTabHeight + (objectSize * ((0 % 3) + 1)), objectSize * ((0 / 3) + 1));
+        try {
+            ObjectImages.get(1)[0] = new ImageIcon(getClass().getResource("/media/special0.png")).getImage().getScaledInstance(objectSize, objectSize, Image.SCALE_SMOOTH);
+            imageTracker.addImage(ObjectImages.get(1)[0], 0);
+        } catch (Exception e) {
         }
         try {
             imageTracker.waitForID(0);
@@ -40,30 +38,30 @@ public class MainMenu {
         }
     }
 
-    public final int getItemAt(Point point) {
-        for (Item menuItem : menuItems.get(currentItemGroup)) {
-            Rectangle rectangle = new Rectangle(menuItem.getX(), menuItem.getY(), itemSize, itemSize);
+    public final int getObjecTypetAt(Point point) {
+        for (BaseObject menuObject : menuObjects.get(currentGroup)) {
+            Rectangle rectangle = new Rectangle(menuObject.getX(), menuObject.getY(), objectSize, objectSize);
             if (rectangle.contains(point)) {
-                return menuItem.getType();
+                return menuObject.getType();
             }
         }
         return -1;
     }
 
     public final void scroll(int amount) {
-        if ((menuItems.get(currentItemGroup)[0].getY() - amount > 0 || menuItems.get(currentItemGroup)[menuItems.get(currentItemGroup).length - 1].getY() - amount > screenHeight) && (menuItems.get(currentItemGroup)[menuItems.get(currentItemGroup).length - 1].getY() - amount + itemSize < screenHeight || menuItems.get(currentItemGroup)[0].getY() - amount < 0)) {
-            for (Item item : menuItems.get(currentItemGroup)) {
-                item.shiftLocation(0, -amount);
+        if ((menuObjects.get(currentGroup)[0].getY() - amount > 0 || menuObjects.get(currentGroup)[menuObjects.get(currentGroup).length - 1].getY() - amount > screenHeight) && (menuObjects.get(currentGroup)[menuObjects.get(currentGroup).length - 1].getY() - amount + objectSize < screenHeight || menuObjects.get(currentGroup)[0].getY() - amount < 0)) {
+            for (BaseObject menuObject : menuObjects.get(currentGroup)) {
+                menuObject.shiftLocation(0, -amount);
             }
         }
     }
 
     public void selectMenuTabAt(Point point) {
-        currentItemGroup = point.y / menuTabWidth;
-        if (currentItemGroup == SPECIALS) {
+        currentGroup = point.y / menuTabWidth;
+        if (currentGroup == SPECIAL) {
             bottomMenu.setDrawingMode(POINT);
         }
-        currentItemType = 0;
+        currentType = 0;
     }
 
     public final void draw() {
@@ -71,11 +69,11 @@ public class MainMenu {
         memoryGraphics.fillRect(0, 0, menuWidth, screenHeight);
         memoryGraphics.setColor(Color.white);
         memoryGraphics.drawLine(menuWidth, 0, menuWidth, screenHeight);
-        for (Item item : menuItems.get(currentItemGroup)) {
-            item.draw();
+        for (BaseObject object : menuObjects.get(currentGroup)) {
+            object.draw();
         }
         for (int i = 0; i < numberOfMenuGroups; i++) {
-            if (currentItemGroup == i) {
+            if (currentGroup == i) {
                 memoryGraphics.setColor(Color.darkGray);
             } else {
                 memoryGraphics.setColor(Color.lightGray);

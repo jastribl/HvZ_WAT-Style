@@ -3,7 +3,7 @@ package Structures;
 import java.awt.Point;
 import static leveleditor.Globals.*;
 
-public class Portal extends Item {
+public class Portal extends BaseObject {
 
     private String destination;
 

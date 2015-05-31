@@ -2,20 +2,20 @@ package Structures;
 
 import java.awt.Point;
 
-public final class BackupItem {
+public final class BackupObject {
 
     private final int backupType, level, group, type, arrayIndex;
     private int repeats;
     private final Point location;
 
-    public BackupItem(int backupTypeG, int levelG, int groupG, int typeG, int arrayIndexG, int repeatsG, Point locationG) {
+    public BackupObject(int backupTypeG, int levelG, int arrayIndexG, int repeatsG, BaseObject objectG) {
         backupType = backupTypeG;
         level = levelG;
-        group = groupG;
-        type = typeG;
+        group = objectG.getGroup();
+        type = objectG.getType();
         arrayIndex = arrayIndexG;
         repeats = repeatsG;
-        location = (Point) locationG.clone();
+        location = (Point) objectG.getLocation().clone();
     }
 
     public final int getBackupType() {
