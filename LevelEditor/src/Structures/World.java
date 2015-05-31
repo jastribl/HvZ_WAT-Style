@@ -1,5 +1,7 @@
 package Structures;
 
+import Cache.BackupObject;
+import Cache.Cache;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.io.*;
@@ -30,7 +32,15 @@ public final class World {
                         type = reader.nextInt();
                         Point point = snapToGrid(new Point((reader.nextInt() * halfObjectSize) + xShift, (reader.nextInt() * (objectSize / 8)) + yShift));
                         int transparency = reader.nextInt();
-                        level.addUnchecked(new BaseObject(group, type, point));
+                        BaseObject newObject = null;
+                        if (group == BLOCK) {
+                            newObject = new Block(group, type, point);
+                        } else if (group == SPECIAL) {
+                            if (type == PORTAL) {
+                                newObject = new Portal(group, type, point, "some text"); //need to save in file somehow
+                            }
+                        }
+                        level.addUnchecked(newObject);
                     }
                     world.add(level);
                 }
@@ -115,7 +125,7 @@ public final class World {
             undo.add(removed);
             isChanged = true;
             redo.clear();
-            return new BaseObject(removed.getGroup(), removed.getType(), removed.getLocation());
+            return removed.getObject().DeepCopy();
         }
         return null;
     }
@@ -182,7 +192,7 @@ public final class World {
             for (int i = 0; i < number; i++) {
                 backup = source.peek();
                 other.add(backup);
-                BaseObject newObject = new BaseObject(backup.getGroup(), backup.getType(), backup.getLocation());
+                BaseObject newObject = backup.getObject();
                 if (backup.getBackupType() == (type == UNDO ? REMOVE : ADD)) {
                     get(currentLevel).addUncheckedAt(newObject, backup.getArrayIndex());
                 } else {

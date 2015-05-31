@@ -110,30 +110,28 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
         if (worlds.size() > 0) {
             Point actualPoint = getContentPane().getMousePosition();
             if (worlds.get(currentWorld).get(currentLevel).isVisible()) {
-                Point snapedPoint;
-                if (actualPoint == null) {
-                    snapedPoint = null;
-                } else {
-                    snapedPoint = snapToGrid(actualPoint);
-                }
+                Point snapedPoint = snapToGrid(actualPoint);
                 if (currentDrawingMode == PAINT && actualPoint != null && mouseIsInMain(actualPoint)) {
-                    BaseObject newObject = new BaseObject(currentGroup, currentType, snapedPoint);
+                    BaseObject newObject = null;
+                    if (currentGroup == BLOCK) {
+                        newObject = new Block(currentGroup, currentType, snapedPoint);
+                    } else if (currentGroup == SPECIAL) {
+                        if (currentType == PORTAL) {
+                            newObject = new Portal(currentGroup, currentType, snapedPoint, "");
+                        }
+                    }
                     if (SwingUtilities.isRightMouseButton(me)) {
                         worlds.get(currentWorld).removeFromCurrentLevelChecked(newObject);
                     } else if (SwingUtilities.isLeftMouseButton(me)) {
                         worlds.get(currentWorld).addToCurrentLevelChecked(newObject);
                     }
-                } else if (currentDrawingMode == POINT) {
-                    if (currentLevelObject != null && SwingUtilities.isLeftMouseButton(me)) {
-                        currentLevelObject.setLocation(snapedPoint);
+                } else if (currentDrawingMode == POINT && currentLevelObject != null && SwingUtilities.isLeftMouseButton(me)) {
+                    currentLevelObject.setLocation(snapedPoint);
+                } else if ((currentDrawingMode == RECTANGLE || currentDrawingMode == DIAMOND) && gridStart != null) {
+                    if (snapedPoint != null) {
+                        gridEnd = snapedPoint;
                     }
-                } else if (currentDrawingMode == RECTANGLE || currentDrawingMode == DIAMOND) {
-                    if (gridStart != null) {
-                        if (snapedPoint != null) {
-                            gridEnd = snapedPoint;
-                        }
-                        populateGrid();
-                    }
+                    populateGrid();
                 }
             }
         }
@@ -155,7 +153,14 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
             if (actualPoint != null) {
                 Point snapedPoint = snapToGrid(actualPoint);
                 if (mouseIsInMain(actualPoint)) {
-                    BaseObject newObject = new BaseObject(currentGroup, currentType, snapedPoint);
+                    BaseObject newObject = null;
+                    if (currentGroup == BLOCK) {
+                        newObject = new Block(currentGroup, currentType, snapedPoint);
+                    } else if (currentGroup == SPECIAL) {
+                        if (currentType == PORTAL) {
+                            newObject = new Portal(currentGroup, currentType, snapedPoint, "");
+                        }
+                    }
                     if (SwingUtilities.isRightMouseButton(me)) {
                         if (currentDrawingMode == PAINT || currentDrawingMode == POINT) {
                             worlds.get(currentWorld).removeFromCurrentLevelChecked(newObject);
@@ -168,11 +173,11 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
                             worlds.get(currentWorld).addToCurrentLevelChecked(newObject);
                         } else if (currentDrawingMode == POINT) {
                             BaseObject object = worlds.get(currentWorld).getFromCurrentLevel(newObject);
-                            if (object != null) {
-                                currentType = object.getType();
-                                currentLevelObject = object;
+                            if (object == null) {
+                                currentLevelObject = newObject;
                             } else {
-                                currentLevelObject = object;
+                                currentType = object.getType();
+                                currentLevelObject = object.DeepCopy();
                             }
                         } else if (currentDrawingMode == RECTANGLE || currentDrawingMode == DIAMOND) {
                             gridStart = snapedPoint;
@@ -185,11 +190,7 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
                     if (mouseIsInMenuTabs(actualPoint)) {
                         mainMenu.selectMenuTabAt(actualPoint);
                     } else if (mouseIsInMenuObjects(actualPoint)) {
-                        int objectType = mainMenu.getObjecTypetAt(actualPoint);
-                        if (objectType >= 0) {
-                            currentType = objectType;
-                            currentLevelObject = new BaseObject(currentGroup, objectType, snapedPoint);
-                        }
+                        mainMenu.setCurrentTypeToObjectAt(actualPoint);
                     }
                 }
             }
@@ -292,7 +293,7 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
             if (key == KeyEvent.VK_N) {
                 addWorld();
             } else if (key == KeyEvent.VK_O) {
-                openWindow.display(worlds, this);
+                openWindow.display(this);
             }
         }
 

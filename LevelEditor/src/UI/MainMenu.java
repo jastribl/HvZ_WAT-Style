@@ -17,7 +17,7 @@ public class MainMenu {
         menuObjects.add(new BaseObject[numberOfBlocks]);
         ObjectImages.add(new Image[numberOfBlocks]);
         for (int i = 0; i < numberOfBlocks; i++) {
-            menuObjects.get(0)[i] = new BaseObject(0, i, menuTabHeight + (objectSize * ((i % 3) + 1)), objectSize * ((i / 3) + 1));
+            menuObjects.get(0)[i] = new Block(0, i, menuTabHeight + (objectSize * ((i % 3) + 1)), objectSize * ((i / 3) + 1));
             try {
                 ObjectImages.get(0)[i] = new ImageIcon(getClass().getResource("/media/block" + i + ".png")).getImage().getScaledInstance(objectSize, objectSize, Image.SCALE_SMOOTH);
                 imageTracker.addImage(ObjectImages.get(0)[i], 0);
@@ -26,7 +26,7 @@ public class MainMenu {
         }
         menuObjects.add(new BaseObject[numberOfSpecials]);
         ObjectImages.add(new Image[numberOfSpecials]);
-        menuObjects.get(1)[0] = new BaseObject(1, 0, menuTabHeight + (objectSize * ((0 % 3) + 1)), objectSize * ((0 / 3) + 1));
+        menuObjects.get(1)[0] = new Portal(1, 0, menuTabHeight + (objectSize * ((0 % 3) + 1)), objectSize * ((0 / 3) + 1), "");
         try {
             ObjectImages.get(1)[0] = new ImageIcon(getClass().getResource("/media/special0.png")).getImage().getScaledInstance(objectSize, objectSize, Image.SCALE_SMOOTH);
             imageTracker.addImage(ObjectImages.get(1)[0], 0);
@@ -38,14 +38,14 @@ public class MainMenu {
         }
     }
 
-    public final int getObjecTypetAt(Point point) {
+    public final void setCurrentTypeToObjectAt(Point point) {
         for (BaseObject menuObject : menuObjects.get(currentGroup)) {
-            Rectangle rectangle = new Rectangle(menuObject.getX(), menuObject.getY(), objectSize, objectSize);
+            Rectangle rectangle = new Rectangle(menuObject.getX() - halfObjectSize, menuObject.getY() - halfObjectSize, objectSize, objectSize);
             if (rectangle.contains(point)) {
-                return menuObject.getType();
+                currentType = menuObject.getType();
+                return;
             }
         }
-        return -1;
     }
 
     public final void scroll(int amount) {
@@ -58,7 +58,9 @@ public class MainMenu {
 
     public void selectMenuTabAt(Point point) {
         currentGroup = point.y / menuTabWidth;
-        if (currentGroup == SPECIAL) {
+        if (currentGroup == BLOCK) {
+            bottomMenu.setDrawingMode(PAINT);
+        } else if (currentGroup == SPECIAL) {
             bottomMenu.setDrawingMode(POINT);
         }
         currentType = 0;

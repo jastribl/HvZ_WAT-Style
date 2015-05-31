@@ -1,5 +1,6 @@
 package Structures;
 
+import Cache.BackupObject;
 import java.util.ArrayList;
 import static leveleditor.Globals.*;
 

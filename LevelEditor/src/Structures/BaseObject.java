@@ -4,10 +4,10 @@ import static UI.MainMenu.ObjectImages;
 import java.awt.*;
 import static leveleditor.Globals.*;
 
-public class BaseObject implements Comparable {
+public abstract class BaseObject implements Comparable {
 
-    protected final int group, type;
-    protected Point location;
+    private final int group, type;
+    private Point location;
 
     public BaseObject(int groupG, int typeG, Point locationG) {
         type = typeG;
@@ -18,6 +18,14 @@ public class BaseObject implements Comparable {
     public BaseObject(int groupG, int typeGiven, int x, int y) {
         this(groupG, typeGiven, new Point(x, y));
     }
+
+    public BaseObject(BaseObject baceObject) {
+        group = baceObject.group;
+        type = baceObject.type;
+        location = (Point) baceObject.location.clone();
+    }
+
+    public abstract BaseObject DeepCopy();
 
     public final Point getLocation() {
         return location;
@@ -44,8 +52,7 @@ public class BaseObject implements Comparable {
     }
 
     public final void shiftLocation(int xShift, int yShift) {
-        location.x += xShift;
-        location.y += yShift;
+        location.translate(xShift, yShift);
     }
 
     public final void draw() {

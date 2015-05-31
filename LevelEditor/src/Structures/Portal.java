@@ -16,6 +16,16 @@ public class Portal extends BaseObject {
         this(groupG, typeGiven, new Point(x, y), destination);
     }
 
+    Portal(Portal p) {
+        super(p);
+        destination = p.destination;
+    }
+
+    @Override
+    public BaseObject DeepCopy() {
+        return new Portal(this);
+    }
+
     public final String getDestination() {
         return destination;
     }

@@ -51,11 +51,15 @@ public class Globals {
     public static final BottomMenu bottomMenu = new BottomMenu();
 
     public static final Point snapToGrid(Point p) {
-        int y = p.y / levelOffset * levelOffset + halfObjectSize;
-        if ((y / levelOffset) % 2 == 0) {
-            return new Point(((p.x + halfObjectSize) / objectSize * objectSize), y);
+        if (p == null) {
+            return p;
         } else {
-            return new Point((p.x / objectSize * objectSize) + halfObjectSize, y);
+            int y = p.y / levelOffset * levelOffset + halfObjectSize;
+            if ((y / levelOffset) % 2 == 0) {
+                return new Point(((p.x + halfObjectSize) / objectSize * objectSize), y);
+            } else {
+                return new Point((p.x / objectSize * objectSize) + halfObjectSize, y);
+            }
         }
     }
 
@@ -143,7 +147,7 @@ public class Globals {
                 int y = gridStart.y + (levelOffset * i);
                 int xShift = (i % 2 == 0 ? 0 : halfObjectSize);
                 for (int j = xStart; j < xEnd; j++) {
-                    grid.addUnchecked(new BaseObject(currentGroup, currentType, gridStart.x + (objectSize * j) + xShift, y));
+                    grid.addUnchecked(new Block(currentGroup, currentType, gridStart.x + (objectSize * j) + xShift, y));
                 }
             }
         } else if (currentDrawingMode == DIAMOND) {
@@ -162,7 +166,7 @@ public class Globals {
                 for (int j = 1; j != topRightDiagonal + jAdd; j += jAdd) {
                     point.x += jAdd * halfObjectSize;
                     point.y += jAdd * levelOffset;
-                    grid.addUnchecked(new BaseObject(currentGroup, currentType, point));
+                    grid.addUnchecked(new Block(currentGroup, currentType, point));
                 }
             }
         }
