@@ -27,13 +27,11 @@ public class Globals {
     public static final int iconSize = 40;
     public static final int iconPadding = 5;
     public static final int bottomMenuHeight = iconSize + (iconPadding * 2);
-
     public static ArrayList<World> worlds = new ArrayList();
     public static final ArrayList<String> allWorlds = new ArrayList();
     public static Level gridItems = new Level();
     public static Item currentLevelObject = null;
     public static Point gridStart = null, gridEnd = null;
-
     public static final int UP = 0, DOWN = 1;
     public static final int ADD = 0, REMOVE = 1;
     public static final int PAINT = 0, POINT = 1, RECTANGLE = 2, DIAMOND = 3;
