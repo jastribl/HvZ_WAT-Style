@@ -1,21 +1,20 @@
 package Cache;
 
+import Structures.BaseObject;
 import java.awt.Point;
 
-public final class BackupItem {
+public final class BackupObject {
 
-    private final int backupType, level, group, type, arrayIndex;
+    private final int backupType, level, arrayIndex;
     private int repeats;
-    private final Point location;
+    private final BaseObject object;
 
-    public BackupItem(int backupTypeG, int levelG, int groupG, int typeG, int arrayIndexG, int repeatsG, Point locationG) {
+    public BackupObject(int backupTypeG, int levelG, int arrayIndexG, int repeatsG, BaseObject objectG) {
         backupType = backupTypeG;
         level = levelG;
-        group = groupG;
-        type = typeG;
         arrayIndex = arrayIndexG;
         repeats = repeatsG;
-        location = (Point) locationG.clone();
+        object = objectG.DeepCopy();
     }
 
     public final int getBackupType() {
@@ -27,11 +26,11 @@ public final class BackupItem {
     }
 
     public final int getGroup() {
-        return group;
+        return object.getGroup();
     }
 
     public final int getType() {
-        return type;
+        return object.getType();
     }
 
     public final int getArrayIndex() {
@@ -43,7 +42,11 @@ public final class BackupItem {
     }
 
     public final Point getLocation() {
-        return location;
+        return object.getLocation();
+    }
+
+    public final BaseObject getObject() {
+        return object;
     }
 
     public final void setRepeats(int repeatsG) {
@@ -51,7 +54,6 @@ public final class BackupItem {
     }
 
     public final void shiftLocation(int xShift, int yShift) {
-        location.x += xShift;
-        location.y += yShift;
+        object.shiftLocation(xShift, yShift);
     }
 }

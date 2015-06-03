@@ -25,7 +25,11 @@ public class BottomMenu {
         }
     }
 
-    public final void changePaintingMode(int direction) {
+    public final void setDrawingMode(int goTo) {
+        currentDrawingMode = goTo;
+    }
+
+    public final void changeDrawingMode(int direction) {
         if (direction == UP) {
             currentDrawingMode = (currentDrawingMode + 1) % (numberOfPaintingTools);
         } else if (direction == DOWN) {

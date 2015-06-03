@@ -1,6 +1,7 @@
 package Structures;
 
-import Cache.*;
+import Cache.BackupObject;
+import Cache.Cache;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.io.*;
@@ -13,6 +14,7 @@ public final class World {
     private String name;
     private final Cache undo = new Cache(), redo = new Cache();
     private boolean isChanged = false;
+    private final int UNDO = 0, REDO = 1;
 
     public World(String nameGiven, boolean load) {
         name = nameGiven;
@@ -27,9 +29,21 @@ public final class World {
                     numberOfBlocks = reader.nextInt();
                     for (int j = 0; j < numberOfBlocks; j++) {
                         type = reader.nextInt();
-                        Point point = snapToGrid(new Point((reader.nextInt() * halfItemSize) + xShift, (reader.nextInt() * (itemSize / 8)) + yShift));
+                        Point point = snapToGrid(new Point((reader.nextInt() * halfObjectSize) + xShift, (reader.nextInt() * (objectSize / 8)) + yShift));
                         int transparency = reader.nextInt();
+<<<<<<< HEAD
                         level.addItemUnchecked(new Item(0, type, point, true));//need to save group
+=======
+                        BaseObject newObject = null;
+                        if (group == BLOCK) {
+                            newObject = new Block(group, type, point);
+                        } else if (group == SPECIAL) {
+                            if (type == PORTAL) {
+                                newObject = new Portal(group, type, point, "some text"); //need to save in file somehow
+                            }
+                        }
+                        level.addUnchecked(newObject);
+>>>>>>> 1748e629c4044eefbd0ca0d57d5f3b7e83597c57
                     }
                     world.add(level);
                 }
@@ -72,13 +86,17 @@ public final class World {
                 }
             }
         }
-        String levelText = String.valueOf((maxX - minX) + itemSize) + " " + String.valueOf((maxY - minY) + itemSize) + "\n" + String.valueOf(world.size()) + "\n";
+        String levelText = String.valueOf((maxX - minX) + objectSize) + " " + String.valueOf((maxY - minY) + objectSize) + "\n" + String.valueOf(world.size()) + "\n";
         for (Level level : world) {
             int size = level.size();
             levelText += String.valueOf(size) + "\n";
             for (int i = 0; i < size; i++) {
                 int transparency = 0;
+<<<<<<< HEAD
                 levelText += String.valueOf(level.getLevel().get(i).getType()) + " " + String.valueOf((level.getLevel().get(i).getX() - minX) / halfItemSize) + " " + String.valueOf((level.getLevel().get(i).getY() - minY) / (levelOffset / 2)) + " " + String.valueOf(transparency) + "\n";
+=======
+                levelText += String.valueOf(level.getLevel().get(i).getGroup()) + " " + String.valueOf(level.getLevel().get(i).getType()) + " " + String.valueOf((level.getLevel().get(i).getX() - minX) / halfObjectSize) + " " + String.valueOf((level.getLevel().get(i).getY() - minY) / (levelOffset / 2)) + " " + String.valueOf(transparency) + "\n";
+>>>>>>> 1748e629c4044eefbd0ca0d57d5f3b7e83597c57
             }
         }
         File file = new File("Worlds/" + getName() + ".txt");
@@ -90,31 +108,31 @@ public final class World {
         isChanged = false;
     }
 
-    public final void addToCurrentLevelChecked(Item item) {
-        int index = get(currentLevel).addItemChecked(item);
+    public final void addToCurrentLevelChecked(BaseObject object) {
+        int index = get(currentLevel).addChecked(object);
         if (index != -1) {
-            undo.add(new BackupItem(ADD, currentLevel, item.getGroup(), item.getType(), index, 1, item.getLocation()));
+            undo.add(new BackupObject(ADD, currentLevel, index, 1, object));
             isChanged = true;
             redo.clear();
         }
     }
 
-    public final void removeFromCurrentLevelChecked(Item item) {
-        BackupItem removedItem = get(currentLevel).removeItem(item);
-        if (removedItem != null) {
-            undo.add(removedItem);
+    public final void removeFromCurrentLevelChecked(BaseObject object) {
+        BackupObject removed = get(currentLevel).remove(object);
+        if (removed != null) {
+            undo.add(removed);
             isChanged = true;
             redo.clear();
         }
     }
 
-    public final Item getFromCurrentLevel(Item item) {
-        BackupItem removedItem = get(currentLevel).removeItem(item);
-        if (removedItem != null) {
-            undo.add(removedItem);
+    public final BaseObject getFromCurrentLevel(BaseObject object) {
+        BackupObject removed = get(currentLevel).remove(object);
+        if (removed != null) {
+            undo.add(removed);
             isChanged = true;
             redo.clear();
-            return new Item(removedItem.getGroup(), removedItem.getType(), removedItem.getLocation(), false);
+            return removed.getObject().DeepCopy();
         }
         return null;
     }
@@ -122,19 +140,19 @@ public final class World {
     public final void applyGrid() {
         int startingSize = undo.getBackupSize();
         if (drawingGrid == true) {
-            for (Item item : gridItems.getLevel()) {
-                addToCurrentLevelChecked(item);
+            for (BaseObject object : grid.getLevel()) {
+                addToCurrentLevelChecked(object);
             }
         } else {
-            for (Item item : gridItems.getLevel()) {
-                removeFromCurrentLevelChecked(item);
+            for (BaseObject object : grid.getLevel()) {
+                removeFromCurrentLevelChecked(object);
             }
         }
         int diff = Math.abs(undo.getBackupSize() - startingSize);
         if (diff > 0) {
             undo.getCache().get(undo.getBackupSize() - 1).setRepeats(diff);
         }
-        gridItems.clear();
+        grid.clear();
         gridStart = null;
         gridEnd = null;
     }
@@ -155,7 +173,15 @@ public final class World {
         }
     }
 
-    public final void Do(int type) {
+    public final void undo() {
+        Do(UNDO);
+    }
+
+    public final void redo() {
+        Do(REDO);
+    }
+
+    private void Do(int type) {
         Cache source, other;
         if (type == UNDO) {
             source = undo;
@@ -166,18 +192,18 @@ public final class World {
         } else {
             return;
         }
-        BackupItem backup = source.peek();
+        BackupObject backup = source.peek();
         if (backup != null && (backup.getBackupType() == ADD || backup.getBackupType() == REMOVE)) {
             int number = backup.getRepeats();
             locateBackup(source.peek());
             for (int i = 0; i < number; i++) {
                 backup = source.peek();
-                other.add(new BackupItem(backup.getBackupType(), backup.getLevel(), backup.getGroup(), backup.getType(), backup.getArrayIndex(), 1, backup.getLocation()));
-                Item newItem = new Item(backup.getGroup(), backup.getType(), backup.getLocation(), false);
+                other.add(backup);
+                BaseObject newObject = backup.getObject();
                 if (backup.getBackupType() == (type == UNDO ? REMOVE : ADD)) {
-                    get(currentLevel).addItemUncheckedAt(newItem, backup.getArrayIndex());
+                    get(currentLevel).addUncheckedAt(newObject, backup.getArrayIndex());
                 } else {
-                    get(currentLevel).removeItemUncheckedAt(backup.getArrayIndex());
+                    get(currentLevel).removeUncheckedAt(backup.getArrayIndex());
                 }
                 source.pop();
             }
@@ -188,7 +214,7 @@ public final class World {
         }
     }
 
-    private void locateBackup(BackupItem backup) {
+    private void locateBackup(BackupObject backup) {
         while (backup.getLevel() < currentLevel) {
             chengleLevel(DOWN);
         }
@@ -199,28 +225,28 @@ public final class World {
         findLocation(backup.getLocation());
     }
 
-    public final void shiftItems(int x, int y) {
+    public final void shiftAll(int x, int y) {
         for (Level level : world) {
-            for (Item item : level.getLevel()) {
-                item.shiftLocation(x, y);
+            for (BaseObject object : level.getLevel()) {
+                object.shiftLocation(x, y);
             }
         }
-        for (BackupItem item : undo.getCache()) {
-            if (item.getBackupType() == ADD || item.getBackupType() == REMOVE) {
-                item.shiftLocation(x, y);
+        for (BackupObject object : undo.getCache()) {
+            if (object.getBackupType() == ADD || object.getBackupType() == REMOVE) {
+                object.shiftLocation(x, y);
             }
         }
-        for (BackupItem item : redo.getCache()) {
-            if (item.getBackupType() == ADD || item.getBackupType() == REMOVE) {
-                item.shiftLocation(x, y);
+        for (BackupObject object : redo.getCache()) {
+            if (object.getBackupType() == ADD || object.getBackupType() == REMOVE) {
+                object.shiftLocation(x, y);
             }
         }
     }
 
-    public final void moveItems(int x, int y) {
-        shiftItems(x * itemSize, y * halfItemSize);
+    public final void moveAll(int x, int y) {
+        shiftAll(x * objectSize, y * halfObjectSize);
         if ((currentDrawingMode == RECTANGLE || currentDrawingMode == DIAMOND) && gridStart != null && gridEnd != null) {
-            gridStart.translate(x * itemSize, y * halfItemSize);
+            gridStart.translate(x * objectSize, y * halfObjectSize);
             populateGrid();
         }
     }
@@ -242,25 +268,24 @@ public final class World {
     }
 
     private void findLocation(Point location) {
-        while (location.x < menuWidth + itemSize) {
-            moveItems(1, 0);
+        while (location.x < menuWidth + objectSize) {
+            moveAll(1, 0);
         }
-        while (location.x > screenWidth - itemSize) {
-            moveItems(-1, 0);
+        while (location.x > screenWidth - objectSize) {
+            moveAll(-1, 0);
         }
-        while (location.y < worldTabHeight + halfItemSize) {
-            moveItems(0, 1);
+        while (location.y < worldTabHeight + halfObjectSize) {
+            moveAll(0, 1);
         }
-        while (location.y > screenHeight - itemSize - bottomMenuHeight) {
-            moveItems(0, -1);
+        while (location.y > screenHeight - objectSize - bottomMenuHeight) {
+            moveAll(0, -1);
         }
     }
 
-    public final void findFirstItem() {
+    public final void findFirstObject() {
         get(currentLevel).setVisible(true);
         if (get(currentLevel).size() > 0) {
-            Item item = get(currentLevel).get(0);
-            findLocation(item.getLocation());
+            findLocation(get(currentLevel).get(0).getLocation());
         }
     }
 
@@ -270,24 +295,24 @@ public final class World {
             if (level.isVisible()) {
                 Level levelToDraw = new Level();
                 for (int j = 0; j < level.size(); j++) {
-                    Item item = level.get(j);
-                    Point p = item.getLocation();
-                    if (p.x > menuWidth - itemSize && p.x < screenWidth && p.y > worldTabHeight - itemSize && p.y < screenHeight) {
-                        levelToDraw.addItemUnchecked(item);
+                    BaseObject object = level.get(j);
+                    Point p = object.getLocation();
+                    if (p.x > menuWidth - objectSize && p.x < screenWidth && p.y > worldTabHeight - objectSize && p.y < screenHeight) {
+                        levelToDraw.addUnchecked(object);
                     }
                 }
                 if (currentLevel == i) {
                     if (currentDrawingMode == POINT && currentLevelObject != null) {
-                        levelToDraw.addItemChecked(currentLevelObject);
+                        levelToDraw.addChecked(currentLevelObject);
                     } else if (currentDrawingMode == RECTANGLE || currentDrawingMode == DIAMOND) {
-                        for (int j = 0; j < gridItems.size(); j++) {
-                            Item item = gridItems.get(j);
-                            Point p = item.getLocation();
-                            if (p.x > menuWidth - itemSize && p.x < screenWidth && p.y > worldTabHeight - itemSize && p.y < screenHeight) {
+                        for (int j = 0; j < grid.size(); j++) {
+                            BaseObject object = grid.get(j);
+                            Point p = object.getLocation();
+                            if (p.x > menuWidth - objectSize && p.x < screenWidth && p.y > worldTabHeight - objectSize && p.y < screenHeight) {
                                 if (drawingGrid) {
-                                    levelToDraw.addItemChecked(item);
+                                    levelToDraw.addChecked(object);
                                 } else {
-                                    levelToDraw.removeItem(item);
+                                    levelToDraw.remove(object);
                                 }
                             }
                         }

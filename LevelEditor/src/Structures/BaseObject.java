@@ -1,31 +1,31 @@
 package Structures;
 
-import static UI.MainMenu.itemImages;
+import static UI.MainMenu.ObjectImages;
 import java.awt.*;
 import static leveleditor.Globals.*;
 
-public final class Item implements Comparable {
+public abstract class BaseObject implements Comparable {
 
     private final int group, type;
     private Point location;
 
-    public Item(int groupG, int typeG, Point locationG, boolean fixLocation) {
+    public BaseObject(int groupG, int typeG, Point locationG) {
         type = typeG;
         group = groupG;
         location = (Point) locationG.clone();
-        if (fixLocation) {
-            fixLocation();
-        }
     }
 
-    public Item(int groupG, int typeGiven, int x, int y, boolean fixLocations) {
-        this(groupG, typeGiven, new Point(x, y), fixLocations);
+    public BaseObject(int groupG, int typeGiven, int x, int y) {
+        this(groupG, typeGiven, new Point(x, y));
     }
 
-    private void fixLocation() {
-        location.x -= halfItemSize;
-        location.y -= halfItemSize;
+    public BaseObject(BaseObject baceObject) {
+        group = baceObject.group;
+        type = baceObject.type;
+        location = (Point) baceObject.location.clone();
     }
+
+    public abstract BaseObject DeepCopy();
 
     public final Point getLocation() {
         return location;
@@ -47,18 +47,16 @@ public final class Item implements Comparable {
         return type;
     }
 
-    public final void setLocationAndFix(Point locationG) {
+    public final void setLocation(Point locationG) {
         location = locationG;
-        fixLocation();
     }
 
     public final void shiftLocation(int xShift, int yShift) {
-        location.x += xShift;
-        location.y += yShift;
+        location.translate(xShift, yShift);
     }
 
     public final void draw() {
-        memoryGraphics.drawImage(itemImages.get(group)[type], location.x, location.y, null);
+        memoryGraphics.drawImage(ObjectImages.get(group)[type], location.x - halfObjectSize, location.y - halfObjectSize, null);
     }
 
     public final void drawFaded() {
@@ -70,7 +68,7 @@ public final class Item implements Comparable {
 
     @Override
     public int compareTo(Object o) {
-        Item o2 = (Item) o;
+        BaseObject o2 = (BaseObject) o;
         if (location.y == o2.getY()) {
             if (location.x == o2.getX()) {
                 return 0;

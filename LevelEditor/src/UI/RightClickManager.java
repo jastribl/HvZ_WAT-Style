@@ -8,7 +8,7 @@ import static leveleditor.Globals.*;
 public class RightClickManager {
 
     private final String[] tabsRightClickText = {"Close", "Close All", "Rename", "Save", "Save All", "Delete"};
-    private final JMenuItem tabsRightClickMenuItems[] = new JMenuItem[tabsRightClickText.length];
+    private final JMenuItem[] worldTabsRightClickMenuItems = new JMenuItem[tabsRightClickText.length];
     private final JPopupMenu tabsRightClickMenu = new JPopupMenu();
 
     public RightClickManager() {
@@ -43,11 +43,11 @@ public class RightClickManager {
             }
 
         };
-        for (int i = 0; i < tabsRightClickMenuItems.length; i++) {
-            tabsRightClickMenuItems[i] = new JMenuItem(tabsRightClickText[i]);
-            tabsRightClickMenuItems[i].setActionCommand(tabsRightClickText[i]);
-            tabsRightClickMenuItems[i].addActionListener(actionListener);
-            tabsRightClickMenu.add(tabsRightClickMenuItems[i]);
+        for (int i = 0; i < worldTabsRightClickMenuItems.length; i++) {
+            worldTabsRightClickMenuItems[i] = new JMenuItem(tabsRightClickText[i]);
+            worldTabsRightClickMenuItems[i].setActionCommand(tabsRightClickText[i]);
+            worldTabsRightClickMenuItems[i].addActionListener(actionListener);
+            tabsRightClickMenu.add(worldTabsRightClickMenuItems[i]);
         }
     }
 
