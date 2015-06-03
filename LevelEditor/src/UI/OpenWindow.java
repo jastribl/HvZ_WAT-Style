@@ -59,9 +59,9 @@ public class OpenWindow extends JDialog implements WindowListener {
         setResizable(false);
     }
 
-    public final void display(JFrame frame) {
+    public final void display(ArrayList<World> worlds, JFrame frame) {
         setLocationRelativeTo(frame);
-        refreshWorldsList();
+        refreshWorldsList(worlds);
         setVisible(true);
     }
 
@@ -74,7 +74,7 @@ public class OpenWindow extends JDialog implements WindowListener {
         }
     }
 
-    private void refreshWorldsList() {
+    private void refreshWorldsList(ArrayList<World> worlds) {
         mainListModel.clear();
         for (String worldName : allWorlds) {
             breakpoint:
@@ -87,7 +87,6 @@ public class OpenWindow extends JDialog implements WindowListener {
                 mainListModel.addElement(worldName);
             }
         }
-
         if (!mainListModel.isEmpty()) {
             mainList.setSelectedIndex(0);
         }
