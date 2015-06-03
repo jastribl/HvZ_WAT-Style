@@ -4,21 +4,21 @@ import java.util.*;
 
 public class Cache {
 
-    private final Stack<BackupObject> backup = new Stack();
+    private final Stack<BackupItem> backup = new Stack();
 
-    public final void add(BackupObject object) {
-        backup.add(object);
+    public final void add(BackupItem item) {
+        backup.add(item);
     }
 
-    public final Stack<BackupObject> getCache() {
+    public final Stack<BackupItem> getCache() {
         return backup;
     }
 
-    public final BackupObject peek() {
+    public final BackupItem peek() {
         return (backup.isEmpty() ? null : backup.peek());
     }
 
-    public final BackupObject pop() {
+    public final BackupItem pop() {
         return (backup.isEmpty() ? null : backup.pop());
     }
 

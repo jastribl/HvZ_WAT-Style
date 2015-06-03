@@ -1,12 +1,12 @@
 package Structures;
 
-import Cache.BackupObject;
+import Cache.BackupItem;
 import java.util.ArrayList;
 import static leveleditor.Globals.*;
 
 public final class Level {
 
-    private final ArrayList<BaseObject> level = new ArrayList();
+    private final ArrayList<Item> level = new ArrayList();
     private boolean visible = true;
 
     public final boolean isVisible() {
@@ -21,7 +21,7 @@ public final class Level {
         visible = !visible;
     }
 
-    public final ArrayList<BaseObject> getLevel() {
+    public final ArrayList<Item> getLevel() {
         return level;
     }
 
@@ -29,49 +29,50 @@ public final class Level {
         return level.size();
     }
 
-    public final BaseObject get(int i) {
+    public final Item get(int i) {
         return level.get(i);
     }
 
     public final void shiftLevel(int x, int y) {
-        for (BaseObject object : level) {
-            object.shiftLocation(x, y);
+        for (Item item : level) {
+            item.shiftLocation(x, y);
         }
     }
 
-    public void addUnchecked(BaseObject o) {
-        level.add(o);
+    public void addItemUnchecked(Item i) {
+        level.add(i);
     }
 
-    public void addUncheckedAt(BaseObject object, int i) {
-        level.add(i, object);
+    public void addItemUncheckedAt(Item item, int i) {
+        level.add(i, item);
     }
 
-    public int addChecked(BaseObject object) {
+    public int addItemChecked(Item item) {
         if (visible) {
             int comp;
             int i = 0;
             for (; i < level.size(); i++) {
-                comp = object.compareTo(level.get(i));
+                comp = item.compareTo(level.get(i));
                 if (comp == 0) {
                     return -1;
                 } else if (comp < 0) {
                     break;
                 }
             }
-            level.add(i, object);
+            level.add(i, item);
             return i;
         }
         return -1;
     }
 
-    public final BackupObject remove(BaseObject object) {
+    public final BackupItem removeItem(Item item) {
         if (visible) {
             int comp;
             for (int i = 0; i < level.size(); i++) {
-                comp = level.get(i).compareTo(object);
+                comp = level.get(i).compareTo(item);
                 if (comp == 0) {
-                    return new BackupObject(REMOVE, currentLevel, i, 1, level.remove(i));
+                    Item toBeReturned = level.remove(i);
+                    return new BackupItem(REMOVE, currentLevel, toBeReturned.getGroup(), toBeReturned.getType(), i, 1, toBeReturned.getLocation());
                 } else if (comp > 0) {
                     return null;
                 }
@@ -80,7 +81,7 @@ public final class Level {
         return null;
     }
 
-    public void removeUncheckedAt(int i) {
+    public void removeItemUncheckedAt(int i) {
         level.remove(i);
     }
 
