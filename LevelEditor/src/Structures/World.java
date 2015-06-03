@@ -19,8 +19,6 @@ public final class World {
         if (load) {
             try {
                 Scanner reader = new Scanner(new File("Worlds/" + name + ".txt"));
-                int xShift = screenWidth / 2 + menuWidth - reader.nextInt() / 2;
-                int yShift = screenHeight / 2 - reader.nextInt() / 2;
                 int numberOfLevels = reader.nextInt(), numberOfBlocks, group, type;
                 for (int i = 0; i < numberOfLevels; i++) {
                     Level level = new Level();
@@ -28,11 +26,12 @@ public final class World {
                     for (int j = 0; j < numberOfBlocks; j++) {
                         group = reader.nextInt();
                         type = reader.nextInt();
-                        Point point = snapToGrid(new Point((reader.nextInt() * halfItemSize) + xShift, (reader.nextInt() * (itemSize / 8)) + yShift));
+                        Point point = snapToGrid(new Point((reader.nextInt() * halfItemSize), (reader.nextInt() * (itemSize / 8))));
                         int transparency = reader.nextInt();
                         level.addItemUnchecked(new Item(group, type, point, true));//need to save group
                     }
                     world.add(level);
+                    findFirstItem();
                 }
             } catch (IOException ex) {
                 world.add(new Level());
@@ -56,30 +55,13 @@ public final class World {
     }
 
     public final void save() {
-        int minX = 999999999, minY = 999999999, maxX = -999999999, maxY = -999999999;
-        for (Level level : world) {
-            for (int i = 0; i < level.getLevel().size(); i++) {
-                if (level.getLevel().get(i).getX() < minX) {
-                    minX = level.getLevel().get(i).getX();
-                }
-                if (level.getLevel().get(i).getX() > maxX) {
-                    maxX = level.getLevel().get(i).getX();
-                }
-                if (level.getLevel().get(i).getY() < minY) {
-                    minY = level.getLevel().get(i).getY();
-                }
-                if (level.getLevel().get(i).getY() > maxY) {
-                    maxY = level.getLevel().get(i).getY();
-                }
-            }
-        }
-        String levelText = String.valueOf((maxX - minX) + itemSize) + " " + String.valueOf((maxY - minY) + itemSize) + "\n" + String.valueOf(world.size()) + "\n";
+        String levelText = String.valueOf(world.size()) + "\n";
         for (Level level : world) {
             int size = level.size();
             levelText += String.valueOf(size) + "\n";
             for (int i = 0; i < size; i++) {
                 int transparency = 0;
-                levelText += String.valueOf(level.getLevel().get(i).getGroup()) + " " + String.valueOf(level.getLevel().get(i).getType()) + " " + String.valueOf((level.getLevel().get(i).getX() - minX) / halfItemSize) + " " + String.valueOf((level.getLevel().get(i).getY() - minY) / (levelOffset / 2)) + " " + String.valueOf(transparency) + "\n";
+                levelText += String.valueOf(level.getLevel().get(i).getGroup()) + " " + String.valueOf(level.getLevel().get(i).getType()) + " " + String.valueOf((level.getLevel().get(i).getX()) / halfItemSize) + " " + String.valueOf((level.getLevel().get(i).getY()) / (levelOffset / 2)) + " " + String.valueOf(transparency) + "\n";
             }
         }
         File file = new File("Worlds/" + getName() + ".txt");
