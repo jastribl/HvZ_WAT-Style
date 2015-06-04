@@ -31,8 +31,8 @@ public final class World {
                         level.addItemUnchecked(new Item(group, type, point, true));//need to save group
                     }
                     world.add(level);
-                    findFirstItem();
                 }
+                findFirstItem();
             } catch (IOException ex) {
                 world.add(new Level());
             }
