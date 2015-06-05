@@ -79,6 +79,13 @@ public class Globals {
         }
     }
 
+    public static final void exportAll() {
+        saveLevelNames();
+        for (World world : worlds) {
+            world.export();
+        }
+    }
+
     public static final void closeTab(int index) {
         if (worlds.get(index).hasChanges() && JOptionPane.showConfirmDialog(null, "Would you like to save changes to \"" + worlds.get(index).getName() + "\"?", "Save Changes?", JOptionPane.YES_NO_OPTION) == 0) {
             worlds.get(index).save();
