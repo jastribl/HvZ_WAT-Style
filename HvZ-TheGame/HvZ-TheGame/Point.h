@@ -1,5 +1,4 @@
-#ifndef POINT_H
-#define POINT_H
+#pragma once
 
 using namespace std;
 
@@ -23,5 +22,3 @@ public:
 	void operator -= (const Point &);
 	void print() const;
 };
-
-#endif
