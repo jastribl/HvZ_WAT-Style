@@ -17,7 +17,7 @@ public class MainMenu {
         menuItems.add(new Item[numberOfBlocks]);
         itemImages.add(new Image[numberOfBlocks]);
         for (int item = 0; item < numberOfBlocks; item++) {
-            menuItems.get(0)[item] = new Item(0, item, menuTabHeight + (itemSize * ((item % 3) + 1)), itemSize * ((item / 3) + 1), true);
+            menuItems.get(0)[item] = new Item(0, item, menuTabHeight + (itemSize * ((item % 3) + 1)), itemSize * ((item / 3) + 1));
             try {
                 itemImages.get(0)[item] = new ImageIcon(getClass().getResource("/media/block" + item + ".png")).getImage().getScaledInstance(itemSize, itemSize, Image.SCALE_SMOOTH);
                 imageTracker.addImage(itemImages.get(0)[item], 0);
@@ -27,7 +27,7 @@ public class MainMenu {
         menuItems.add(new Item[numberOfSpecials]);
         itemImages.add(new Image[numberOfSpecials]);
         for (int special = 0; special < numberOfSpecials; special++) {
-            menuItems.get(1)[special] = new Item(1, special, menuTabHeight + (itemSize * ((special % 3) + 1)), itemSize * ((special / 3) + 1), true);
+            menuItems.get(1)[special] = new Item(1, special, menuTabHeight + (itemSize * ((special % 3) + 1)), itemSize * ((special / 3) + 1));
             try {
                 itemImages.get(1)[special] = new ImageIcon(getClass().getResource("/media/special" + special + ".png")).getImage().getScaledInstance(itemSize, itemSize, Image.SCALE_SMOOTH);
                 imageTracker.addImage(itemImages.get(1)[special], 0);

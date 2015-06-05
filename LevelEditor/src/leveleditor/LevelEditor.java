@@ -128,7 +128,7 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
                     snapedPoint = snapToGrid(actualPoint);
                 }
                 if (currentDrawingMode == PAINT && actualPoint != null && mouseIsInMain(actualPoint)) {
-                    Item newItem = new Item(currentItemGroup, currentItemType, snapedPoint, true);
+                    Item newItem = new Item(currentItemGroup, currentItemType, snapedPoint);
                     if (SwingUtilities.isRightMouseButton(me)) {
                         worlds.get(currentWorld).removeFromCurrentLevelChecked(newItem);
                     } else if (SwingUtilities.isLeftMouseButton(me)) {
@@ -136,7 +136,7 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
                     }
                 } else if (currentDrawingMode == POINT) {
                     if (currentLevelObject != null && SwingUtilities.isLeftMouseButton(me)) {
-                        currentLevelObject.setLocationAndFix(snapedPoint);
+                        currentLevelObject.setLocation(snapedPoint);
                     }
                 } else if (currentDrawingMode == RECTANGLE || currentDrawingMode == DIAMOND) {
                     if (gridStart != null) {
@@ -166,7 +166,7 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
             if (actualPoint != null) {
                 Point snapedPoint = snapToGrid(actualPoint);
                 if (mouseIsInMain(actualPoint)) {
-                    Item newItem = new Item(currentItemGroup, currentItemType, snapedPoint, true);
+                    Item newItem = new Item(currentItemGroup, currentItemType, snapedPoint);
                     if (SwingUtilities.isRightMouseButton(me)) {
                         if (currentDrawingMode == PAINT || currentDrawingMode == POINT) {
                             worlds.get(currentWorld).removeFromCurrentLevelChecked(newItem);
@@ -199,7 +199,7 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
                         int itemType = mainMenu.getItemAt(actualPoint);
                         if (itemType >= 0) {
                             currentItemType = itemType;
-                            currentLevelObject = new Item(currentItemGroup, itemType, snapedPoint, true);
+                            currentLevelObject = new Item(currentItemGroup, itemType, snapedPoint);
                         }
                     }
                 }

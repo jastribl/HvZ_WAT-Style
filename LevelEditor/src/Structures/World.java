@@ -26,9 +26,9 @@ public final class World {
                     for (int j = 0; j < numberOfBlocks; j++) {
                         group = reader.nextInt();
                         type = reader.nextInt();
-                        Point point = snapToGrid(new Point((reader.nextInt() * halfItemSize), (reader.nextInt() * (itemSize / 8))));
+                        Point point = new Point((reader.nextInt() * halfItemSize), (reader.nextInt() * (itemSize / 8)));
                         int transparency = reader.nextInt();
-                        level.addItemUnchecked(new Item(group, type, point, true));//need to save group
+                        level.addItemUnchecked(new Item(group, type, point));
                     }
                     world.add(level);
                 }
@@ -97,7 +97,7 @@ public final class World {
             undo.add(removedItem);
             isChanged = true;
             redo.clear();
-            return new Item(removedItem.getGroup(), removedItem.getType(), removedItem.getLocation(), false);
+            return new Item(removedItem.getGroup(), removedItem.getType(), removedItem.getLocation());
         }
         return null;
     }
@@ -156,7 +156,7 @@ public final class World {
             for (int i = 0; i < number; i++) {
                 backup = source.peek();
                 other.add(new BackupItem(backup.getBackupType(), backup.getLevel(), backup.getGroup(), backup.getType(), backup.getArrayIndex(), 1, backup.getLocation()));
-                Item newItem = new Item(backup.getGroup(), backup.getType(), backup.getLocation(), false);
+                Item newItem = new Item(backup.getGroup(), backup.getType(), backup.getLocation());
                 if (backup.getBackupType() == (type == UNDO ? REMOVE : ADD)) {
                     get(currentLevel).addItemUncheckedAt(newItem, backup.getArrayIndex());
                 } else {
@@ -167,7 +167,7 @@ public final class World {
             if (type == UNDO) {
                 other.getCache().get(other.getBackupSize() - 1).setRepeats(number);
             }
-            isChanged = (source.getBackupSize() != 0);
+            isChanged = (undo.getBackupSize() != 0);
         }
     }
 

@@ -132,7 +132,7 @@ public class Globals {
                 int y = gridStart.y + (levelOffset * i);
                 int xShift = (i % 2 == 0 ? 0 : halfItemSize);
                 for (int j = xStart; j < xEnd; j++) {
-                    gridItems.addItemUnchecked(new Item(currentItemGroup, currentItemType, gridStart.x + (itemSize * j) + xShift, y, true));
+                    gridItems.addItemUnchecked(new Item(currentItemGroup, currentItemType, gridStart.x + (itemSize * j) + xShift, y));
                 }
             }
         } else if (currentDrawingMode == DIAMOND) {
@@ -151,7 +151,7 @@ public class Globals {
                 for (int j = 1; j != topRightDiagonal + jAdd; j += jAdd) {
                     point.x += jAdd * halfItemSize;
                     point.y += jAdd * levelOffset;
-                    gridItems.addItemUnchecked(new Item(currentItemGroup, currentItemType, point, true));
+                    gridItems.addItemUnchecked(new Item(currentItemGroup, currentItemType, point));
                 }
             }
         }
