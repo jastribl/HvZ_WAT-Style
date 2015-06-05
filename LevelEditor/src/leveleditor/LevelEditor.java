@@ -284,6 +284,12 @@ public final class LevelEditor extends JFrame implements MouseMotionListener, Mo
                     } else if (worlds.size() > 0) {
                         worlds.get(currentWorld).save();
                     }
+                } else if (key == KeyEvent.VK_E) {
+                    if (ke.isShiftDown()) {
+                        exportAll();
+                    } else if (worlds.size() > 0) {
+                        worlds.get(currentWorld).export();
+                    }
                 } else if (key == KeyEvent.VK_TAB) {
                     switchWorld(ke.isShiftDown() ? DOWN : UP);
                 } else if (key == KeyEvent.VK_F4) {

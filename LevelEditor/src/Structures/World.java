@@ -27,7 +27,6 @@ public final class World {
                         group = reader.nextInt();
                         type = reader.nextInt();
                         Point point = new Point((reader.nextInt() * halfItemSize), (reader.nextInt() * (itemSize / 8)));
-                        int transparency = reader.nextInt();
                         level.addItemUnchecked(new Item(group, type, point));
                     }
                     world.add(level);
@@ -60,8 +59,7 @@ public final class World {
             int size = level.size();
             levelText += String.valueOf(size) + "\n";
             for (int i = 0; i < size; i++) {
-                int transparency = 0;
-                levelText += String.valueOf(level.getLevel().get(i).getGroup()) + " " + String.valueOf(level.getLevel().get(i).getType()) + " " + String.valueOf((level.getLevel().get(i).getX()) / halfItemSize) + " " + String.valueOf((level.getLevel().get(i).getY()) / (levelOffset / 2)) + " " + String.valueOf(transparency) + "\n";
+                levelText += String.valueOf(level.getLevel().get(i).getGroup()) + " " + String.valueOf(level.getLevel().get(i).getType()) + " " + String.valueOf((level.getLevel().get(i).getX()) / halfItemSize) + " " + String.valueOf((level.getLevel().get(i).getY()) / (levelOffset / 2)) + "\n";
             }
         }
         File file = new File("Worlds/" + getName() + ".txt");
@@ -71,6 +69,44 @@ public final class World {
             return;
         }
         isChanged = false;
+    }
+
+    private Point isometricToCartician(Point point) {
+        return new Point((2 * point.y + point.x) / 2, (2 * point.y - point.x) / 2);
+    }
+
+    private Point carticianToIsometric(Point point) {
+        return new Point(point.x - point.y, (point.x + point.y) / 2);
+    }
+
+    public final void export() {
+        int xMin = Integer.MAX_VALUE, yMin = Integer.MAX_VALUE;
+        for (Level level : world) {
+            int size = level.size();
+            for (int i = 0; i < size; i++) {
+                Point point = isometricToCartician(level.getLevel().get(i).getLocation());
+                if (point.x < xMin) {
+                    xMin = point.x;
+                }
+                if (point.y < yMin) {
+                    yMin = point.y;
+                }
+            }
+        }
+        String levelText = String.valueOf(world.size()) + "\n";
+        for (Level level : world) {
+            levelText += String.valueOf(level.size()) + "\n";
+            for (int i = 0; i < level.size(); i++) {
+                Point point = isometricToCartician(level.getLevel().get(i).getLocation());
+                levelText += String.valueOf(level.getLevel().get(i).getGroup()) + " " + String.valueOf(level.getLevel().get(i).getType()) + " " + String.valueOf((point.x - xMin) / halfItemSize) + " " + String.valueOf((point.y - yMin) / halfItemSize) + "\n";
+            }
+        }
+        File file = new File("Worlds/" + getName() + ".World");
+        try (BufferedWriter output = new BufferedWriter(new FileWriter(file))) {
+            output.write(levelText);
+        } catch (IOException ex) {
+            return;
+        }
     }
 
     public final void addToCurrentLevelChecked(Item item) {
