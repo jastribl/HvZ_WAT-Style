@@ -84,12 +84,14 @@ public final class World {
         for (int i = 0; i < world.size(); i++) {
             Level level = world.get(i);
             for (int j = 0; j < level.size(); j++) {
-                Point point = isometricToCartesian(level.getLevel().get(j).getLocation());
+                Point point = (Point) level.getLevel().get(j).getLocation().clone();
+                point.translate(0, halfItemSize * i);
+                point = isometricToCartesian(point);
                 if (point.x < xMin) {
                     xMin = point.x;
                 }
-                if (point.y + (levelOffset * i) < yMin) {
-                    yMin = point.y + (levelOffset * i);
+                if (point.y < yMin) {
+                    yMin = point.y;
                 }
             }
         }
@@ -99,9 +101,10 @@ public final class World {
             levelText += String.valueOf(world.get(i).size()) + "\n";
             for (int j = 0; j < level.size(); j++) {
                 Item item = level.getLevel().get(j);
-                Point point = isometricToCartesian(item.getLocation());
-                point.translate(0, levelOffset * i);
-                levelText += String.valueOf(item.getGroup()) + " " + String.valueOf(item.getType()) + " " + String.valueOf((point.x - xMin) / halfItemSize) + " " + String.valueOf((point.y - yMin) / halfItemSize) + "\n";
+                Point point = (Point) item.getLocation().clone();
+                point.translate(0, halfItemSize * i);
+                point = isometricToCartesian(point);
+                levelText += String.valueOf(item.getGroup()) + " " + String.valueOf(item.getType()) + " " + String.valueOf((point.x) / halfItemSize) + " " + String.valueOf((point.y) / halfItemSize) + "\n";
             }
         }
         File file = new File("Worlds/" + getName() + ".World");
