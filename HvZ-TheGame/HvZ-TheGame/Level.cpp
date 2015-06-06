@@ -19,7 +19,7 @@ Block Level::getBlockAt(const Point& point) const {
 	return Block();
 }
 
-void Level::addBlockAt(const Block& block) {
+void Level::addBlockAt(Block block) {
 	level.insert({ block.getLocation(), block });
 }
 
@@ -33,4 +33,8 @@ void Level::draw(sf::RenderWindow& window) {
 	for (map<Point, Block, ByLocation>::iterator iterator = level.begin(); iterator != level.end(); ++iterator){
 		iterator->second.draw(window);
 	}
+}
+
+int Level::size(){
+	return level.size();
 }

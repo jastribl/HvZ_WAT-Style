@@ -11,7 +11,8 @@ private:
 public:
 	World();
 	~World();
-	void addLevel(const Level& level);
+	void addLevel(Level level);
 	void removeLevel(int i);
 	void draw(sf::RenderWindow& window);
+	int size();
 };

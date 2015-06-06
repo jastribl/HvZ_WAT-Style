@@ -6,28 +6,27 @@
 #include "Block.h"
 #include <fstream>
 #include <iostream>
-
+#include <stdlib.h>
 void updateGame() {
 }
 
 int main()
 {
-	sf::RenderWindow window(sf::RenderWindow(sf::VideoMode(SCREEN_SIZE_X, SCREEN_SIZE_Y), "HvZ - The Game", sf::Style::None));
+	sf::ContextSettings settings;
+	settings.antialiasingLevel = 8;
+	sf::RenderWindow window(sf::RenderWindow(sf::VideoMode(SCREEN_SIZE_X, SCREEN_SIZE_Y), "HvZ - The Game", sf::Style::None, settings));
 	sf::View view(sf::FloatRect(0, 0, SCREEN_SIZE_X, SCREEN_SIZE_Y));
 	Hud hud = Hud();
 
 
 	sf::Texture texture;
 	texture.loadFromFile("Resources/Images/block0.png");
-	sf::Sprite sprite;
-	sprite.setTexture(texture);
-	sprite.setPosition(200, 200);
 
 	World world;
 	ifstream  worldReader("Resources/Maps/the.World");
 	int numberOfLevels;
 	worldReader >> numberOfLevels;
-	int count = 0;
+
 	for (int i = 0; i < numberOfLevels; i++){
 		int numberOfBlocks;
 		Level level;
@@ -35,16 +34,17 @@ int main()
 		for (int j = 0; j < numberOfBlocks; j++){
 			int group, type, x, y;
 			worldReader >> group >> type >> x >> y;
-			level.addBlockAt(Block(type, Point(x * 8, y * 8), texture));
-			count++;
+			Block block = Block(type, Point(x * 8, y * 8), texture);
+			level.addBlockAt(block);
 		}
 		world.addLevel(level);
 	}
-	std::cout << count;
+
+	cout << world.size() << endl;
 
 
 	window.setView(view);
-	window.setFramerateLimit(60);
+	window.setFramerateLimit(10);
 	sf::Clock clock;
 	float elapsedTime = 0.0f;
 	while (window.isOpen()) {
@@ -73,8 +73,10 @@ int main()
 		window.clear(sf::Color(255, 255, 255));
 
 		world.draw(window);
+
+		hud.setHP(rand() % 101);
+		hud.setMP(rand() % 101);
 		hud.drawToWindow(window);
-		window.draw(sprite);
 		window.display();
 		elapsedTime += clock.restart().asSeconds();
 	}
