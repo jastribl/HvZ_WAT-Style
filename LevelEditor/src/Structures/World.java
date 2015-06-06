@@ -71,34 +71,37 @@ public final class World {
         isChanged = false;
     }
 
-    private Point isometricToCartician(Point point) {
+    private Point isometricToCartesian(Point point) {
         return new Point((2 * point.y + point.x) / 2, (2 * point.y - point.x) / 2);
     }
 
-    private Point carticianToIsometric(Point point) {
+    private Point cartesianToIsometric(Point point) {
         return new Point(point.x - point.y, (point.x + point.y) / 2);
     }
 
     public final void export() {
         int xMin = Integer.MAX_VALUE, yMin = Integer.MAX_VALUE;
-        for (Level level : world) {
-            int size = level.size();
-            for (int i = 0; i < size; i++) {
-                Point point = isometricToCartician(level.getLevel().get(i).getLocation());
+        for (int i = 0; i < world.size(); i++) {
+            Level level = world.get(i);
+            for (int j = 0; j < level.size(); j++) {
+                Point point = isometricToCartesian(level.getLevel().get(j).getLocation());
                 if (point.x < xMin) {
                     xMin = point.x;
                 }
-                if (point.y < yMin) {
-                    yMin = point.y;
+                if (point.y + (levelOffset * i) < yMin) {
+                    yMin = point.y + (levelOffset * i);
                 }
             }
         }
         String levelText = String.valueOf(world.size()) + "\n";
-        for (Level level : world) {
-            levelText += String.valueOf(level.size()) + "\n";
-            for (int i = 0; i < level.size(); i++) {
-                Point point = isometricToCartician(level.getLevel().get(i).getLocation());
-                levelText += String.valueOf(level.getLevel().get(i).getGroup()) + " " + String.valueOf(level.getLevel().get(i).getType()) + " " + String.valueOf((point.x - xMin) / halfItemSize) + " " + String.valueOf((point.y - yMin) / halfItemSize) + "\n";
+        for (int i = 0; i < world.size(); i++) {
+            Level level = world.get(i);
+            levelText += String.valueOf(world.get(i).size()) + "\n";
+            for (int j = 0; j < level.size(); j++) {
+                Item item = level.getLevel().get(j);
+                Point point = isometricToCartesian(item.getLocation());
+                point.translate(0, levelOffset * i);
+                levelText += String.valueOf(item.getGroup()) + " " + String.valueOf(item.getType()) + " " + String.valueOf((point.x - xMin) / halfItemSize) + " " + String.valueOf((point.y - yMin) / halfItemSize) + "\n";
             }
         }
         File file = new File("Worlds/" + getName() + ".World");
