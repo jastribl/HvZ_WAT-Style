@@ -11,7 +11,7 @@ private:
 
 public:
 	Block();
-	Block(int blockType, Point blockLocation, const sf::Texture& texture);
+	Block(int blockType, Point blockLocation, int level, const sf::Texture& texture);
 	~Block();
 	int getType();
 	void setType(int blockType);

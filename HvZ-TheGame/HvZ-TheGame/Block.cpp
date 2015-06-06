@@ -6,14 +6,15 @@
 
 Block::Block() {}
 
-Block::Block(int blockType, Point blockLocation, const sf::Texture& texture) {
+Block::Block(int blockType, Point blockLocation, int level, const sf::Texture& texture) {
 	type = blockType;
 	location = blockLocation;
 	sprite = sf::Sprite(texture);
 	sprite.scale(BLOCK_SIZE / sprite.getLocalBounds().width, BLOCK_SIZE / sprite.getLocalBounds().height);
-	Point p = Point(location.getX() * HALF_BLOCK_SIZE, location.getY() * HALF_BLOCK_SIZE);
-	sprite.setPosition(p.getX() - p.getY(), (p.getX() + p.getY()) / 2);
+	Point p = cartesianToIsometric(location.getX() * HALF_BLOCK_SIZE, location.getY() * HALF_BLOCK_SIZE);
+	sprite.setPosition(p.getX(), p.getY() - (level*HALF_BLOCK_SIZE));
 }
+
 
 Block::~Block() {}
 

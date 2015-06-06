@@ -37,7 +37,7 @@ int main()
 		for (int j = 0; j < numberOfBlocks; j++){
 			int group, type, x, y;
 			worldReader >> group >> type >> x >> y;
-			Block block = Block(type, Point(x, y), textureManager.getTextureFor(group, type));
+			Block block = Block(type, Point(x, y), i, textureManager.getTextureFor(group, type));
 			level.addBlockAt(block);
 		}
 		world.addLevel(level);
@@ -83,9 +83,9 @@ int main()
 		}
 		window.clear(sf::Color(255, 255, 255));
 		world.draw(window);
-		hud.setHP(rand() % 101);
-		hud.setMP(rand() % 101);
-		hud.drawToWindow(window);
+		//hud.setHP(rand() % 101);
+		//hud.setMP(rand() % 101);
+		//hud.drawToWindow(window);
 		window.setView(view);
 		window.display();
 		elapsedTime += clock.restart().asSeconds();
