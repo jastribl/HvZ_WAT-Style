@@ -2,17 +2,19 @@
 #include "Constants.h"
 #include "Hud.h"
 #include <iostream>
-
+#include <stdlib.h>
 void updateGame() {
 }
 
 int main()
 {
-	sf::RenderWindow window(sf::RenderWindow(sf::VideoMode(SCREEN_SIZE_X, SCREEN_SIZE_Y), "HvZ - The Game", sf::Style::None));
+	sf::ContextSettings settings;
+	settings.antialiasingLevel = 8;
+	sf::RenderWindow window(sf::RenderWindow(sf::VideoMode(SCREEN_SIZE_X, SCREEN_SIZE_Y), "HvZ - The Game", sf::Style::None,settings));
 	sf::View view(sf::FloatRect(0, 0, SCREEN_SIZE_X, SCREEN_SIZE_Y));
 	Hud hud = Hud();
 	window.setView(view);
-	window.setFramerateLimit(60);
+	window.setFramerateLimit(10);
 	sf::Clock clock;
 	float elapsedTime = 0.0f;
 	while (window.isOpen()) {
@@ -39,6 +41,8 @@ int main()
 			updateGame();
 		}
 		window.clear(sf::Color(255, 255, 255));
+		hud.setHP(rand() % 101);
+		hud.setMP(rand() % 101);
 		hud.drawToWindow(window);
 		window.display();
 		elapsedTime += clock.restart().asSeconds();
