@@ -4,9 +4,11 @@
 #include "World.h"
 #include "Level.h"
 #include "Block.h"
+#include "TextureManager.h"
 #include <fstream>
 #include <iostream>
 #include <stdlib.h>
+
 void updateGame() {
 }
 
@@ -19,14 +21,13 @@ int main()
 	Hud hud = Hud();
 
 
-	sf::Texture texture;
-	texture.loadFromFile("Resources/Images/block0.png");
+	TextureManager textureManager = TextureManager();
 
-	World world;
-	ifstream  worldReader("Resources/Maps/the.World");
+
+	World world = World();
+	std::ifstream  worldReader("Resources/Maps/the.World");
 	int numberOfLevels;
 	worldReader >> numberOfLevels;
-
 	for (int i = 0; i < numberOfLevels; i++){
 		int numberOfBlocks;
 		Level level;
@@ -34,14 +35,11 @@ int main()
 		for (int j = 0; j < numberOfBlocks; j++){
 			int group, type, x, y;
 			worldReader >> group >> type >> x >> y;
-			Block block = Block(type, Point(x * 8, y * 8), texture);
+			Block block = Block(type, Point(x, y), textureManager.getTextureFor(group, type));
 			level.addBlockAt(block);
 		}
 		world.addLevel(level);
 	}
-
-	cout << world.size() << endl;
-
 
 	window.setView(view);
 	window.setFramerateLimit(10);

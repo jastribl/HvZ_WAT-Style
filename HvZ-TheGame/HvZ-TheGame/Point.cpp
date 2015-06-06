@@ -4,8 +4,6 @@
 #include <iostream>
 #include <math.h>
 
-using namespace std;
-
 Point::Point() {}
 
 Point::Point(double xGiven = 0.0, double yGiven = 0.0) {
@@ -43,5 +41,5 @@ void Point::operator -= (const Point & p) {
 }
 
 void Point::print() const {
-	cout << "(" << x << "," << y << ")";
+	std::cout << "(" << x << "," << y << ")";
 }

@@ -6,7 +6,7 @@ World::World() {}
 
 World::~World() {}
 
-void World::addLevel(Level level){
+void World::addLevel(const Level& level){
 	world.push_back(level);
 }
 

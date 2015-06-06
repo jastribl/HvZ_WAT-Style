@@ -1,15 +1,18 @@
 #include "stdafx.h"
+#include "Constants.h"
 #include "Block.h"
 #include "Point.h"
 #include <iostream>
 
 Block::Block() {}
 
-Block::Block(int blockType, Point blockLocation, sf::Texture texture) {
+Block::Block(int blockType, Point blockLocation, const sf::Texture& texture) {
 	type = blockType;
 	location = blockLocation;
 	sprite = sf::Sprite(texture);
-	sprite.setPosition(blockLocation.getX(), blockLocation.getY());
+	sprite.scale(BLOCK_SIZE / sprite.getLocalBounds().width, BLOCK_SIZE / sprite.getLocalBounds().height);
+	Point p = Point(location.getX() * HALF_BLOCK_SIZE, location.getY() * HALF_BLOCK_SIZE);
+	sprite.setPosition(p.getX() - p.getY(), (p.getX() + p.getY()) / 2);
 }
 
 Block::~Block() {}
