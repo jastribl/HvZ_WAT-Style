@@ -8,13 +8,10 @@ private:
 	double x, y;
 
 public:
+	Point();
 	Point(double, double);
-	double getX() {
-		return x;
-	}
-	double getY() {
-		return y;
-	}
+	double getX() const;
+	double getY() const;
 	bool operator == (const Point &) const;
 	Point operator + (const Point &) const;
 	Point operator - (const Point &) const;

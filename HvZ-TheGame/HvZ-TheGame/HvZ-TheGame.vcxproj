@@ -94,14 +94,18 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Block.h" />
     <ClInclude Include="Constants.h" />
     <ClInclude Include="Hud.h" />
+    <ClInclude Include="Level.h" />
     <ClInclude Include="Point.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Hud.cpp" />
+    <ClCompile Include="Block.cpp" />
     <ClCompile Include="HvZ-TheGame.cpp" />
+    <ClCompile Include="Level.cpp" />
     <ClCompile Include="Point.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

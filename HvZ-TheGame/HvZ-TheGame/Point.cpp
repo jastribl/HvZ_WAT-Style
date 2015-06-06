@@ -6,6 +6,8 @@
 
 using namespace std;
 
+Point::Point() {}
+
 Point::Point(double xGiven = 0.0, double yGiven = 0.0) {
 	x = xGiven;
 	y = yGiven;
@@ -14,6 +16,13 @@ Point::Point(double xGiven = 0.0, double yGiven = 0.0) {
 bool Point::operator == (const Point & p) const
 {
 	return (x == p.x && y == p.y);
+}
+
+double Point::getX() const {
+	return x;
+}
+double Point::getY() const {
+	return y;
 }
 
 Point Point::operator + (const Point & p) const
