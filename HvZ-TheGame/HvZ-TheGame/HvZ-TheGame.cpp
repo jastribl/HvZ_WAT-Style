@@ -5,6 +5,7 @@
 #include "Level.h"
 #include "Block.h"
 #include "TextureManager.h"
+#include "WorldManager.h"
 #include <fstream>
 #include <iostream>
 #include <stdlib.h>
@@ -21,6 +22,8 @@ int main()
 
 	Hud hud = Hud();
 
+	WorldManager worldManager = WorldManager();
+
 	TextureManager textureManager = TextureManager();
 
 	World world = World();
@@ -29,7 +32,7 @@ int main()
 	worldReader >> numberOfLevels;
 	for (int i = 0; i < numberOfLevels; i++){
 		int numberOfBlocks;
-		Level level;
+		Level level = Level();
 		worldReader >> numberOfBlocks;
 		for (int j = 0; j < numberOfBlocks; j++){
 			int group, type, x, y;
@@ -53,6 +56,18 @@ int main()
 				if (event.key.code == sf::Keyboard::Escape){
 					window.close();
 				}
+				else if (event.key.code == sf::Keyboard::Up){
+					view.move(0, -10);
+				}
+				else if (event.key.code == sf::Keyboard::Down){
+					view.move(0, 10);
+				}
+				else if (event.key.code == sf::Keyboard::Left){
+					view.move(-10., 0);
+				}
+				else if (event.key.code == sf::Keyboard::Right){
+					view.move(10, 0);
+				}
 				break;
 
 			case sf::Event::Closed:
@@ -71,6 +86,7 @@ int main()
 		hud.setHP(rand() % 101);
 		hud.setMP(rand() % 101);
 		hud.drawToWindow(window);
+		window.setView(view);
 		window.display();
 		elapsedTime += clock.restart().asSeconds();
 	}
