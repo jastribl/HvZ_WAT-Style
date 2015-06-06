@@ -2,8 +2,7 @@
 
 #include "stdafx.h"
 #include "Constants.h"
-
-
+#include "Hud.h"
 void updateGame(){
 
 }
@@ -12,6 +11,7 @@ int main()
 {
 	sf::RenderWindow* window(new sf::RenderWindow(sf::VideoMode(SCREEN_SIZE_X, SCREEN_SIZE_Y), "HvZ - The Game", sf::Style::None));
 	sf::View view(sf::FloatRect(0, 0, SCREEN_SIZE_X, SCREEN_SIZE_Y));
+	Hud* hud = new Hud();
 	window->setView(view);
 	window->setFramerateLimit(60);
 	sf::Clock clock;
@@ -40,9 +40,11 @@ int main()
 			updateGame();
 		}
 		window->clear(sf::Color(255, 255, 255));
+		window->draw(*hud->drawHud());
 		window->display();
 		elapsedTime += clock.restart().asSeconds();
 	}
 	delete window;
+	delete hud;
 	return 0;
 }
