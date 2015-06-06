@@ -18,11 +18,10 @@ int main()
 	settings.antialiasingLevel = 8;
 	sf::RenderWindow window(sf::RenderWindow(sf::VideoMode(SCREEN_SIZE_X, SCREEN_SIZE_Y), "HvZ - The Game", sf::Style::None, settings));
 	sf::View view(sf::FloatRect(0, 0, SCREEN_SIZE_X, SCREEN_SIZE_Y));
+
 	Hud hud = Hud();
 
-
 	TextureManager textureManager = TextureManager();
-
 
 	World world = World();
 	std::ifstream  worldReader("Resources/Maps/the.World");
@@ -50,7 +49,6 @@ int main()
 		while (window.pollEvent(event)) {
 			switch (event.type)
 			{
-
 			case sf::Event::KeyPressed:
 				if (event.key.code == sf::Keyboard::Escape){
 					window.close();
@@ -69,9 +67,7 @@ int main()
 			updateGame();
 		}
 		window.clear(sf::Color(255, 255, 255));
-
 		world.draw(window);
-
 		hud.setHP(rand() % 101);
 		hud.setMP(rand() % 101);
 		hud.drawToWindow(window);

@@ -4,14 +4,6 @@
 #include <iostream>
 
 Hud::Hud() {
-	//if (!create(SCREEN_SIZE_X, SCREEN_SIZE_Y)) 	{
-	//	std::cerr << "Error" << std::endl;
-	//}
-	//drawingSprite = sf::Sprite(getTexture());
-	//if (!test.loadFromFile("Resources/Images/Splashscreen.png"))
-	//{
-	//	std::cerr << "ERROR" << std::endl;
-	//}
 	font.loadFromFile("Resources/Fonts/arial.ttf");
 }
 
@@ -25,12 +17,6 @@ void Hud::setMP(float newmp){
 }
 
 void Hud::drawToWindow(sf::RenderWindow& window) {
-	//shape.move(0.5, 0);
-	//clear();
-	//draw(shape);
-	//display();
-	//window.draw(drawingSprite);
-
 	static int HP_ORIGIN_X = 0;
 	static int HP_ORIGIN_Y = 0;
 	static int HP_BORDER = 3;
@@ -57,6 +43,7 @@ void Hud::drawToWindow(sf::RenderWindow& window) {
 	vertices.push_back(sf::Vertex(sf::Vector2f(HP_ORIGIN_X + HP_BORDER, HP_ORIGIN_Y + HP_WIDTH - HP_BORDER), sf::Color(64, 64, 64)));
 	vertices.push_back(sf::Vertex(sf::Vector2f(HP_ORIGIN_X + HP_LENGTH - HP_BORDER, HP_ORIGIN_Y + HP_WIDTH - HP_BORDER), sf::Color(80, 80, 80)));
 	vertices.push_back(sf::Vertex(sf::Vector2f(HP_ORIGIN_X + HP_LENGTH - HP_BORDER, HP_ORIGIN_Y + HP_BORDER), sf::Color(128, 128, 128)));
+
 
 	vertices.push_back(sf::Vertex(sf::Vector2f(HP_ORIGIN_X + HP_BAR_X, HP_ORIGIN_Y + HP_BAR_Y), sf::Color(204, 0, 0)));
 	vertices.push_back(sf::Vertex(sf::Vector2f(HP_ORIGIN_X + HP_BAR_X, HP_ORIGIN_Y + HP_BAR_WIDTH + HP_BAR_Y), sf::Color(100, 0, 0)));
