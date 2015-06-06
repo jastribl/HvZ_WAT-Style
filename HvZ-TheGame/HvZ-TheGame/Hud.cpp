@@ -14,13 +14,13 @@ Hud::Hud() {
 }
 
 Hud::~Hud() {
-	//delete drawingSprite;
 }
 
-const sf::Sprite Hud::drawHud() {
+void Hud::drawToWindow(sf::RenderWindow& window) {
 	shape.move(0.5, 0);
 	clear();
 	draw(shape);
 	display();
-	return drawingSprite;
+	window.draw(drawingSprite);
+
 }

@@ -9,4 +9,5 @@ public:
 	Hud();
 	~Hud();
 	const sf::Sprite drawHud();
+	void drawToWindow(sf::RenderWindow& window);
 };

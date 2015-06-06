@@ -4,7 +4,6 @@
 #include <iostream>
 
 void updateGame() {
-
 }
 
 int main()
@@ -40,11 +39,9 @@ int main()
 			updateGame();
 		}
 		window.clear(sf::Color(255, 255, 255));
-		window.draw(hud.drawHud());
+		hud.drawToWindow(window);
 		window.display();
 		elapsedTime += clock.restart().asSeconds();
 	}
-	//delete window;
-	//delete hud;
 	return 0;
 }
