@@ -41,6 +41,7 @@ public class MainMenu {
     }
 
     public final int getItemAt(Point point) {
+        point.translate(halfItemSize, halfItemSize);
         for (Item menuItem : menuItems.get(currentItemGroup)) {
             Rectangle rectangle = new Rectangle(menuItem.getX(), menuItem.getY(), itemSize, itemSize);
             if (rectangle.contains(point)) {
