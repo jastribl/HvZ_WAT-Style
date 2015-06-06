@@ -7,10 +7,11 @@ class Block {
 private:
 	int type;
 	Point location;
+	sf::Sprite sprite;
 
 public:
 	Block();
-	Block(int blockType, Point blockLocation);
+	Block(int blockType, Point blockLocation, sf::Texture texture);
 	~Block();
 	int getType();
 	void setType(int blockType);
@@ -18,5 +19,6 @@ public:
 	int getX() const;
 	int getY() const;
 	void setLocation(Point blockLocation);
+	void draw(sf::RenderWindow& window);
 };
 

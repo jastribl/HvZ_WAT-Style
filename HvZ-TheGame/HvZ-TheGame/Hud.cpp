@@ -22,5 +22,4 @@ void Hud::drawToWindow(sf::RenderWindow& window) {
 	draw(shape);
 	display();
 	window.draw(drawingSprite);
-
 }

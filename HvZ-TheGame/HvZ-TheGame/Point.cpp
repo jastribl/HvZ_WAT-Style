@@ -13,8 +13,7 @@ Point::Point(double xGiven = 0.0, double yGiven = 0.0) {
 	y = yGiven;
 }
 
-bool Point::operator == (const Point & p) const
-{
+bool Point::operator == (const Point & p) const {
 	return (x == p.x && y == p.y);
 }
 
@@ -25,27 +24,24 @@ double Point::getY() const {
 	return y;
 }
 
-Point Point::operator + (const Point & p) const
-{
+Point Point::operator + (const Point & p) const {
 	return Point(x + p.x, y + p.y);
 }
 
-Point Point::operator - (const Point & p) const
-{
+Point Point::operator - (const Point & p) const {
 	return Point(x - p.x, y - p.y);
 }
 
-void Point::operator += (const Point & p){
+void Point::operator += (const Point & p) {
 	x += p.x;
 	y += p.y;
 }
 
-void Point::operator -= (const Point & p){
+void Point::operator -= (const Point & p) {
 	x -= p.x;
 	y -= p.y;
 }
 
-void Point::print() const
-{
+void Point::print() const {
 	cout << "(" << x << "," << y << ")";
 }

@@ -6,9 +6,8 @@
 class Level {
 
 private:
-	struct ByLocation : public std::binary_function < Block, Block, bool >
-	{
-		bool operator()(const Block& a, const Block& b) const
+	struct ByLocation {
+		bool operator()(const Point& a, const Point& b) const
 		{
 			if (a.getY() == b.getY()) {
 				if (a.getX() == b.getX()) {
@@ -31,5 +30,7 @@ public:
 	bool isEmpty() const;
 	bool existsAt(const Point& point) const;
 	Block getBlockAt(const Point& point) const;
-	void addBlockAt(Block block, const Point& point);
+	void addBlockAt(const Block& block);
+	void removeBlockAt(const Point& point);
+	void draw(sf::RenderWindow& window);
 };
