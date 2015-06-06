@@ -69,9 +69,7 @@ int main()
 			updateGame();
 		}
 		window.clear(sf::Color(255, 255, 255));
-
 		world.draw(window);
-
 		hud.setHP(rand() % 101);
 		hud.setMP(rand() % 101);
 		hud.drawToWindow(window);
