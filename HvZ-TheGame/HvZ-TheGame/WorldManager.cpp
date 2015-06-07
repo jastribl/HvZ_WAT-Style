@@ -35,3 +35,13 @@ WorldManager::~WorldManager() {}
 World& WorldManager::getCurrentWorld() {
 	return worlds.find(currentWorld)->second;
 }
+
+void WorldManager::nextWorld() {
+	std::map < std::string, World >::iterator it = worlds.find(currentWorld);
+	if (it == worlds.end()) {
+		currentWorld = worlds.begin()->first;
+	}
+	else {
+		currentWorld = std::next(worlds.find(currentWorld))->first;
+	}
+}

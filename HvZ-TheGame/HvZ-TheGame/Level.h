@@ -29,7 +29,7 @@ public:
 	~Level();
 	bool isEmpty() const;
 	bool blockExitsAt(const Point& point) const;
-	Block getBlockAt(const Point& point) const;
+	Block& getBlockAt(const Point& point);
 	void addBlockAt(const Block& block);
 	void removeBlockAt(const Point& point);
 	void draw(sf::RenderWindow& window);

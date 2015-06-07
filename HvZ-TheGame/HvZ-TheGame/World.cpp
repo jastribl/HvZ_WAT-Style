@@ -14,6 +14,10 @@ void World::removeLevel(int i){
 	world.erase(world.begin() + i);
 }
 
+Level& World::getLevel(int index){
+	return world.at(index);
+}
+
 void World::draw(sf::RenderWindow& window) {
 	for (int i = 0; i < world.size(); i++){
 		world.at(i).draw(window);

@@ -12,7 +12,7 @@ Block::Block(int blockType, Point blockLocation, int level, const sf::Texture& t
 	sprite = sf::Sprite(texture);
 	sprite.scale(BLOCK_SIZE / sprite.getLocalBounds().width, BLOCK_SIZE / sprite.getLocalBounds().height);
 	Point p = cartesianToIsometric(location.getX() * HALF_BLOCK_SIZE, location.getY() * HALF_BLOCK_SIZE);
-	sprite.setPosition(p.getX(), p.getY() - (level*HALF_BLOCK_SIZE));
+	sprite.setPosition(p.getX() - HALF_BLOCK_SIZE, p.getY() - (level * HALF_BLOCK_SIZE));
 }
 
 
@@ -43,5 +43,10 @@ void Block::setLocation(Point blockLocation) {
 }
 
 void Block::draw(sf::RenderWindow& window) {
-	window.draw(sprite);
+	if (visible)
+		window.draw(sprite);
+}
+
+void Block::toggleVisible(){
+	visible = !visible;
 }

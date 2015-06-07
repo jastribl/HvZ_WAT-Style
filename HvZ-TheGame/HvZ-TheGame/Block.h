@@ -8,6 +8,7 @@ private:
 	int type;
 	Point location;
 	sf::Sprite sprite;
+	bool visible = true;
 
 public:
 	Block();
@@ -20,5 +21,6 @@ public:
 	int getY() const;
 	void setLocation(Point blockLocation);
 	void draw(sf::RenderWindow& window);
+	void toggleVisible();
 };
 

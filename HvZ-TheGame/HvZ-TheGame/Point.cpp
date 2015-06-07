@@ -8,17 +8,25 @@ Point::Point() {
 	y = 0.0;
 }
 
-Point::Point(double xGiven = 0.0, double yGiven = 0.0) {
+Point::Point(int xGiven = 0, int yGiven = 0) {
 	x = xGiven;
 	y = yGiven;
 }
 
-double Point::getX() const {
+int Point::getX() const {
 	return x;
 }
 
-double Point::getY() const {
+int Point::getY() const {
 	return y;
+}
+
+void Point::setX(int xG) {
+	x = xG;
+}
+
+void Point::setY(int yG) {
+	y = yG;
 }
 
 bool Point::operator == (const Point & p) const {

@@ -15,7 +15,7 @@ bool Level::blockExitsAt(const Point& point) const {
 	return level.count(point) > 0;
 }
 
-Block Level::getBlockAt(const Point& point) const {
+Block& Level::getBlockAt(const Point& point) {
 	return level.find(point)->second;
 }
 

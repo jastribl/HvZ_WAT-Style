@@ -15,4 +15,5 @@ public:
 	WorldManager(TextureManager& textureManager);
 	~WorldManager();
 	World& getCurrentWorld();
+	void nextWorld();
 };
