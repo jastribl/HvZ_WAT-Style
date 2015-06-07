@@ -5,11 +5,11 @@
 WorldManager::WorldManager() {}
 
 WorldManager::WorldManager(TextureManager& textureManager) {
-	std::ifstream  worldsReader("Resources/Maps/Worlds.Worlds");
+	std::ifstream  worldsReader("Resources/Worlds/Worlds.Worlds");
 	std::string worldName;
 	while (worldsReader >> worldName){
 		World world = World();
-		std::ifstream  worldReader("Resources/Maps/" + worldName + ".World");
+		std::ifstream  worldReader("Resources/Worlds/" + worldName + ".World");
 		int numberOfLevels;
 		worldReader >> numberOfLevels;
 		for (int i = 0; i < numberOfLevels; i++){
