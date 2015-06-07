@@ -14,7 +14,7 @@ public class BottomMenu {
         MediaTracker imageTracker = new MediaTracker(new JFrame());
         for (int icon = 0; icon < iconImages.length; icon++) {
             try {
-                iconImages[icon] = new ImageIcon(getClass().getResource("/media/icon" + icon + ".png")).getImage().getScaledInstance(iconSize, iconSize, Image.SCALE_SMOOTH);
+                iconImages[icon] = new ImageIcon(getClass().getResource("/Media/icon" + icon + ".png")).getImage().getScaledInstance(iconSize, iconSize, Image.SCALE_SMOOTH);
                 imageTracker.addImage(iconImages[icon], 0);
             } catch (Exception e) {
             }

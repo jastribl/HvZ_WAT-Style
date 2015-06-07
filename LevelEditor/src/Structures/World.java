@@ -18,7 +18,7 @@ public final class World {
         name = nameGiven;
         if (load) {
             try {
-                Scanner reader = new Scanner(new File("Worlds/" + name + ".txt"));
+                Scanner reader = new Scanner(new File("Worlds/" + name + ".Level"));
                 int numberOfLevels = reader.nextInt(), numberOfBlocks, group, type;
                 for (int i = 0; i < numberOfLevels; i++) {
                     Level level = new Level();
@@ -62,7 +62,7 @@ public final class World {
                 levelText += String.valueOf(level.getLevel().get(i).getGroup()) + " " + String.valueOf(level.getLevel().get(i).getType()) + " " + String.valueOf((level.getLevel().get(i).getX()) / halfItemSize) + " " + String.valueOf((level.getLevel().get(i).getY()) / (levelOffset / 2)) + "\n";
             }
         }
-        File file = new File("Worlds/" + getName() + ".txt");
+        File file = new File("Worlds/" + getName() + ".Level");
         try (BufferedWriter output = new BufferedWriter(new FileWriter(file))) {
             output.write(levelText);
         } catch (IOException ex) {
@@ -174,7 +174,7 @@ public final class World {
             String oldWorldName = name;
             name = newWorldName;
             allWorlds.set(allWorlds.indexOf(oldWorldName), newWorldName);
-            new File("Worlds/" + oldWorldName + ".txt").delete();
+            new File("Worlds/" + oldWorldName + ".Level").delete();
             saveLevelNames();
             save();
         }
