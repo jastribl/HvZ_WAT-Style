@@ -104,7 +104,7 @@ public final class World {
                 Point point = (Point) item.getLocation().clone();
                 point.translate(0, halfItemSize * i);
                 point = isometricToCartesian(point);
-                levelText += String.valueOf(item.getGroup()) + " " + String.valueOf(item.getType()) + " " + String.valueOf((point.x) / halfItemSize) + " " + String.valueOf((point.y) / halfItemSize) + "\n";
+                levelText += String.valueOf(item.getGroup()) + " " + String.valueOf(item.getType()) + " " + String.valueOf((point.x - xMin) / halfItemSize) + " " + String.valueOf((point.y - yMin) / halfItemSize) + "\n";
             }
         }
         File file = new File("Worlds/" + getName() + ".World");
