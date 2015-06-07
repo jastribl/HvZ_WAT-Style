@@ -15,5 +15,5 @@ public:
 	void removeLevel(int i);
 	Level& getLevel(int index);
 	void draw(sf::RenderWindow& window);
-	int size();
+	int size() const;
 };

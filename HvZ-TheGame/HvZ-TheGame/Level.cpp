@@ -20,7 +20,7 @@ Block& Level::getBlockAt(const Point& point) {
 }
 
 void Level::addBlockAt(const Block& block) {
-	level[block.getLocation()] = block;
+	level.insert({ block.location, block });
 }
 
 void Level::removeBlockAt(const Point& point) {

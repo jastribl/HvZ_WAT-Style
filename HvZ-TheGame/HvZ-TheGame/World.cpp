@@ -24,6 +24,6 @@ void World::draw(sf::RenderWindow& window) {
 	}
 }
 
-int World::size(){
+int World::size() const {
 	return world.size();
 }

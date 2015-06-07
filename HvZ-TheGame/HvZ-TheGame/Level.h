@@ -9,16 +9,11 @@ private:
 	struct ByLocation {
 		bool operator()(const Point& a, const Point& b) const
 		{
-			if (a.getY() == b.getY()) {
-				if (a.getX() == b.getX()) {
-					return false;
-				}
-				else {
-					return (a.getX() <= b.getX());
-				}
+			if (a.y == b.y) {
+				return (a.x < b.x);
 			}
 			else {
-				return (a.getY() <= b.getY());
+				return (a.y <= b.y);
 			}
 		}
 	};

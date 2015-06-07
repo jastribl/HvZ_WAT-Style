@@ -15,7 +15,7 @@ static Point cartesianToIsometric(const int x, const int y){
 }
 
 static Point cartesianToIsometric(const Point& p) {
-	return cartesianToIsometric(p.getX(), p.getY());
+	return cartesianToIsometric(p.x, p.y);
 }
 
 static Point cartesianToIsometric(const sf::Vector2f& p) {
@@ -27,7 +27,7 @@ static Point isometricToCartesian(const int x, const int y) {
 }
 
 static Point isometricToCartesian(const Point& p) {
-	return isometricToCartesian(p.getX(), p.getY());
+	return isometricToCartesian(p.x, p.y);
 }
 
 static Point isometricToCartesian(const sf::Vector2f& p) {
@@ -36,5 +36,5 @@ static Point isometricToCartesian(const sf::Vector2f& p) {
 
 static Point screenToGrid(const sf::Vector2f& p) {
 	Point point = isometricToCartesian(p);
-	return Point(point.getX() / HALF_BLOCK_SIZE, point.getY() / HALF_BLOCK_SIZE);
+	return Point(point.x / HALF_BLOCK_SIZE, point.y / HALF_BLOCK_SIZE);
 }
