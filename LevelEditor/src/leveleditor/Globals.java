@@ -50,21 +50,21 @@ public class Globals {
 
     public static final void preloadLevelNames() {
         try {
-            Scanner worldReader = new Scanner(new File("Worlds/levels.txt"));
+            Scanner worldReader = new Scanner(new File("Worlds/Worlds.Worlds"));
             while (worldReader.hasNext()) {
                 allWorlds.add(worldReader.next());
             }
         } catch (IOException ex) {
             try {
                 new File("Worlds").mkdir();
-                new File("Worlds/levels.txt").createNewFile();
+                new File("Worlds/Worlds.Worlds").createNewFile();
             } catch (IOException ex1) {
             }
         }
     }
 
     public static void saveLevelNames() {
-        try (BufferedWriter worldWriter = new BufferedWriter(new FileWriter(new File("worlds/levels.txt")))) {
+        try (BufferedWriter worldWriter = new BufferedWriter(new FileWriter(new File("worlds/Worlds.Worlds")))) {
             for (String worldName : allWorlds) {
                 worldWriter.write(worldName + "\n");
             }
@@ -105,7 +105,7 @@ public class Globals {
 
     public static final void removeCurrentWorld() {
         if (JOptionPane.showConfirmDialog(null, "Are you sure you want to remove this World", "Remove?", JOptionPane.YES_NO_OPTION) == 0) {
-            new File("Worlds/" + worlds.get(currentWorld).getName() + ".txt").delete();
+            new File("Worlds/" + worlds.get(currentWorld).getName() + ".Level").delete();
             allWorlds.remove(worlds.get(currentWorld).getName());
             worlds.remove(currentWorld);
             if (currentWorld == worlds.size()) {
