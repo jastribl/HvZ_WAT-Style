@@ -9,19 +9,21 @@ Hud::Hud() {
 
 Hud::~Hud() {
 }
+
 void Hud::setHP(float newhp){
 	hp = newhp;
 }
+
 void Hud::setMP(float newmp){
 	mp = newmp;
 }
 
 void Hud::drawToWindow(sf::RenderWindow& window) {
-	static int HP_ORIGIN_X = 0;
-	static int HP_ORIGIN_Y = 0;
 	static int HP_BORDER = 3;
 	static int HP_LENGTH = 300;
 	static int HP_WIDTH = 150;
+	static int HP_ORIGIN_X = SCREEN_SIZE_X - HP_LENGTH - (HP_BORDER * 2);
+	static int HP_ORIGIN_Y = SCREEN_SIZE_Y - HP_WIDTH - (HP_BORDER * 2);
 	static int HP_TEXT_X = 20;
 	static int HP_TEXT_Y = 15;
 	static int HP_MPTEXT_X = 20;

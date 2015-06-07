@@ -1,9 +1,7 @@
 #include "stdafx.h"
 #include "Point.h"
-
 #include <iostream>
 #include <math.h>
-
 
 Point::Point() {
 	x = 0.0;

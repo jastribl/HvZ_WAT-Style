@@ -11,7 +11,7 @@ bool Level::isEmpty() const {
 	return level.empty();
 }
 
-bool Level::existsAt(const Point& point) const {
+bool Level::blockExitsAt(const Point& point) const {
 	return level.count(point) > 0;
 }
 
@@ -33,6 +33,6 @@ void Level::draw(sf::RenderWindow& window) {
 	}
 }
 
-int Level::size(){
+int Level::size() const {
 	return level.size();
 }

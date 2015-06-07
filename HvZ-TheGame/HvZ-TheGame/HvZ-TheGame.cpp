@@ -7,8 +7,6 @@
 #include "TextureManager.h"
 #include "WorldManager.h"
 #include <fstream>
-#include <iostream>
-#include <stdlib.h>
 
 void updateGame() {
 }
@@ -18,32 +16,15 @@ int main()
 	sf::ContextSettings settings;
 	settings.antialiasingLevel = 8;
 	sf::RenderWindow window(sf::RenderWindow(sf::VideoMode(SCREEN_SIZE_X, SCREEN_SIZE_Y), "HvZ - The Game", sf::Style::None, settings));
-	sf::View view(sf::FloatRect(0, 0, SCREEN_SIZE_X, SCREEN_SIZE_Y));
+	sf::View hudView(sf::FloatRect(0, 0, SCREEN_SIZE_X, SCREEN_SIZE_Y));
+	sf::View worldView(sf::FloatRect(0, 0, SCREEN_SIZE_X, SCREEN_SIZE_Y));
 
 	Hud hud = Hud();
 
-	WorldManager worldManager = WorldManager();
-
 	TextureManager textureManager = TextureManager();
 
-	World world = World();
-	std::ifstream  worldReader("Resources/Maps/the.World");
-	int numberOfLevels;
-	worldReader >> numberOfLevels;
-	for (int i = 0; i < numberOfLevels; i++){
-		int numberOfBlocks;
-		Level level = Level();
-		worldReader >> numberOfBlocks;
-		for (int j = 0; j < numberOfBlocks; j++){
-			int group, type, x, y;
-			worldReader >> group >> type >> x >> y;
-			Block block = Block(type, Point(x, y), i, textureManager.getTextureFor(group, type));
-			level.addBlockAt(block);
-		}
-		world.addLevel(level);
-	}
+	WorldManager worldManager = WorldManager(textureManager);
 
-	window.setView(view);
 	window.setFramerateLimit(10);
 	sf::Clock clock;
 	float elapsedTime = 0.0f;
@@ -57,16 +38,16 @@ int main()
 					window.close();
 				}
 				else if (event.key.code == sf::Keyboard::Up){
-					view.move(0, -10);
+					worldView.move(0, -10);
 				}
 				else if (event.key.code == sf::Keyboard::Down){
-					view.move(0, 10);
+					worldView.move(0, 10);
 				}
 				else if (event.key.code == sf::Keyboard::Left){
-					view.move(-10., 0);
+					worldView.move(-10., 0);
 				}
 				else if (event.key.code == sf::Keyboard::Right){
-					view.move(10, 0);
+					worldView.move(10, 0);
 				}
 				break;
 
@@ -82,11 +63,12 @@ int main()
 			updateGame();
 		}
 		window.clear(sf::Color(255, 255, 255));
-		world.draw(window);
-		//hud.setHP(rand() % 101);
-		//hud.setMP(rand() % 101);
-		//hud.drawToWindow(window);
-		window.setView(view);
+		window.setView(hudView);
+		hud.setHP(rand() % 101);
+		hud.setMP(rand() % 101);
+		hud.drawToWindow(window);
+		window.setView(worldView);
+		worldManager.getCurrentWorld().draw(window);
 		window.display();
 		elapsedTime += clock.restart().asSeconds();
 	}

@@ -19,10 +19,10 @@ TextureManager::TextureManager() {
 
 TextureManager::~TextureManager() {}
 
-void TextureManager::addTextureFor(sf::Texture texture, int group, int type){
+void TextureManager::addTextureFor(sf::Texture texture, int group, int type) {
 	textures[group][type] = texture;
 }
 
-const sf::Texture& TextureManager::getTextureFor(int group, int type){
+const sf::Texture& TextureManager::getTextureFor(int group, int type) {
 	return textures[group][type];
 }

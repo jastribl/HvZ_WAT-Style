@@ -11,7 +11,7 @@ void World::addLevel(const Level& level){
 }
 
 void World::removeLevel(int i){
-	world.erase(world.begin() + i - 1);
+	world.erase(world.begin() + i);
 }
 
 void World::draw(sf::RenderWindow& window) {
