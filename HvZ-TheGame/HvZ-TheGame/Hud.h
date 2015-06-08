@@ -3,12 +3,13 @@
 class Hud {
 
 private:
-	sf::Font font;
+	sf::Font hpFont;
+	sf::Font timeFont;
 	float hp = 100;
 	float hpmax = 100;
 	float mp = 100;
 	float mpmax = 100;
-
+	sf::CircleShape minimap;
 public:
 	Hud();
 	~Hud();
