@@ -38,7 +38,7 @@ World& WorldManager::getCurrentWorld() {
 
 void WorldManager::nextWorld() {
 	std::map < std::string, World >::iterator it = worlds.find(currentWorld);
-	if (it == worlds.end()) {
+	if (it == std::prev(worlds.end())) {
 		currentWorld = worlds.begin()->first;
 	}
 	else {

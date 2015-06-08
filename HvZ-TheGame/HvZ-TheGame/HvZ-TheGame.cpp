@@ -64,6 +64,16 @@ int main()
 				window.close();
 				break;
 
+			case sf::Event::MouseWheelMoved: {
+				if (event.mouseWheel.delta > 0){
+					worldView.zoom(0.8);
+				}
+				else{
+					worldView.zoom(1.25);
+				}
+				break;
+			}
+
 			default:
 				break;
 			}
