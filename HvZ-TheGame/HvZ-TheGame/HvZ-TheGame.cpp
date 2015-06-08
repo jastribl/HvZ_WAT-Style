@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Constants.h"
+#include "Character.h"
 #include "Hud.h"
 #include "TextureManager.h"
 #include "WorldManager.h"
@@ -21,6 +22,11 @@ int main()
 
 	WorldManager worldManager = WorldManager(textureManager);
 
+	Character character = Character(Point(10, 10), Point(0, 0), 1, textureManager.getTextureFor(CHARACTER, 0));
+
+
+	worldView.move(-1000, 50);
+
 	window.setFramerateLimit(10);
 	sf::Clock clock;
 	float elapsedTime = 0.0f;
@@ -35,19 +41,22 @@ int main()
 					window.close();
 				}
 				else if (event.key.code == sf::Keyboard::Up){
-					worldView.move(0, -10);
+					character.move(0, -1);
 				}
 				else if (event.key.code == sf::Keyboard::Down){
-					worldView.move(0, 10);
+					character.move(0, 1);
 				}
 				else if (event.key.code == sf::Keyboard::Left){
-					worldView.move(-10., 0);
+					character.move(-1, 0);
 				}
 				else if (event.key.code == sf::Keyboard::Right){
-					worldView.move(10, 0);
+					character.move(1, 0);
 				}
 				else if (event.key.code == sf::Keyboard::W){
 					worldManager.nextWorld();
+				}
+				if (worldManager.getCurrentWorld().getLevel(1).blockExitsAt(character.getGridDestination())) {
+					character.stop();
 				}
 				break;
 
@@ -85,6 +94,7 @@ int main()
 
 		window.setView(worldView);
 		worldManager.getCurrentWorld().draw(window);
+		character.draw(window);
 
 		window.setView(hudView);
 		hud.setHP(rand() % 101);

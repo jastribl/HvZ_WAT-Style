@@ -10,6 +10,7 @@ private:
 	float mp = 100;
 	float mpmax = 100;
 	sf::CircleShape minimap;
+
 public:
 	Hud();
 	~Hud();

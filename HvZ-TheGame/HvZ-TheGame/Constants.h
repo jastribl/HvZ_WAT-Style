@@ -10,6 +10,8 @@ static int SCREEN_SIZE_Y = 1080;
 static int BLOCK_SIZE = 64;
 static int HALF_BLOCK_SIZE = BLOCK_SIZE / 2;
 
+static int BLOCK = 0, SPECIAL = 1, CHARACTER = 2;
+
 static Point cartesianToIsometric(const int x, const int y){
 	return Point(x - y, (x + y) / 2);
 }
