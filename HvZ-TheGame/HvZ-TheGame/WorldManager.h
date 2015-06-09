@@ -1,6 +1,7 @@
 #pragma once
 #include "World.h"
 #include "TextureManager.h"
+#include "Character.h"
 #include <map>
 #include <string>
 
@@ -11,9 +12,10 @@ private:
 	std::string currentWorld;
 
 public:
-	WorldManager();
+	Character character;
 	WorldManager(TextureManager& textureManager);
 	~WorldManager();
 	World& getCurrentWorld();
 	void nextWorld();
+	void moveCHaracter(int x, int y);
 };

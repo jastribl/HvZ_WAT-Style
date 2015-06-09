@@ -1,19 +1,12 @@
 #pragma once
 
-#include "Point.h"
+#include "BaseClass.h"
 
-class Block {
-
-private:
-	sf::Sprite sprite;
-	bool visible = true;
+class Block : public BaseClass {
 
 public:
 	const int type;
-	const Point location;
 
-	Block(int blockType, Point blockLocation, int level, const sf::Texture& texture);
+	Block(Point gridLocation, const sf::Texture& texture, int blockType, int level);
 	~Block();
-	void draw(sf::RenderWindow& window);
-	void toggleVisible();
 };

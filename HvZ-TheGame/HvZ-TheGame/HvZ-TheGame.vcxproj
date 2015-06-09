@@ -94,6 +94,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="BaseClass.h" />
     <ClInclude Include="Block.h" />
     <ClInclude Include="Character.h" />
     <ClInclude Include="Constants.h" />
@@ -106,6 +107,7 @@
     <ClInclude Include="WorldManager.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BaseClass.cpp" />
     <ClCompile Include="Character.cpp" />
     <ClCompile Include="Hud.cpp" />
     <ClCompile Include="Block.cpp" />

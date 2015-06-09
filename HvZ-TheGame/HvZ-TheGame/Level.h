@@ -1,6 +1,6 @@
 #pragma once
 #include "Point.h"
-#include "Block.h"
+#include "BaseClass.h"
 #include <map>
 
 class Level {
@@ -17,15 +17,15 @@ private:
 			}
 		}
 	};
-	std::map<Point, Block, ByLocation> level;
+	std::map<Point, BaseClass, ByLocation> level;
 
 public:
 	Level();
 	~Level();
 	bool isEmpty() const;
 	bool blockExitsAt(const Point& point) const;
-	Block& getBlockAt(const Point& point);
-	void addBlockAt(const Block& block);
+	BaseClass& getBlockAt(const Point& point);
+	void addBlock(const BaseClass& block);
 	void removeBlockAt(const Point& point);
 	void draw(sf::RenderWindow& window);
 	int size() const;

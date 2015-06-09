@@ -1,25 +1,14 @@
 #pragma once
 
-#include "Point.h"
+#include "BaseClass.h"
 
-class Character {
-
-private:
-	sf::Sprite sprite;
-	int characterLevel;
-	Point gridLocation;
-	Point gridDestination;
+class Character :public BaseClass {
 
 public:
-	Character(Point grid, Point point, int level, const sf::Texture& texture);
+	Character(Point grid, const sf::Texture& texture, int level);
 	~Character();
-	Point getGridLocation() const;
-	void setGridLocation(Point point);
-	Point getGridDestination() const;
-	void setGridDestination(Point point);
 
 	void move(int x, int y);
 	void stop();
-
-	void draw(sf::RenderWindow& window);
+	void applyMove();
 };

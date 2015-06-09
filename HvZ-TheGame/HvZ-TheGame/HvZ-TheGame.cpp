@@ -22,7 +22,7 @@ int main()
 
 	WorldManager worldManager = WorldManager(textureManager);
 
-	Character character = Character(Point(10, 10), Point(0, 0), 1, textureManager.getTextureFor(CHARACTER, 0));
+	//Character character = Character(Point(10, 10), textureManager.getTextureFor(CHARACTER, 0), Point(0, 0), 1);
 
 
 	worldView.move(-1000, 50);
@@ -41,22 +41,19 @@ int main()
 					window.close();
 				}
 				else if (event.key.code == sf::Keyboard::Up){
-					character.move(0, -1);
+					worldManager.moveCHaracter(0, -1);
 				}
 				else if (event.key.code == sf::Keyboard::Down){
-					character.move(0, 1);
+					worldManager.moveCHaracter(0, 1);
 				}
 				else if (event.key.code == sf::Keyboard::Left){
-					character.move(-1, 0);
+					worldManager.moveCHaracter(-1, 0);
 				}
 				else if (event.key.code == sf::Keyboard::Right){
-					character.move(1, 0);
+					worldManager.moveCHaracter(1, 0);
 				}
 				else if (event.key.code == sf::Keyboard::W){
 					worldManager.nextWorld();
-				}
-				if (worldManager.getCurrentWorld().getLevel(1).blockExitsAt(character.getGridDestination())) {
-					character.stop();
 				}
 				break;
 
@@ -64,7 +61,7 @@ int main()
 				Point point = screenToGrid(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
 				if (worldManager.getCurrentWorld().getLevel(0).blockExitsAt(point))
 				{
-					worldManager.getCurrentWorld().getLevel(0).getBlockAt(point).toggleVisible();
+					worldManager.getCurrentWorld().getLevel(0).removeBlockAt(point);
 				}
 				break;
 			}
@@ -94,7 +91,6 @@ int main()
 
 		window.setView(worldView);
 		worldManager.getCurrentWorld().draw(window);
-		character.draw(window);
 
 		window.setView(hudView);
 		hud.setHP(rand() % 101);

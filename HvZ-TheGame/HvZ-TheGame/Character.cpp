@@ -2,32 +2,14 @@
 #include "Constants.h"
 #include "Character.h"
 
-Character::Character(Point grid, Point point, int level, const sf::Texture& texture)
-	:gridLocation(grid), gridDestination(grid), characterLevel(level){
-	sprite = sf::Sprite(texture);
+Character::Character(Point grid, const sf::Texture& texture, int level)
+	:BaseClass(grid, texture, level) {
 	sprite.scale(BLOCK_SIZE / sprite.getLocalBounds().width, BLOCK_SIZE / sprite.getLocalBounds().height);
 	Point p = cartesianToIsometric(gridLocation.x * HALF_BLOCK_SIZE, gridLocation.y * HALF_BLOCK_SIZE);
-	sprite.setPosition(p.x - HALF_BLOCK_SIZE, p.y - (characterLevel * HALF_BLOCK_SIZE));
+	sprite.setPosition(p.x - HALF_BLOCK_SIZE, p.y - (level * HALF_BLOCK_SIZE));
 }
 
-Character::~Character() {
-}
-
-Point Character::getGridLocation() const {
-	return gridLocation;
-}
-
-void Character::setGridLocation(Point point) {
-	gridLocation = point;
-}
-
-Point Character::getGridDestination() const {
-	return gridDestination;
-}
-
-void Character::setGridDestination(Point point) {
-	gridDestination = point;
-}
+Character::~Character() {}
 
 void Character::move(int x, int y) {
 	gridDestination.x += x;
@@ -38,9 +20,8 @@ void Character::stop() {
 	gridDestination = gridLocation;
 }
 
-void Character::draw(sf::RenderWindow& window) {
+void Character::applyMove() {
 	gridLocation = gridDestination;
 	Point p = cartesianToIsometric(gridLocation.x * HALF_BLOCK_SIZE, gridLocation.y * HALF_BLOCK_SIZE);
-	sprite.setPosition(p.x - HALF_BLOCK_SIZE, p.y - (characterLevel * HALF_BLOCK_SIZE));
-	window.draw(sprite);
+	sprite.setPosition(p.x - HALF_BLOCK_SIZE, p.y - (level * HALF_BLOCK_SIZE));
 }

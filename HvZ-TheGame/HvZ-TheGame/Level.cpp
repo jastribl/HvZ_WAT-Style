@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Level.h"
+
 #include <iostream>
 
 
@@ -15,12 +16,12 @@ bool Level::blockExitsAt(const Point& point) const {
 	return level.count(point) > 0;
 }
 
-Block& Level::getBlockAt(const Point& point) {
+BaseClass& Level::getBlockAt(const Point& point) {
 	return level.find(point)->second;
 }
 
-void Level::addBlockAt(const Block& block) {
-	level.insert({ block.location, block });
+void Level::addBlock(const BaseClass& block) {
+	level.insert({ block.gridLocation, block });
 }
 
 void Level::removeBlockAt(const Point& point) {
@@ -28,7 +29,8 @@ void Level::removeBlockAt(const Point& point) {
 }
 
 void Level::draw(sf::RenderWindow& window) {
-	for (std::map<Point, Block, ByLocation>::iterator iterator = level.begin(); iterator != level.end(); ++iterator){
+	for (std::map<Point, BaseClass, ByLocation>::iterator iterator = level.begin(); iterator != level.end(); ++iterator){
+		iterator->second.applyMove();
 		iterator->second.draw(window);
 	}
 }
