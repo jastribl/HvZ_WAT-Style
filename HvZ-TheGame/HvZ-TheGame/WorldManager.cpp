@@ -9,6 +9,7 @@ WorldManager::WorldManager(TextureManager& textureManager)
 	:character(Point(3, 3), textureManager.getTextureFor(CHARACTER, 0), 1) {
 	std::ifstream  worldsReader("Resources/Worlds/Worlds.Worlds");
 	std::string worldName;
+	bool characterSet = false;
 	while (worldsReader >> worldName) {
 		World world = World();
 		std::ifstream  worldReader("Resources/Worlds/" + worldName + ".World");
@@ -21,11 +22,12 @@ WorldManager::WorldManager(TextureManager& textureManager)
 			for (int j = 0; j < numberOfBlocks; j++){
 				int group, type, x, y;
 				worldReader >> group >> type >> x >> y;
-				Block block = Block(Point(x, y), textureManager.getTextureFor(group, type), type, i);
+				BaseClass block = Block(Point(x, y), textureManager.getTextureFor(group, type), type, i);
 				level.addBlock(block);
 			}
-			if (i == character.level){
+			if (!characterSet && i == character.level && worldName == "it"){
 				level.addBlock(character);
+				characterSet = true;
 			}
 			world.addLevel(level);
 		}
