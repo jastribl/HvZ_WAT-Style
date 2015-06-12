@@ -12,10 +12,8 @@ private:
 	std::string currentWorld;
 
 public:
-	Character character;
 	WorldManager(TextureManager& textureManager);
 	~WorldManager();
 	World& getCurrentWorld();
 	void nextWorld();
-	void moveCHaracter(int x, int y);
 };

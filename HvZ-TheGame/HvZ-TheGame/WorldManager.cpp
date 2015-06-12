@@ -5,11 +5,10 @@
 #include "Point.h"
 #include <fstream>
 
-WorldManager::WorldManager(TextureManager& textureManager)
-	:character(Point(3, 3), textureManager.getTextureFor(CHARACTER, 0), 1) {
+WorldManager::WorldManager(TextureManager& textureManager) {
 	std::ifstream  worldsReader("Resources/Worlds/Worlds.Worlds");
 	std::string worldName;
-	bool characterSet = false;
+	//bool characterSet = false;
 	while (worldsReader >> worldName) {
 		World world = World();
 		std::ifstream  worldReader("Resources/Worlds/" + worldName + ".World");
@@ -25,10 +24,10 @@ WorldManager::WorldManager(TextureManager& textureManager)
 				BaseClass block = Block(Point(x, y), textureManager.getTextureFor(group, type), type, i);
 				level.addBlock(block);
 			}
-			if (!characterSet && i == character.level && worldName == "it"){
-				level.addBlock(character);
-				characterSet = true;
-			}
+			//if (!characterSet && i == character.level && worldName == "it"){
+			//	level.addBlock(character);
+			//	characterSet = true;
+			//}
 			world.addLevel(level);
 		}
 		worlds[worldName] = world;
@@ -50,18 +49,5 @@ void WorldManager::nextWorld() {
 	}
 	else {
 		currentWorld = std::next(worlds.find(currentWorld))->first;
-	}
-}
-
-void WorldManager::moveCHaracter(int x, int y) {
-	character.move(x, y);
-	if (getCurrentWorld().getLevel(character.level).blockExitsAt(character.gridDestination)) {
-		character.stop();
-	}
-	else{
-		getCurrentWorld().getLevel(character.level).removeBlockAt(character.gridLocation);
-		character.applyMove();
-		getCurrentWorld().getLevel(character.level).addBlock(character);
-
 	}
 }

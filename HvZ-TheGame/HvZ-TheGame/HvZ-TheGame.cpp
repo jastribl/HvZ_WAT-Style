@@ -8,22 +8,35 @@
 void updateGame() {
 }
 
-int main()
-{
+
+
+Hud hud = Hud();
+TextureManager textureManager = TextureManager();
+WorldManager worldManager = WorldManager(textureManager);
+Character character = Character(Point(3, 3), textureManager.getTextureFor(CHARACTER, 0), 1);
+
+void moveCharacter(int x, int y) {
+	character.move(x, y);
+	if (worldManager.getCurrentWorld().getLevel(character.level).blockExitsAt(character.gridDestination)) {
+		character.stop();
+	}
+	else{
+		worldManager.getCurrentWorld().getLevel(character.level).removeBlockAt(character.gridLocation);
+		character.applyMove();
+		worldManager.getCurrentWorld().getLevel(character.level).addBlock(character);
+
+	}
+}
+
+int main() {
 	sf::ContextSettings settings;
 	settings.antialiasingLevel = 8;
 	sf::RenderWindow window(sf::RenderWindow(sf::VideoMode(SCREEN_SIZE_X, SCREEN_SIZE_Y), "HvZ - The Game", sf::Style::Fullscreen, settings));
 	sf::View hudView(sf::FloatRect(0, 0, SCREEN_SIZE_X, SCREEN_SIZE_Y));
 	sf::View worldView(sf::FloatRect(0, 0, SCREEN_SIZE_X, SCREEN_SIZE_Y));
 
-	Hud hud = Hud();
 
-	TextureManager textureManager = TextureManager();
-
-	WorldManager worldManager = WorldManager(textureManager);
-
-	//Character character = Character(Point(10, 10), textureManager.getTextureFor(CHARACTER, 0), Point(0, 0), 1);
-
+	worldManager.getCurrentWorld().getLevel(1).addBlock(character);
 
 	worldView.move(-1000, 50);
 
@@ -41,16 +54,16 @@ int main()
 					window.close();
 				}
 				else if (event.key.code == sf::Keyboard::Up){
-					worldManager.moveCHaracter(0, -1);
+					moveCharacter(0, -1);
 				}
 				else if (event.key.code == sf::Keyboard::Down){
-					worldManager.moveCHaracter(0, 1);
+					moveCharacter(0, 1);
 				}
 				else if (event.key.code == sf::Keyboard::Left){
-					worldManager.moveCHaracter(-1, 0);
+					moveCharacter(-1, 0);
 				}
 				else if (event.key.code == sf::Keyboard::Right){
-					worldManager.moveCHaracter(1, 0);
+					moveCharacter(1, 0);
 				}
 				else if (event.key.code == sf::Keyboard::W){
 					worldManager.nextWorld();
