@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "World.h"
 #include "BaseClass.h"
+#include <iostream>
 
 World::World() {}
 
@@ -23,11 +24,8 @@ void World::removeAt(const Point& point) {
 }
 
 void World::draw(sf::RenderWindow& window) {
-	for (auto iterator = world.begin(); iterator != world.end(); ++iterator){
-		iterator->second->commitMove();
-	}
-	for (auto iterator = world.begin(); iterator != world.end(); ++iterator){
-		iterator->second->draw(window);
+	for (auto it = world.begin(); it != world.end(); ++it){
+		it->second->draw(window);
 	}
 }
 

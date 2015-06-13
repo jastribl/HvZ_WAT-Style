@@ -6,8 +6,7 @@
 #include "World.h"
 #include "Character.h"
 
-void updateGame() {
-}
+//void updateGame() {}
 
 int main() {
 	sf::ContextSettings settings;
@@ -36,35 +35,35 @@ int main() {
 					window.close();
 				}
 				else if (event.key.code == sf::Keyboard::Up){
-					character->stageShift(0, -1, 0);
+					character->move(0, -1, 0);
 				}
 				else if (event.key.code == sf::Keyboard::Down){
-					character->stageShift(0, 1, 0);
+					character->move(0, 1, 0);
 				}
 				else if (event.key.code == sf::Keyboard::Left){
-					character->stageShift(-1, 0, 0);
+					character->move(-1, 0, 0);
 				}
 				else if (event.key.code == sf::Keyboard::Right){
-					character->stageShift(1, 0, 0);
+					character->move(1, 0, 0);
 				}
 				else if (event.key.code == sf::Keyboard::PageUp){
-					character->stageShift(0, 0, 1);
+					character->move(0, 0, 1);
 				}
 				else if (event.key.code == sf::Keyboard::PageDown){
-					character->stageShift(0, 0, -1);
+					character->move(0, 0, -1);
 				}
 				else if (event.key.code == sf::Keyboard::W){
 					worldManager.nextWorld();
 				}
 				break;
 
-			//case sf::Event::MouseButtonPressed: {
-			//	Point point = screenToGrid(window.mapPixelToCoords(sf::Mouse::getPosition(window)), character->gridLocation.z);
-			//	if (!worldManager.getCurrentWorld()->existsAt(point)) {
-			//		character->setStageLocation(point);
-			//	}
-			//	break;
-			//}
+				//case sf::Event::MouseButtonPressed: {
+				//	Point point = screenToGrid(window.mapPixelToCoords(sf::Mouse::getPosition(window)), character->gridLocation.z);
+				//	if (!worldManager.getCurrentWorld()->existsAt(point)) {
+				//		character->setStageLocation(point);
+				//	}
+				//	break;
+				//}
 
 			case sf::Event::Closed:
 				window.close();
@@ -84,9 +83,9 @@ int main() {
 				break;
 			}
 		}
-		for (; elapsedTime >= 0.025f; elapsedTime -= 0.025f) {
-			updateGame();
-		}
+		//for (; elapsedTime >= 0.025f; elapsedTime -= 0.025f) {
+		//	updateGame();
+		//}
 		window.clear(sf::Color(255, 255, 255));
 
 		window.setView(worldView);

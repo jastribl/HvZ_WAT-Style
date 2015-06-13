@@ -12,28 +12,18 @@ Character::Character(World& world, const sf::Texture& texture, Point grid)
 
 Character::~Character() {}
 
-void Character::stageShift(int x, int y, int z) {
+void Character::move(int x, int y, int z) {
+	Point gridDestination = Point(gridLocation);
 	gridDestination.x += x;
 	gridDestination.y += y;
 	gridDestination.z += z;
-}
-
-
-void Character::commitMove() {
 	if (!gridLocation.equals(gridDestination)){
-		if (world.existsAt(gridDestination)) {
-			cancelMove();
-		}
-		else{
+		if (!world.existsAt(gridDestination)) {
 			world.removeAt(gridLocation);
 			gridLocation = gridDestination;
 			world.add(this);
 		}
 	}
-}
-
-void Character::cancelMove(){
-	gridDestination = gridLocation;
 }
 
 void Character::draw(sf::RenderWindow& window) {

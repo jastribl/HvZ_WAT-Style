@@ -1,6 +1,7 @@
 #pragma once
 class BaseClass;
 #include "Point.h"
+#include <string>
 
 class World {
 
@@ -14,6 +15,8 @@ private:
 	std::map<Point, BaseClass*, ByLocation> world;
 
 public:
+	std::string name;
+
 	World();
 	~World();
 
