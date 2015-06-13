@@ -24,18 +24,7 @@ void World::removeAt(const Point& point) {
 
 void World::draw(sf::RenderWindow& window) {
 	for (auto iterator = world.begin(); iterator != world.end(); ++iterator){
-		BaseClass* temp = iterator->second;
-		if (!temp->gridLocation.equals(temp->gridDestination)){
-			if (existsAt(temp->gridDestination)) {
-				temp->cancelMove();
-			}
-			else{
-				removeAt(temp->gridLocation);
-				temp->commitMove();
-				add(temp);
-			}
-		}
-		iterator->second->draw(window);
+		iterator->second->commitMove();
 	}
 	for (auto iterator = world.begin(); iterator != world.end(); ++iterator){
 		iterator->second->draw(window);

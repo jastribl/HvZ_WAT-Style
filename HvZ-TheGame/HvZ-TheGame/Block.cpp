@@ -10,3 +10,7 @@ Block::Block(World& world, const sf::Texture& texture, Point gridLocation, int b
 }
 
 Block::~Block() {}
+
+void Block::draw(sf::RenderWindow& window) {
+	window.draw(sprite);
+}

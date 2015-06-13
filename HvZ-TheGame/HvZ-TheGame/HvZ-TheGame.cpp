@@ -58,13 +58,13 @@ int main() {
 				}
 				break;
 
-			case sf::Event::MouseButtonPressed: {
-				Point point = screenToGrid(window.mapPixelToCoords(sf::Mouse::getPosition(window)), character->gridLocation.z);
-				if (!worldManager.getCurrentWorld()->existsAt(point)) {
-					character->setStageLocation(point);
-				}
-				break;
-			}
+			//case sf::Event::MouseButtonPressed: {
+			//	Point point = screenToGrid(window.mapPixelToCoords(sf::Mouse::getPosition(window)), character->gridLocation.z);
+			//	if (!worldManager.getCurrentWorld()->existsAt(point)) {
+			//		character->setStageLocation(point);
+			//	}
+			//	break;
+			//}
 
 			case sf::Event::Closed:
 				window.close();
