@@ -1,15 +1,15 @@
 #include "stdafx.h"
 #include "WorldManager.h"
-#include "Constants.h"
+#include "TextureManager.h"
+#include "World.h"
 #include "Block.h"
-#include "Point.h"
 #include <fstream>
 
 WorldManager::WorldManager(TextureManager& textureManager) {
 	std::ifstream  worldsReader("Resources/Worlds/Worlds.Worlds");
 	std::string worldName;
 	while (worldsReader >> worldName) {
-		World world = World();
+		World* world = new World();
 		std::ifstream  worldReader("Resources/Worlds/" + worldName + ".World");
 		int numberOfLevels;
 		worldReader >> numberOfLevels;
@@ -20,7 +20,7 @@ WorldManager::WorldManager(TextureManager& textureManager) {
 				int group, type, x, y;
 				worldReader >> group >> type >> x >> y;
 				BaseClass* block = new Block(Point(x, y, z), textureManager.getTextureFor(group, type), type);
-				world.add(block);
+				world->add(block);
 			}
 		}
 		worlds[worldName] = world;
@@ -30,12 +30,12 @@ WorldManager::WorldManager(TextureManager& textureManager) {
 
 WorldManager::~WorldManager() {}
 
-World& WorldManager::getCurrentWorld() {
+World* WorldManager::getCurrentWorld() {
 	return worlds.find(currentWorld)->second;
 }
 
 void WorldManager::nextWorld() {
-	std::map < std::string, World >::iterator it = worlds.find(currentWorld);
+	std::map < std::string, World* >::iterator it = worlds.find(currentWorld);
 	if (it == std::prev(worlds.end())) {
 		currentWorld = worlds.begin()->first;
 	}

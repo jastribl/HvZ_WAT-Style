@@ -62,10 +62,10 @@ void Hud::drawToWindow(sf::RenderWindow& window) {
 	static int BOX_PERROW = 4;
 	static int BOX_NUM = 28;
 	static int BOX_SIZE_LENGTH = BOX_PERROW*BOX_LENGTH - BOX_BORDER*(BOX_PERROW - 1);
-	static int BOX_SIZE_WIDTH = ((BOX_NUM-1) / BOX_PERROW + 1)*BOX_WIDTH - BOX_BORDER*((BOX_NUM-1) / BOX_PERROW);
-	static int BOX_ORIGIN_X = SIDEBAR_ORIGIN_X + BOX_LGBORDER+6;
+	static int BOX_SIZE_WIDTH = ((BOX_NUM - 1) / BOX_PERROW + 1)*BOX_WIDTH - BOX_BORDER*((BOX_NUM - 1) / BOX_PERROW);
+	static int BOX_ORIGIN_X = SIDEBAR_ORIGIN_X + BOX_LGBORDER + 6;
 	static int BOX_ORIGIN_Y = 425 + BOX_LGBORDER;
-	
+
 	//Inventory border
 	vertices.push_back(sf::Vertex(sf::Vector2f(BOX_ORIGIN_X - BOX_LGBORDER, BOX_ORIGIN_Y - BOX_LGBORDER), sf::Color(255, 216, 0)));
 	vertices.push_back(sf::Vertex(sf::Vector2f(BOX_ORIGIN_X - BOX_LGBORDER, BOX_ORIGIN_Y + BOX_SIZE_WIDTH + BOX_LGBORDER), sf::Color(255, 216, 0)));
@@ -74,15 +74,15 @@ void Hud::drawToWindow(sf::RenderWindow& window) {
 	//Inventory blocks
 	for (int x = 0; x < BOX_NUM; x++)
 	{
-		vertices.push_back(sf::Vertex(sf::Vector2f(BOX_ORIGIN_X + (x%BOX_PERROW)*BOX_MOVEMENT_X, BOX_ORIGIN_Y+BOX_MOVEMENT_Y*(x/BOX_PERROW)), sf::Color(255, 216, 0)));
-		vertices.push_back(sf::Vertex(sf::Vector2f(BOX_ORIGIN_X + (x%BOX_PERROW)*BOX_MOVEMENT_X, BOX_ORIGIN_Y+BOX_MOVEMENT_Y*(x/BOX_PERROW) + BOX_WIDTH), sf::Color(255, 216, 0)));
-		vertices.push_back(sf::Vertex(sf::Vector2f(BOX_ORIGIN_X + (x%BOX_PERROW)*BOX_MOVEMENT_X + BOX_LENGTH, BOX_ORIGIN_Y+BOX_MOVEMENT_Y*(x/BOX_PERROW) + BOX_WIDTH), sf::Color(255, 216, 0)));
+		vertices.push_back(sf::Vertex(sf::Vector2f(BOX_ORIGIN_X + (x%BOX_PERROW)*BOX_MOVEMENT_X, BOX_ORIGIN_Y + BOX_MOVEMENT_Y*(x / BOX_PERROW)), sf::Color(255, 216, 0)));
+		vertices.push_back(sf::Vertex(sf::Vector2f(BOX_ORIGIN_X + (x%BOX_PERROW)*BOX_MOVEMENT_X, BOX_ORIGIN_Y + BOX_MOVEMENT_Y*(x / BOX_PERROW) + BOX_WIDTH), sf::Color(255, 216, 0)));
+		vertices.push_back(sf::Vertex(sf::Vector2f(BOX_ORIGIN_X + (x%BOX_PERROW)*BOX_MOVEMENT_X + BOX_LENGTH, BOX_ORIGIN_Y + BOX_MOVEMENT_Y*(x / BOX_PERROW) + BOX_WIDTH), sf::Color(255, 216, 0)));
 		vertices.push_back(sf::Vertex(sf::Vector2f(BOX_ORIGIN_X + (x%BOX_PERROW)*BOX_MOVEMENT_X + BOX_LENGTH, BOX_ORIGIN_Y + BOX_MOVEMENT_Y*(x / BOX_PERROW)), sf::Color(255, 216, 0)));
 
-		vertices.push_back(sf::Vertex(sf::Vector2f(BOX_ORIGIN_X + (x%BOX_PERROW)*BOX_MOVEMENT_X + BOX_BORDER, BOX_ORIGIN_Y+BOX_MOVEMENT_Y*(x/BOX_PERROW) + BOX_BORDER), sf::Color(64, 64, 64)));
-		vertices.push_back(sf::Vertex(sf::Vector2f(BOX_ORIGIN_X + (x%BOX_PERROW)*BOX_MOVEMENT_X + BOX_BORDER, BOX_ORIGIN_Y+BOX_MOVEMENT_Y*(x/BOX_PERROW) + BOX_WIDTH - BOX_BORDER), sf::Color(50, 50, 50)));
-		vertices.push_back(sf::Vertex(sf::Vector2f(BOX_ORIGIN_X + (x%BOX_PERROW)*BOX_MOVEMENT_X + BOX_LENGTH - BOX_BORDER, BOX_ORIGIN_Y+BOX_MOVEMENT_Y*(x/BOX_PERROW) + BOX_WIDTH - BOX_BORDER), sf::Color(50, 50, 50)));
-		vertices.push_back(sf::Vertex(sf::Vector2f(BOX_ORIGIN_X + (x%BOX_PERROW)*BOX_MOVEMENT_X + BOX_LENGTH - BOX_BORDER, BOX_ORIGIN_Y+BOX_MOVEMENT_Y*(x/BOX_PERROW) + BOX_BORDER), sf::Color(64, 64, 64)));
+		vertices.push_back(sf::Vertex(sf::Vector2f(BOX_ORIGIN_X + (x%BOX_PERROW)*BOX_MOVEMENT_X + BOX_BORDER, BOX_ORIGIN_Y + BOX_MOVEMENT_Y*(x / BOX_PERROW) + BOX_BORDER), sf::Color(64, 64, 64)));
+		vertices.push_back(sf::Vertex(sf::Vector2f(BOX_ORIGIN_X + (x%BOX_PERROW)*BOX_MOVEMENT_X + BOX_BORDER, BOX_ORIGIN_Y + BOX_MOVEMENT_Y*(x / BOX_PERROW) + BOX_WIDTH - BOX_BORDER), sf::Color(50, 50, 50)));
+		vertices.push_back(sf::Vertex(sf::Vector2f(BOX_ORIGIN_X + (x%BOX_PERROW)*BOX_MOVEMENT_X + BOX_LENGTH - BOX_BORDER, BOX_ORIGIN_Y + BOX_MOVEMENT_Y*(x / BOX_PERROW) + BOX_WIDTH - BOX_BORDER), sf::Color(50, 50, 50)));
+		vertices.push_back(sf::Vertex(sf::Vector2f(BOX_ORIGIN_X + (x%BOX_PERROW)*BOX_MOVEMENT_X + BOX_LENGTH - BOX_BORDER, BOX_ORIGIN_Y + BOX_MOVEMENT_Y*(x / BOX_PERROW) + BOX_BORDER), sf::Color(64, 64, 64)));
 	}
 
 	//HP and MP BAR
@@ -132,7 +132,7 @@ void Hud::drawToWindow(sf::RenderWindow& window) {
 	struct tm localTime;
 
 	time(&currentTime);                   // Get the current time
-	localtime_s(&localTime,&currentTime);  // Convert the current time to the local time
+	localtime_s(&localTime, &currentTime);  // Convert the current time to the local time
 
 	int hour = localTime.tm_hour;
 	if (hour > 12)
@@ -141,7 +141,7 @@ void Hud::drawToWindow(sf::RenderWindow& window) {
 	int sec = localTime.tm_sec;
 	std::string ampm = ((localTime.tm_hour >= 12) ? "PM" : "AM");
 
-	sf::Text timeText(std::to_string(hour)+":"+std::to_string(min)+":"+std::to_string(sec)+" "+ampm, timeFont, 50);
+	sf::Text timeText(std::to_string(hour) + ":" + std::to_string(min) + ":" + std::to_string(sec) + " " + ampm, timeFont, 50);
 	timeText.setColor(sf::Color::Black);
 	timeText.setPosition(1640, 50);
 	window.draw(timeText);

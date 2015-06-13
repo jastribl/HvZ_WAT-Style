@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "Point.h"
-
 #include <iostream>
 
 Point::Point(int x = 0, int y = 0, int z = 0) :x(x), y(y), z(z) {}

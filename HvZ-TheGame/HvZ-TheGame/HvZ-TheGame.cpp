@@ -1,9 +1,10 @@
 #include "stdafx.h"
 #include "Constants.h"
-#include "Character.h"
-#include "Hud.h"
-#include "TextureManager.h"
 #include "WorldManager.h"
+#include "TextureManager.h"
+#include "Hud.h"
+#include "World.h"
+#include "Character.h"
 
 void updateGame() {
 }
@@ -20,7 +21,7 @@ int main() {
 	TextureManager textureManager = TextureManager();
 	WorldManager worldManager = WorldManager(textureManager);
 	BaseClass* character = new Character(Point(1, 1, 1), textureManager.getTextureFor(CHARACTER, 0));
-	worldManager.getCurrentWorld().add(character);
+	worldManager.getCurrentWorld()->add(character);
 
 	worldView.move(-1000, 50);
 
@@ -60,7 +61,7 @@ int main() {
 
 			case sf::Event::MouseButtonPressed: {
 				Point point = screenToGrid(window.mapPixelToCoords(sf::Mouse::getPosition(window)), character->gridLocation.z);
-				if (!worldManager.getCurrentWorld().existsAt(point)) {
+				if (!worldManager.getCurrentWorld()->existsAt(point)) {
 					character->setStageLocation(point);
 				}
 				break;
@@ -90,7 +91,7 @@ int main() {
 		window.clear(sf::Color(255, 255, 255));
 
 		window.setView(worldView);
-		worldManager.getCurrentWorld().draw(window);
+		worldManager.getCurrentWorld()->draw(window);
 
 		window.setView(hudView);
 		hud.setHP(rand() % 101);

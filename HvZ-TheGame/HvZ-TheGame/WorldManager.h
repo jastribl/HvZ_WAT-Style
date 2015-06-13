@@ -1,20 +1,19 @@
 #pragma once
-#include "World.h"
-#include "TextureManager.h"
-#include "Character.h"
+class World;
+class TextureManager;
 #include <map>
 #include <string>
 
 class WorldManager {
 
 private:
-	std::map < std::string, World > worlds;
+	std::map < std::string, World* > worlds;
 	std::string currentWorld;
 
 public:
 	WorldManager(TextureManager& textureManager);
 	~WorldManager();
 
-	World& getCurrentWorld();
+	World* getCurrentWorld();
 	void nextWorld();
 };

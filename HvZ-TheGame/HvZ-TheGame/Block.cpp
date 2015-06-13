@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "Block.h"
-
 #include "Constants.h"
 
 Block::Block(Point gridLocation, const sf::Texture& texture, int blockType)
