@@ -20,8 +20,7 @@ int main() {
 	Hud hud = Hud();
 	TextureManager textureManager = TextureManager();
 	WorldManager worldManager = WorldManager(textureManager);
-	BaseClass* character = new Character(Point(1, 1, 1), textureManager.getTextureFor(CHARACTER, 0));
-	worldManager.getCurrentWorld()->add(character);
+	BaseClass* character = new Character(*worldManager.getCurrentWorld(), textureManager.getTextureFor(CHARACTER, 0), Point(1, 1, 1));
 
 	worldView.move(-1000, 50);
 

@@ -1,10 +1,11 @@
 #pragma once
 #include "BaseClass.h"
+class World;
 
 class Character :public BaseClass {
 
 public:
-	Character(Point grid, const sf::Texture& texture);
+	Character(World& world, const sf::Texture& texture, Point grid);
 	~Character();
 
 	virtual void setStageLocation(Point& point);

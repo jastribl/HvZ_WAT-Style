@@ -2,8 +2,8 @@
 #include "Character.h"
 #include "Constants.h"
 
-Character::Character(Point grid, const sf::Texture& texture)
-	:BaseClass(grid, texture) {
+Character::Character(World& world, const sf::Texture& texture, Point grid)
+	:BaseClass(world, texture, grid) {
 	sprite.scale(BLOCK_SIZE / sprite.getLocalBounds().width, (BLOCK_SIZE * 2) / sprite.getLocalBounds().height);
 	Point p = cartesianToIsometric(gridLocation.x * HALF_BLOCK_SIZE, gridLocation.y * HALF_BLOCK_SIZE, gridLocation.z);
 	sprite.setPosition(p.x - HALF_BLOCK_SIZE, p.y - (p.z * HALF_BLOCK_SIZE) - BLOCK_SIZE);

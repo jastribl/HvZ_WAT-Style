@@ -1,14 +1,16 @@
 #pragma once
+class World;
 #include "Point.h"
 
 class BaseClass {
 
 public:
+	World& world;
 	Point gridLocation;
 	Point gridDestination;
 	sf::Sprite sprite;
 
-	BaseClass(Point grid, const sf::Texture& texture);
+	BaseClass(World& world, const sf::Texture& texture, Point grid);
 	~BaseClass();
 
 	virtual void setStageLocation(Point& point);

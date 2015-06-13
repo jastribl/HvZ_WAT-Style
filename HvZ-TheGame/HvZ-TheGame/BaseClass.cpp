@@ -1,8 +1,11 @@
 #include "stdafx.h"
 #include "BaseClass.h"
+#include "World.h"
 
-BaseClass::BaseClass(Point grid, const sf::Texture& texture)
-	:gridLocation(grid), gridDestination(grid), sprite(texture) {}
+BaseClass::BaseClass(World& world, const sf::Texture& texture, Point grid)
+	:world(world), sprite(texture), gridLocation(grid), gridDestination(grid)  {
+	world.add(this);
+}
 
 BaseClass::~BaseClass() {}
 

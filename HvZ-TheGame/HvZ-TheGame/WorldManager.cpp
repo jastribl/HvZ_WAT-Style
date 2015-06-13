@@ -19,8 +19,7 @@ WorldManager::WorldManager(TextureManager& textureManager) {
 			for (int j = 0; j < numberOfBlocks; j++){
 				int group, type, x, y;
 				worldReader >> group >> type >> x >> y;
-				BaseClass* block = new Block(Point(x, y, z), textureManager.getTextureFor(group, type), type);
-				world->add(block);
+				BaseClass* block = new Block(*world, textureManager.getTextureFor(group, type), Point(x, y, z), type);
 			}
 		}
 		worlds[worldName] = world;
