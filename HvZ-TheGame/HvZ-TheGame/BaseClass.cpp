@@ -9,14 +9,8 @@ BaseClass::BaseClass(Point grid, const sf::Texture& texture, int level)
 BaseClass::~BaseClass() {}
 
 void BaseClass::move(int x, int y){}
-
-void BaseClass::applyMove() {
-	gridLocation = gridDestination;
-}
-
-void BaseClass::stop() {
-	gridDestination = gridLocation;
-}
+void BaseClass::applyMove() {}
+void BaseClass::stop() {}
 
 void BaseClass::draw(sf::RenderWindow& window) {
 	window.draw(sprite);

@@ -14,8 +14,7 @@ public:
 	virtual ~BaseClass();
 
 	virtual void move(int x, int y);
-	void applyMove();
-	void stop();
-
-	void draw(sf::RenderWindow& window);
+	virtual void applyMove();
+	virtual void stop();
+	virtual void draw(sf::RenderWindow& window);
 };

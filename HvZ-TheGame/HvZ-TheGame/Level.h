@@ -17,15 +17,15 @@ private:
 			}
 		}
 	};
-	std::map<Point, BaseClass, ByLocation> level;
+	std::map<Point, BaseClass*, ByLocation> level;
 
 public:
 	Level();
 	~Level();
 	bool isEmpty() const;
 	bool blockExitsAt(const Point& point) const;
-	BaseClass& getBlockAt(const Point& point);
-	void addBlock(const BaseClass& block);
+	BaseClass* getBlockAt(const Point& point);
+	void addBlock(BaseClass* block);
 	void removeBlockAt(const Point& point);
 	void draw(sf::RenderWindow& window);
 	int size() const;

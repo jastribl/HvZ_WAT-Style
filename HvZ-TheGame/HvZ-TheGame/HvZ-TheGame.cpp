@@ -8,26 +8,6 @@
 void updateGame() {
 }
 
-
-
-Hud hud = Hud();
-TextureManager textureManager = TextureManager();
-WorldManager worldManager = WorldManager(textureManager);
-Character character = Character(Point(3, 3), textureManager.getTextureFor(CHARACTER, 0), 1);
-
-void moveCharacter(int x, int y) {
-	character.move(x, y);
-	if (worldManager.getCurrentWorld().getLevel(character.level).blockExitsAt(character.gridDestination)) {
-		character.stop();
-	}
-	else{
-		worldManager.getCurrentWorld().getLevel(character.level).removeBlockAt(character.gridLocation);
-		character.applyMove();
-		worldManager.getCurrentWorld().getLevel(character.level).addBlock(character);
-
-	}
-}
-
 int main() {
 	sf::ContextSettings settings;
 	settings.antialiasingLevel = 8;
@@ -36,6 +16,10 @@ int main() {
 	sf::View worldView(sf::FloatRect(0, 0, SCREEN_SIZE_X, SCREEN_SIZE_Y));
 
 
+	Hud hud = Hud();
+	TextureManager textureManager = TextureManager();
+	WorldManager worldManager = WorldManager(textureManager);
+	BaseClass* character = new Character(Point(3, 3), textureManager.getTextureFor(CHARACTER, 0), 1);
 	worldManager.getCurrentWorld().getLevel(1).addBlock(character);
 
 	worldView.move(-1000, 50);
@@ -46,24 +30,22 @@ int main() {
 	while (window.isOpen()) {
 		sf::Event event;
 		while (window.pollEvent(event)) {
-			switch (event.type)
-			{
+			switch (event.type) 			{
 			case sf::Event::KeyPressed:
-
 				if (event.key.code == sf::Keyboard::Escape){
 					window.close();
 				}
 				else if (event.key.code == sf::Keyboard::Up){
-					moveCharacter(0, -1);
+					character->move(0, -1);
 				}
 				else if (event.key.code == sf::Keyboard::Down){
-					moveCharacter(0, 1);
+					character->move(0, 1);
 				}
 				else if (event.key.code == sf::Keyboard::Left){
-					moveCharacter(-1, 0);
+					character->move(-1, 0);
 				}
 				else if (event.key.code == sf::Keyboard::Right){
-					moveCharacter(1, 0);
+					character->move(1, 0);
 				}
 				else if (event.key.code == sf::Keyboard::W){
 					worldManager.nextWorld();
@@ -72,8 +54,7 @@ int main() {
 
 			case sf::Event::MouseButtonPressed: {
 				Point point = screenToGrid(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
-				if (worldManager.getCurrentWorld().getLevel(0).blockExitsAt(point))
-				{
+				if (worldManager.getCurrentWorld().getLevel(0).blockExitsAt(point)) {
 					worldManager.getCurrentWorld().getLevel(0).removeBlockAt(point);
 				}
 				break;
@@ -84,10 +65,10 @@ int main() {
 				break;
 
 			case sf::Event::MouseWheelMoved: {
-				if (event.mouseWheel.delta > 0){
+				if (event.mouseWheel.delta > 0) {
 					worldView.zoom(0.8);
 				}
-				else{
+				else {
 					worldView.zoom(1.25);
 				}
 				break;
