@@ -1,5 +1,4 @@
 #pragma once
-
 #include "BaseClass.h"
 #include <vector>
 

@@ -36,29 +36,35 @@ int main() {
 					window.close();
 				}
 				else if (event.key.code == sf::Keyboard::Up){
-					character->move(0, -1);
+					character->stageShift(0, -1, 0);
 				}
 				else if (event.key.code == sf::Keyboard::Down){
-					character->move(0, 1);
+					character->stageShift(0, 1, 0);
 				}
 				else if (event.key.code == sf::Keyboard::Left){
-					character->move(-1, 0);
+					character->stageShift(-1, 0, 0);
 				}
 				else if (event.key.code == sf::Keyboard::Right){
-					character->move(1, 0);
+					character->stageShift(1, 0, 0);
+				}
+				else if (event.key.code == sf::Keyboard::PageUp){
+					character->stageShift(0, 0, 1);
+				}
+				else if (event.key.code == sf::Keyboard::PageDown){
+					character->stageShift(0, 0, -1);
 				}
 				else if (event.key.code == sf::Keyboard::W){
 					worldManager.nextWorld();
 				}
 				break;
 
-				//case sf::Event::MouseButtonPressed: {
-				//	Point point = screenToGrid(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
-				//	if (worldManager.getCurrentWorld().getLevel(0).existsAt(point)) {
-				//		worldManager.getCurrentWorld().getLevel(0).removeAt(point);
-				//	}
-				//	break;
-				//}
+			case sf::Event::MouseButtonPressed: {
+				Point point = screenToGrid(window.mapPixelToCoords(sf::Mouse::getPosition(window)), character->gridLocation.z);
+				if (!worldManager.getCurrentWorld().existsAt(point)) {
+					character->setStageLocation(point);
+				}
+				break;
+			}
 
 			case sf::Event::Closed:
 				window.close();

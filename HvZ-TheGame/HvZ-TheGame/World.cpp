@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "World.h"
+#include "BaseClass.h"
 
 World::World() {}
 
@@ -26,11 +27,11 @@ void World::draw(sf::RenderWindow& window) {
 		BaseClass* temp = iterator->second;
 		if (!temp->gridLocation.equals(temp->gridDestination)){
 			if (existsAt(temp->gridDestination)) {
-				temp->stop();
+				temp->cancelMove();
 			}
 			else{
 				removeAt(temp->gridLocation);
-				temp->applyMove();
+				temp->commitMove();
 				add(temp);
 			}
 		}

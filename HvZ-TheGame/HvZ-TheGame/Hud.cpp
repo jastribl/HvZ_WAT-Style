@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "Hud.h"
-
 #include "Constants.h"
 #include <ctime>
 

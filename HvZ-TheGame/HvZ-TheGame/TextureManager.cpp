@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "TextureManager.h"
-
 #include "Constants.h"
 #include <string>
 

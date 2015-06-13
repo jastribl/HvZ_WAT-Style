@@ -1,5 +1,4 @@
 #pragma once
-
 #include "Point.h"
 
 class BaseClass {
@@ -12,8 +11,10 @@ public:
 	BaseClass(Point grid, const sf::Texture& texture);
 	~BaseClass();
 
-	virtual void move(int x, int y);
-	virtual void applyMove();
-	virtual void stop();
+	virtual void setStageLocation(Point& point);
+	virtual void setStageLocation(int x, int y, int z);
+	virtual void stageShift(int x, int y, int z);
+	virtual void commitMove();
+	virtual void cancelMove();
 	virtual void draw(sf::RenderWindow& window);
 };

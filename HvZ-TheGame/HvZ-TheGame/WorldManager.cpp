@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "WorldManager.h"
-
 #include "Constants.h"
 #include "Block.h"
 #include "Point.h"

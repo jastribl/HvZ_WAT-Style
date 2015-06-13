@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "Character.h"
-
 #include "Constants.h"
 
 Character::Character(Point grid, const sf::Texture& texture)
@@ -12,17 +11,27 @@ Character::Character(Point grid, const sf::Texture& texture)
 
 Character::~Character() {}
 
-void Character::move(int x, int y) {
+void Character::setStageLocation(Point& point) {
+	gridDestination = point;
+}
+
+void Character::setStageLocation(int x, int y, int z){
+	gridDestination = Point(x, y, z);
+}
+
+void Character::stageShift(int x, int y, int z) {
 	gridDestination.x += x;
 	gridDestination.y += y;
+	gridDestination.z += z;
 }
 
-void Character::applyMove() {
+
+void Character::commitMove() {
 	gridLocation = gridDestination;
 	Point p = cartesianToIsometric(gridLocation.x * HALF_BLOCK_SIZE, gridLocation.y * HALF_BLOCK_SIZE, gridLocation.z);
-	sprite.setPosition(p.x - HALF_BLOCK_SIZE, p.y - (p.z * HALF_BLOCK_SIZE));
+	sprite.setPosition(p.x - HALF_BLOCK_SIZE, p.y - (p.z * HALF_BLOCK_SIZE) - BLOCK_SIZE);
 }
 
-void Character::stop(){
+void Character::cancelMove(){
 	gridDestination = gridLocation;
 }
