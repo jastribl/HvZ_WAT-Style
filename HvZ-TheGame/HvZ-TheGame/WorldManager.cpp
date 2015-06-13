@@ -16,15 +16,13 @@ WorldManager::WorldManager(TextureManager& textureManager) {
 		worldReader >> numberOfLevels;
 		for (int z = 0; z < numberOfLevels; z++) {
 			int numberOfBlocks;
-			Level level = Level();
 			worldReader >> numberOfBlocks;
 			for (int j = 0; j < numberOfBlocks; j++){
 				int group, type, x, y;
 				worldReader >> group >> type >> x >> y;
 				BaseClass* block = new Block(Point(x, y, z), textureManager.getTextureFor(group, type), type);
-				level.add(block);
+				world.add(block);
 			}
-			world.addLevel(level);
 		}
 		worlds[worldName] = world;
 	}

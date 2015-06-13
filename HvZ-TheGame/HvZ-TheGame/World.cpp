@@ -5,21 +5,39 @@ World::World() {}
 
 World::~World() {}
 
-void World::addLevel(const Level& level){
-	world.push_back(level);
+bool World::existsAt(const Point& point) const {
+	return world.count(point) > 0;
 }
 
-void World::removeLevel(int i){
-	world.erase(world.begin() + i);
+BaseClass* World::getAt(const Point& point) {
+	return world.find(point)->second;
 }
 
-Level& World::getLevel(int index){
-	return world.at(index);
+void World::add(BaseClass* object) {
+	world.insert({ object->gridLocation, object });
+}
+
+void World::removeAt(const Point& point) {
+	world.erase(point);
 }
 
 void World::draw(sf::RenderWindow& window) {
-	for (int i = 0; i < world.size(); i++){
-		world.at(i).draw(window);
+	for (auto iterator = world.begin(); iterator != world.end(); ++iterator){
+		BaseClass* temp = iterator->second;
+		if (!temp->gridLocation.equals(temp->gridDestination)){
+			if (existsAt(temp->gridDestination)) {
+				temp->stop();
+			}
+			else{
+				removeAt(temp->gridLocation);
+				temp->applyMove();
+				add(temp);
+			}
+		}
+		iterator->second->draw(window);
+	}
+	for (auto iterator = world.begin(); iterator != world.end(); ++iterator){
+		iterator->second->draw(window);
 	}
 }
 
