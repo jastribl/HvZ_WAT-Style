@@ -1,8 +1,9 @@
 #include "stdafx.h"
-#include "Constants.h"
 #include "Hud.h"
-#include <iostream>
+
+#include "Constants.h"
 #include <ctime>
+
 Hud::Hud() {
 	hpFont.loadFromFile("Resources/Fonts/arial.ttf");
 	timeFont.loadFromFile("Resources/Fonts/DS-DIGI.ttf");
@@ -15,8 +16,7 @@ Hud::Hud() {
 	minimap.setPosition(1770, 250);
 }
 
-Hud::~Hud() {
-}
+Hud::~Hud() {}
 
 void Hud::setHP(float newhp){
 	hp = newhp;

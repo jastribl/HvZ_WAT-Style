@@ -14,6 +14,7 @@ private:
 public:
 	Hud();
 	~Hud();
+
 	void setHP(float newhp);
 	void setMP(float newmp);
 	void drawToWindow(sf::RenderWindow& window);

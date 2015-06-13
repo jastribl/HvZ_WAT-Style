@@ -1,14 +1,16 @@
 #include "stdafx.h"
 #include "Point.h"
-#include <iostream>
-#include <math.h>
 
-Point::Point(int xx = 0, int yy = 0) :x(xx), y(yy) {}
+#include <iostream>
+
+Point::Point(int x = 0, int y = 0, int z = 0) :x(x), y(y), z(z) {}
 
 bool Point::equals(const Point& p) const {
-	return (x == p.x && y == p.y);
+	return (x == p.x && y == p.y && z == p.z);
 }
 
+Point::~Point() {}
+
 void Point::print() const {
-	std::cout << "(" << x << "," << y << ")";
+	std::cout << "(" << x << "," << y << "," << z << ")";
 }

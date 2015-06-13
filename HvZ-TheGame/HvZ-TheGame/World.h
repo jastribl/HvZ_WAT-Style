@@ -11,6 +11,7 @@ private:
 public:
 	World();
 	~World();
+
 	void addLevel(const Level& level);
 	void removeLevel(int i);
 	Level& getLevel(int index);

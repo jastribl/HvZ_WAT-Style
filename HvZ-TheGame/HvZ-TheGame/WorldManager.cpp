@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "WorldManager.h"
+
 #include "Constants.h"
 #include "Block.h"
 #include "Point.h"
@@ -13,15 +14,15 @@ WorldManager::WorldManager(TextureManager& textureManager) {
 		std::ifstream  worldReader("Resources/Worlds/" + worldName + ".World");
 		int numberOfLevels;
 		worldReader >> numberOfLevels;
-		for (int i = 0; i < numberOfLevels; i++) {
+		for (int z = 0; z < numberOfLevels; z++) {
 			int numberOfBlocks;
 			Level level = Level();
 			worldReader >> numberOfBlocks;
 			for (int j = 0; j < numberOfBlocks; j++){
 				int group, type, x, y;
 				worldReader >> group >> type >> x >> y;
-				BaseClass* block = new Block(Point(x, y), textureManager.getTextureFor(group, type), type, i);
-				level.addBlock(block);
+				BaseClass* block = new Block(Point(x, y, z), textureManager.getTextureFor(group, type), type);
+				level.add(block);
 			}
 			world.addLevel(level);
 		}
@@ -31,7 +32,6 @@ WorldManager::WorldManager(TextureManager& textureManager) {
 }
 
 WorldManager::~WorldManager() {}
-
 
 World& WorldManager::getCurrentWorld() {
 	return worlds.find(currentWorld)->second;

@@ -1,6 +1,7 @@
 #include "stdafx.h"
-#include "Constants.h"
 #include "TextureManager.h"
+
+#include "Constants.h"
 #include <string>
 
 TextureManager::TextureManager() {

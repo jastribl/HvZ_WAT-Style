@@ -5,7 +5,7 @@
 class Character :public BaseClass {
 
 public:
-	Character(Point grid, const sf::Texture& texture, int level);
+	Character(Point grid, const sf::Texture& texture);
 	~Character();
 
 	virtual	void move(int x, int y);

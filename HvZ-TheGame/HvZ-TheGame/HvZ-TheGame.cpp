@@ -19,8 +19,8 @@ int main() {
 	Hud hud = Hud();
 	TextureManager textureManager = TextureManager();
 	WorldManager worldManager = WorldManager(textureManager);
-	BaseClass* character = new Character(Point(3, 3), textureManager.getTextureFor(CHARACTER, 0), 1);
-	worldManager.getCurrentWorld().getLevel(1).addBlock(character);
+	BaseClass* character = new Character(Point(3, 3, 1), textureManager.getTextureFor(CHARACTER, 0));
+	worldManager.getCurrentWorld().getLevel(1).add(character);
 
 	worldView.move(-1000, 50);
 
@@ -52,13 +52,13 @@ int main() {
 				}
 				break;
 
-			case sf::Event::MouseButtonPressed: {
-				Point point = screenToGrid(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
-				if (worldManager.getCurrentWorld().getLevel(0).blockExitsAt(point)) {
-					worldManager.getCurrentWorld().getLevel(0).removeBlockAt(point);
-				}
-				break;
-			}
+				//case sf::Event::MouseButtonPressed: {
+				//	Point point = screenToGrid(window.mapPixelToCoords(sf::Mouse::getPosition(window)));
+				//	if (worldManager.getCurrentWorld().getLevel(0).existsAt(point)) {
+				//		worldManager.getCurrentWorld().getLevel(0).removeAt(point);
+				//	}
+				//	break;
+				//}
 
 			case sf::Event::Closed:
 				window.close();

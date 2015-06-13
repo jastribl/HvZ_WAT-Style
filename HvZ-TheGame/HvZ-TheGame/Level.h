@@ -22,11 +22,12 @@ private:
 public:
 	Level();
 	~Level();
+
 	bool isEmpty() const;
-	bool blockExitsAt(const Point& point) const;
-	BaseClass* getBlockAt(const Point& point);
-	void addBlock(BaseClass* block);
-	void removeBlockAt(const Point& point);
+	bool existsAt(const Point& point) const;
+	BaseClass* getAt(const Point& point);
+	void add(BaseClass* object);
+	void removeAt(const Point& point);
 	void draw(sf::RenderWindow& window);
 	int size() const;
 };

@@ -1,10 +1,10 @@
 #include "stdafx.h"
-
 #include "BaseClass.h"
+
 #include "Point.h"
 
-BaseClass::BaseClass(Point grid, const sf::Texture& texture, int level)
-	:gridLocation(grid), gridDestination(grid), sprite(texture), level(level) {}
+BaseClass::BaseClass(Point grid, const sf::Texture& texture)
+	:gridLocation(grid), gridDestination(grid), sprite(texture) {}
 
 BaseClass::~BaseClass() {}
 
