@@ -15,7 +15,7 @@ static int CHARACTER_WIDTH = BLOCK_SIZE, CHARACTER_HEIGHT = BLOCK_SIZE * 2;
 enum BLOCK_TYPE{ BLOCK, SPECIAL, CHARACTER };
 
 static Point& cartesianToIsometric(const int x, const int y, const int z){
-	return Point(x - y, (x + y) / 2, z);
+	return Point(x - y, ((x + y) / 2) - (z * HALF_BLOCK_SIZE), z);
 }
 
 static Point& isometricToCartesian(const int x, const int y, const int z) {
@@ -25,4 +25,11 @@ static Point& isometricToCartesian(const int x, const int y, const int z) {
 static Point& screenToGrid(const sf::Vector2f& p, const int z) {
 	Point& point = isometricToCartesian(p.x, p.y, z);
 	return Point(point.x / HALF_BLOCK_SIZE, point.y / HALF_BLOCK_SIZE, point.z);
+}
+
+static Point& screenToPoint(const sf::Vector2f& p, const int z) {
+	Point& point = isometricToCartesian(p.x, p.y, z);
+	float xDiff = (point.x / HALF_BLOCK_SIZE) - point.x;
+	float yDiff = (point.y / HALF_BLOCK_SIZE) - point.y;
+	return Point(xDiff, yDiff, point.z);
 }

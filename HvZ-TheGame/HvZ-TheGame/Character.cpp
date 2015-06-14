@@ -5,6 +5,7 @@
 
 Character::Character(World& world, const sf::Texture& texture, Point gridLocation, Point pointLocation)
 	:BaseClass(world, texture, gridLocation, pointLocation) {
+	sprite.setOrigin(sprite.getLocalBounds().width / 2, sprite.getLocalBounds().height);
 	sprite.scale(CHARACTER_WIDTH / sprite.getLocalBounds().width, CHARACTER_HEIGHT / sprite.getLocalBounds().height);
 }
 
@@ -54,7 +55,10 @@ void Character::move(int x, int y, int z) {
 }
 
 void Character::draw(sf::RenderWindow& window) {
+	//system("cls");
+	//Point((gridLocation.x*HALF_BLOCK_SIZE) + pointLocation.x, (gridLocation.y*HALF_BLOCK_SIZE) + pointLocation.y, (gridLocation.z*HALF_BLOCK_SIZE) + pointLocation.z).print();
+
 	Point p = cartesianToIsometric((gridLocation.x * HALF_BLOCK_SIZE) + pointLocation.x, (gridLocation.y * HALF_BLOCK_SIZE) + pointLocation.y, gridLocation.z);
-	sprite.setPosition(p.x - HALF_BLOCK_SIZE, p.y - (p.z * HALF_BLOCK_SIZE) - BLOCK_SIZE);
+	sprite.setPosition(p.x, p.y);
 	BaseClass::draw(window);
 }
