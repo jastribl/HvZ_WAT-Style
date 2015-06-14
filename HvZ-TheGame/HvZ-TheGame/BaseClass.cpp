@@ -2,8 +2,8 @@
 #include "BaseClass.h"
 #include "World.h"
 
-BaseClass::BaseClass(World& world, const sf::Texture& texture, Point grid)
-	:world(world), sprite(texture), gridLocation(grid)  {
+BaseClass::BaseClass(World& world, const sf::Texture& texture, Point gridLocation, Point pointLocation)
+	:world(world), sprite(texture), gridLocation(gridLocation), pointLocation(pointLocation) {
 	world.add(this);
 }
 

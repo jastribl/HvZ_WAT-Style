@@ -10,8 +10,9 @@ protected:
 public:
 	World& world;
 	Point gridLocation;
+	Point pointLocation;
 
-	BaseClass(World& world, const sf::Texture& texture, Point grid);
+	BaseClass(World& world, const sf::Texture& texture, Point gridLocation, Point pointLocation);
 	~BaseClass();
 
 	virtual void move(int x, int y, int z);

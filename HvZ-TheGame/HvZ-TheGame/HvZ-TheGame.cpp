@@ -20,7 +20,7 @@ int main() {
 	Hud hud = Hud();
 	TextureManager textureManager = TextureManager();
 	WorldManager worldManager = WorldManager(textureManager);
-	BaseClass* character = new Character(*worldManager.getCurrentWorld(), textureManager.getTextureFor(CHARACTER, 0), Point(1, 1, 1));
+	BaseClass* character = new Character(*worldManager.getCurrentWorld(), textureManager.getTextureFor(CHARACTER, 0), Point(1, 1, 1), Point(0, 0, 0));
 
 	window.setFramerateLimit(60);
 	sf::Clock clock;
@@ -34,22 +34,22 @@ int main() {
 					window.close();
 				}
 				else if (event.key.code == sf::Keyboard::Up){
-					character->move(0, -1, 0);
+					character->move(-10, -10, 0);
 				}
 				else if (event.key.code == sf::Keyboard::Down){
-					character->move(0, 1, 0);
+					character->move(10, 10, 0);
 				}
 				else if (event.key.code == sf::Keyboard::Left){
-					character->move(-1, 0, 0);
+					character->move(-10, 10, 0);
 				}
 				else if (event.key.code == sf::Keyboard::Right){
-					character->move(1, 0, 0);
+					character->move(10, -10, 0);
 				}
 				else if (event.key.code == sf::Keyboard::PageUp){
-					character->move(0, 0, 1);
+					character->move(0, 0, 10);
 				}
 				else if (event.key.code == sf::Keyboard::PageDown){
-					character->move(0, 0, -1);
+					character->move(0, 0, -10);
 				}
 				else if (event.key.code == sf::Keyboard::W){
 					worldManager.nextWorld();
