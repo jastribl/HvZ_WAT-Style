@@ -5,6 +5,7 @@
 #include "Hud.h"
 #include "World.h"
 #include "Character.h"
+#include <iostream>
 
 //void updateGame() {}
 
@@ -57,13 +58,15 @@ int main() {
 				}
 				break;
 
-				//case sf::Event::MouseButtonPressed: {
-				//	Point point = screenToGrid(window.mapPixelToCoords(sf::Mouse::getPosition(window)), character->gridLocation.z);
-				//	if (!worldManager.getCurrentWorld()->existsAt(point)) {
-				//		character->setStageLocation(point);
-				//	}
-				//	break;
-				//}
+			case sf::Event::MouseButtonPressed: {
+				Point point = screenToGrid(window.mapPixelToCoords(sf::Mouse::getPosition(window)), 1);
+				if (!worldManager.getCurrentWorld()->existsAt(point)) {
+					Point p = Point(point.x - character->gridLocation.x, point.y - character->gridLocation.y, 0);
+					character->move(p.x, p.y, p.z);
+					//worldManager.getCurrentWorld()->removeAt(point);
+				}
+				break;
+			}
 
 			case sf::Event::Closed:
 				window.close();

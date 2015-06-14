@@ -10,4 +10,6 @@ BaseClass::BaseClass(World& world, const sf::Texture& texture, Point grid)
 BaseClass::~BaseClass() {}
 
 void BaseClass::move(int x, int y, int z){}
-void BaseClass::draw(sf::RenderWindow& window) {}
+void BaseClass::draw(sf::RenderWindow& window) {
+	window.draw(sprite);
+}

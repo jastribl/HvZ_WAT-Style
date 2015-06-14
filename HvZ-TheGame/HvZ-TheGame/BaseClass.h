@@ -4,10 +4,12 @@ class World;
 
 class BaseClass {
 
+protected:
+	sf::Sprite sprite;
+
 public:
 	World& world;
 	Point gridLocation;
-	sf::Sprite sprite;
 
 	BaseClass(World& world, const sf::Texture& texture, Point grid);
 	~BaseClass();

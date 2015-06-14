@@ -9,6 +9,4 @@ public:
 
 	Block(World& world, const sf::Texture& texture, Point gridLocation, int blockType);
 	~Block();
-
-	virtual void draw(sf::RenderWindow& window);
 };
