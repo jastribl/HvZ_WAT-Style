@@ -22,9 +22,7 @@ int main() {
 	WorldManager worldManager = WorldManager(textureManager);
 	BaseClass* character = new Character(*worldManager.getCurrentWorld(), textureManager.getTextureFor(CHARACTER, 0), Point(1, 1, 1));
 
-	worldView.move(-1000, 50);
-
-	window.setFramerateLimit(10);
+	window.setFramerateLimit(60);
 	sf::Clock clock;
 	float elapsedTime = 0.0f;
 	while (window.isOpen()) {
@@ -86,6 +84,21 @@ int main() {
 				break;
 			}
 		}
+
+		sf::Vector2i mousePositionWindow = sf::Mouse::getPosition(window);
+		if (mousePositionWindow.x > 1366 - 10) {
+			worldView.move(20, 0);
+		}
+		else if (mousePositionWindow.x < 10) {
+			worldView.move(-20, 0);
+		}
+		else if (mousePositionWindow.y > 768 - 10) {
+			worldView.move(0, 20);
+		}
+		else if (mousePositionWindow.y < 10) {
+			worldView.move(0, -20);
+		}
+
 		//for (; elapsedTime >= 0.025f; elapsedTime -= 0.025f) {
 		//	updateGame();
 		//}

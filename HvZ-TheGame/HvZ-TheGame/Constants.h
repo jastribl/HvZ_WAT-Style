@@ -7,10 +7,10 @@
 static int SCREEN_SIZE_X = 1920;
 static int SCREEN_SIZE_Y = 1080;
 
-static int BLOCK_SIZE = 64;
+static int BLOCK_SIZE = 62;
 static int HALF_BLOCK_SIZE = BLOCK_SIZE / 2;
 
-static int CHARACTER_WIDTH = 64, CHARACTER_HEIGHT = 128;
+static int CHARACTER_WIDTH = 62, CHARACTER_HEIGHT = 128;
 
 enum BLOCK_TYPE{ BLOCK, SPECIAL, CHARACTER };
 
