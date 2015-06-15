@@ -4,13 +4,13 @@
 #include <string>
 
 TextureManager::TextureManager() {
-	for (int i = 0; i < numberOfBlocks; i++){
+	for (int i = 0; i < numberOfBlocks; i++) {
 		sf::Texture texture;
 		texture.setSmooth(true);
 		texture.loadFromFile(std::string("Resources/Images/block") + std::to_string(i) + std::string(".png"));
 		addTextureFor(texture, BLOCK, i);
 	}
-	for (int i = 0; i < numberOfSpecials; i++){
+	for (int i = 0; i < numberOfSpecials; i++) {
 		sf::Texture texture;
 		texture.setSmooth(true);
 		texture.loadFromFile(std::string("Resources/Images/special") + std::to_string(i) + std::string(".png"));

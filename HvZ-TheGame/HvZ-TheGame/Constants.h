@@ -49,9 +49,9 @@ static int HALF_BLOCK_SIZE = BLOCK_SIZE / 2;
 
 static int CHARACTER_WIDTH = BLOCK_SIZE, CHARACTER_HEIGHT = BLOCK_SIZE * 2;
 
-enum ITEM_GROUP{ BLOCK, SPECIAL, CHARACTER };
+enum ITEM_GROUP { BLOCK, SPECIAL, CHARACTER };
 
-static Point& cartesianToIsometric(const int x, const int y, const int z){
+static Point& cartesianToIsometric(const int x, const int y, const int z) {
 	return Point(x - y, ((x + y) / 2) - z, z);
 }
 
@@ -61,19 +61,11 @@ static Point& isometricToCartesian(const int x, const int y, const int z) {
 
 static Point& screenToGrid(const sf::Vector2f& p, const int z) {
 	Point& point = isometricToCartesian(p.x, p.y, z);
-	return Point(point.x / HALF_BLOCK_SIZE, point.y / HALF_BLOCK_SIZE, point.z);
-}
-
-static Point& screenToPoint(const sf::Vector2f& p, const int z) {
-	Point& point = isometricToCartesian(p.x, p.y, z);
-	float xDiff = (point.x / HALF_BLOCK_SIZE) - point.x;
-	float yDiff = (point.y / HALF_BLOCK_SIZE) - point.y;
-	return Point(xDiff, yDiff, point.z);
+	return Point(point.x / BLOCK_SIZE, point.y / BLOCK_SIZE, point.z);
 }
 
 struct ByLocation {
-	bool operator()(const Point& a, const Point& b) const
-	{
+	bool operator()(const Point& a, const Point& b) const {
 		return (a.x + a.y == b.x + b.y) ? std::min(a.x, a.y) == std::min(b.x, b.y) ? a.y == b.y ? a.z < b.z : a.y > b.y : std::min(a.x, a.y) < std::min(b.x, b.y) : a.x + a.y < b.x + b.y;
 	}
 };

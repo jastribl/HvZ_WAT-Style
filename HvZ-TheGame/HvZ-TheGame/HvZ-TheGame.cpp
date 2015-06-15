@@ -28,91 +28,80 @@ int main() {
 	while (window.isOpen()) {
 		sf::Event event;
 		while (window.pollEvent(event)) {
-			switch (event.type) 			{
-			case sf::Event::KeyPressed:
-				if (event.key.code == sf::Keyboard::Escape){
+			switch (event.type) {
+				case sf::Event::KeyPressed:
+					if (event.key.code == sf::Keyboard::Escape) {
+						window.close();
+					} else if (event.key.code == sf::Keyboard::Up) {
+						character->move(0, -4, 0);
+					} else if (event.key.code == sf::Keyboard::Down) {
+						character->move(0, 4, 0);
+					} else if (event.key.code == sf::Keyboard::Left) {
+						character->move(-4, 0, 0);
+					} else if (event.key.code == sf::Keyboard::Right) {
+						character->move(4, 0, 0);
+					} else if (event.key.code == sf::Keyboard::PageUp) {
+						character->move(0, 0, 4);
+					} else if (event.key.code == sf::Keyboard::PageDown) {
+						character->move(0, 0, -4);
+					} else if (event.key.code == sf::Keyboard::W) {
+						worldManager.getCurrentWorld()->removeFromMap(character->gridLocation, character->pointLocation);
+						worldManager.nextWorld();
+						worldManager.getCurrentWorld()->add(character);
+					}
+					break;
+
+				case sf::Event::Closed:
 					window.close();
-				}
-				else if (event.key.code == sf::Keyboard::Up){
-					character->move(0, -4, 0);
-				}
-				else if (event.key.code == sf::Keyboard::Down){
-					character->move(0, 4, 0);
-				}
-				else if (event.key.code == sf::Keyboard::Left){
-					character->move(-4, 0, 0);
-				}
-				else if (event.key.code == sf::Keyboard::Right){
-					character->move(4, 0, 0);
-				}
-				else if (event.key.code == sf::Keyboard::PageUp){
-					character->move(0, 0, 4);
-				}
-				else if (event.key.code == sf::Keyboard::PageDown){
-					character->move(0, 0, -4);
-				}
-				else if (event.key.code == sf::Keyboard::W){
-					worldManager.getCurrentWorld()->removeFromMap(character->gridLocation, character->pointLocation);
-					worldManager.nextWorld();
-					worldManager.getCurrentWorld()->add(character);
-				}
-				break;
+					break;
 
-			case sf::Event::Closed:
-				window.close();
-				break;
-
-			case sf::Event::MouseWheelMoved: {
-				if (event.mouseWheel.delta > 0) {
-					worldView.zoom(0.8);
+				case sf::Event::MouseWheelMoved: {
+					if (event.mouseWheel.delta > 0) {
+						worldView.zoom(0.8);
+					} else {
+						worldView.zoom(1.25);
+					}
+					break;
 				}
-				else {
-					worldView.zoom(1.25);
+				case sf::Event::MouseButtonPressed:{
+					if (event.mouseButton.button == sf::Mouse::Left&&event.mouseButton.x > SIDEBAR_ORIGIN_X&&event.mouseButton.y > SIDEBAR_ORIGIN_Y) {
+						hud.click(event.mouseButton.x, event.mouseButton.y);
+					}
+					break;
 				}
-				break;
-			}
-			case sf::Event::MouseButtonPressed:{
-				if (event.mouseButton.button == sf::Mouse::Left&&event.mouseButton.x > SIDEBAR_ORIGIN_X&&event.mouseButton.y > SIDEBAR_ORIGIN_Y){
-					hud.click(event.mouseButton.x, event.mouseButton.y);
+				case sf::Event::MouseButtonReleased:{
+					if (event.mouseButton.button == sf::Mouse::Left) {
+						hud.release(event.mouseButton.x, event.mouseButton.y);
+					}
+					break;
 				}
-				break;
-			}
-			case sf::Event::MouseButtonReleased:{
-				if (event.mouseButton.button == sf::Mouse::Left){
-					hud.release(event.mouseButton.x, event.mouseButton.y);
-				}
-				break;
-			}
-			default:
-				break;
+				default:
+					break;
 			}
 		}
 
-		//Point point = screenToGrid(window.mapPixelToCoords(sf::Mouse::getPosition(window)), 1);
-		//if (!worldManager.getCurrentWorld()->itemsExistAt(point)) {
-		//	Point p = Point(point.x - character->gridLocation.x, point.y - character->gridLocation.y, 0);
-		//	character->move(p.x, p.y, p.z);
-		//	//worldManager.getCurrentWorld()->removeAt(point);
-		//}
+		Point point = screenToGrid(window.mapPixelToCoords(sf::Mouse::getPosition(window)), 1);
+		if (!worldManager.getCurrentWorld()->itemsExistAt(point)) {
+			Point p = Point(point.x - character->gridLocation.x, point.y - character->gridLocation.y, 0);
+			character->move(p.x, p.y, p.z);
+		}
 
 
 		sf::Vector2i mousePositionWindow = sf::Mouse::getPosition(window);
 		if (mousePositionWindow.x > window.getSize().x - 10) {
-			worldView.move(20, 0);
-		}
-		else if (mousePositionWindow.x < 10) {
-			worldView.move(-20, 0);
-		}
-		else if (mousePositionWindow.y > window.getSize().y - 10) {
-			worldView.move(0, 20);
-		}
-		else if (mousePositionWindow.y < 10) {
-			worldView.move(0, -20);
+			worldView.move(40, 0);
+		} else if (mousePositionWindow.x < 10) {
+			worldView.move(-40, 0);
+		} else if (mousePositionWindow.y > window.getSize().y - 10) {
+			worldView.move(0, 40);
+		} else if (mousePositionWindow.y < 10) {
+			worldView.move(0, -40);
 		}
 
 		//for (; elapsedTime >= 0.025f; elapsedTime -= 0.025f) {
 		//	updateGame();
 		//}
+
 		window.clear(sf::Color(255, 255, 255));
 
 		window.setView(worldView);

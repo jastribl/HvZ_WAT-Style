@@ -19,23 +19,23 @@ Hud::Hud() {
 
 Hud::~Hud() {}
 
-void Hud::setHP(float newhp){
+void Hud::setHP(float newhp) {
 	hp = newhp;
 }
 
-void Hud::setMP(float newmp){
+void Hud::setMP(float newmp) {
 	mp = newmp;
 }
-void Hud::click(int x,int y){
-	if (x > BOX_ORIGIN_X&&x<BOX_ORIGIN_X + BOX_SIZE_LENGTH&&y>BOX_ORIGIN_Y&&y < BOX_ORIGIN_Y + BOX_SIZE_WIDTH){
+void Hud::click(int x, int y) {
+	if (x > BOX_ORIGIN_X&&x<BOX_ORIGIN_X + BOX_SIZE_LENGTH&&y>BOX_ORIGIN_Y&&y < BOX_ORIGIN_Y + BOX_SIZE_WIDTH) {
 		inventory.click(x, y);
 	}
 }
-void Hud::release(int x,int y){
-	inventory.release(x,y);
+void Hud::release(int x, int y) {
+	inventory.release(x, y);
 }
 void Hud::drawToWindow(sf::RenderWindow& window) {
-	
+
 	std::vector<sf::Vertex> vertices;
 	//Sidebar background
 	vertices.push_back(sf::Vertex(sf::Vector2f(SIDEBAR_ORIGIN_X, 0), sf::Color(64, 64, 64)));
@@ -77,12 +77,12 @@ void Hud::drawToWindow(sf::RenderWindow& window) {
 	window.draw(&vertices[0], vertices.size(), sf::Quads);
 	inventory.drawToWindow(window);
 
-	sf::Text hpText("HP: " + std::to_string((int)hp) + " / " + std::to_string((int)hpmax), hpFont, 20);
+	sf::Text hpText("HP: " + std::to_string((int) hp) + " / " + std::to_string((int) hpmax), hpFont, 20);
 	hpText.setStyle(sf::Text::Bold);
 	hpText.setColor(sf::Color::White);
 	hpText.setPosition(sf::Vector2f(HP_ORIGIN_X + HP_TEXT_X, HP_ORIGIN_Y + HP_TEXT_Y));
 	window.draw(hpText);
-	hpText.setString("MP: " + std::to_string((int)mp) + " / " + std::to_string((int)mpmax));
+	hpText.setString("MP: " + std::to_string((int) mp) + " / " + std::to_string((int) mpmax));
 	hpText.setPosition(sf::Vector2f(HP_ORIGIN_X + HP_MPTEXT_X, HP_ORIGIN_Y + HP_MPTEXT_Y));
 	window.draw(hpText);
 

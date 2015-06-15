@@ -1,5 +1,6 @@
 #pragma once
 #include "Inventory.h"
+
 class Hud {
 
 private:
@@ -16,8 +17,8 @@ private:
 public:
 	Hud();
 	~Hud();
-	void click(int x,int y);
-	void release(int x,int y);
+	void click(int x, int y);
+	void release(int x, int y);
 	void setHP(float newhp);
 	void setMP(float newmp);
 	void drawToWindow(sf::RenderWindow& window);

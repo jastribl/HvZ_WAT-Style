@@ -16,7 +16,7 @@ WorldManager::WorldManager(TextureManager& textureManager) {
 		for (int z = 0; z < numberOfLevels; z++) {
 			int numberOfBlocks;
 			worldReader >> numberOfBlocks;
-			for (int j = 0; j < numberOfBlocks; j++){
+			for (int j = 0; j < numberOfBlocks; j++) {
 				int group, type, x, y;
 				worldReader >> group >> type >> x >> y;
 				BaseClass* block = new Block(*world, textureManager.getTextureFor(group, type), Point(x, y, z), type);
@@ -37,8 +37,7 @@ void WorldManager::nextWorld() {
 	std::map < std::string, World* >::iterator it = worlds.find(currentWorld);
 	if (it == std::prev(worlds.end())) {
 		currentWorld = worlds.begin()->first;
-	}
-	else {
+	} else {
 		currentWorld = std::next(worlds.find(currentWorld))->first;
 	}
 }

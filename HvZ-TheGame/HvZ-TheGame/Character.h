@@ -10,4 +10,5 @@ public:
 
 	virtual	void move(int x, int y, int z);
 	virtual void draw(sf::RenderWindow& window);
+	virtual void hitDetect(BaseClass& test);
 };

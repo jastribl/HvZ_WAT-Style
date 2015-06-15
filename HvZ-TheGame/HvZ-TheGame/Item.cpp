@@ -2,31 +2,35 @@
 #include "Item.h"
 #include "Constants.h"
 #include <iostream>
-Item::Item(){
+
+Item::Item() {
 	initialized = false;
 	active = false;
 }
-void Item::initalize(std::string file)
-{
-	if (!texture.loadFromFile(file)){
-		std::cerr << "Error loading: " << file<<std::endl;
+
+void Item::initalize(std::string file) {
+	if (!texture.loadFromFile(file)) {
+		std::cerr << "Error loading: " << file << std::endl;
 		return;
 	}
 	setTexture(texture);
 	initialized = true;
 }
-void Item::setActive(){
+
+Item::~Item() {}
+
+void Item::setActive() {
 	active = true;
 }
-void Item::release(){
+
+void Item::release() {
 	active = false;
 }
-bool Item::isInitialized(){
+
+bool Item::isInitialized() {
 	return initialized;
 }
-bool Item::isActive(){
+
+bool Item::isActive() {
 	return active;
-}
-Item::~Item()
-{
 }
