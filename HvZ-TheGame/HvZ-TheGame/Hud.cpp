@@ -1,7 +1,9 @@
 #include "stdafx.h"
-#include "Hud.h"
+#include "Inventory.h"
 #include "Constants.h"
+#include "Hud.h"
 #include <ctime>
+#include <iostream>
 
 Hud::Hud() {
 	hpFont.loadFromFile("Resources/Fonts/arial.ttf");
@@ -24,66 +26,22 @@ void Hud::setHP(float newhp){
 void Hud::setMP(float newmp){
 	mp = newmp;
 }
-
+void Hud::click(int x,int y){
+	if (x > BOX_ORIGIN_X&&x<BOX_ORIGIN_X + BOX_SIZE_LENGTH&&y>BOX_ORIGIN_Y&&y < BOX_ORIGIN_Y + BOX_SIZE_WIDTH){
+		inventory.click(x, y);
+	}
+}
+void Hud::release(int x,int y){
+	inventory.release(x,y);
+}
 void Hud::drawToWindow(sf::RenderWindow& window) {
-	static int HP_BORDER = 3;
-	static int HP_LENGTH = 299;
-	static int HP_WIDTH = 150;
-	static int HP_ORIGIN_X = SCREEN_SIZE_X - HP_LENGTH;
-	static int HP_ORIGIN_Y = SCREEN_SIZE_Y - HP_WIDTH;
-	static int HP_TEXT_X = 20;
-	static int HP_TEXT_Y = 15;
-	static int HP_MPTEXT_X = 20;
-	static int HP_MPTEXT_Y = 70;
-	static int HP_BAR_X = 20;
-	static int HP_BAR_Y = 45;
-	static int HP_BAR_LENGTH = 260;
-	static int HP_BAR_WIDTH = 20;
-	static int HP_MPBAR_X = 20;
-	static int HP_MPBAR_Y = 100;
-
-	static int SIDEBAR_ORIGIN_X = 1620;
-	static int SIDEBAR_ORIGIN_Y = 0;
-	static int SIDEBAR_LENGTH = SCREEN_SIZE_X - SIDEBAR_ORIGIN_X;
-
+	
 	std::vector<sf::Vertex> vertices;
 	//Sidebar background
 	vertices.push_back(sf::Vertex(sf::Vector2f(SIDEBAR_ORIGIN_X, 0), sf::Color(64, 64, 64)));
 	vertices.push_back(sf::Vertex(sf::Vector2f(SIDEBAR_ORIGIN_X, SCREEN_SIZE_Y), sf::Color(50, 50, 50)));
 	vertices.push_back(sf::Vertex(sf::Vector2f(SIDEBAR_ORIGIN_X + SIDEBAR_LENGTH, SCREEN_SIZE_Y), sf::Color(50, 50, 50)));
 	vertices.push_back(sf::Vertex(sf::Vector2f(SIDEBAR_ORIGIN_X + SIDEBAR_LENGTH, 0), sf::Color(64, 64, 64)));
-
-	static int BOX_LENGTH = 73;
-	static int BOX_WIDTH = 73;
-	static int BOX_BORDER = 3;
-	static int BOX_LGBORDER = 2;
-	static int BOX_MOVEMENT_X = 70;
-	static int BOX_MOVEMENT_Y = 70;
-	static int BOX_PERROW = 4;
-	static int BOX_NUM = 28;
-	static int BOX_SIZE_LENGTH = BOX_PERROW*BOX_LENGTH - BOX_BORDER*(BOX_PERROW - 1);
-	static int BOX_SIZE_WIDTH = ((BOX_NUM - 1) / BOX_PERROW + 1)*BOX_WIDTH - BOX_BORDER*((BOX_NUM - 1) / BOX_PERROW);
-	static int BOX_ORIGIN_X = SIDEBAR_ORIGIN_X + BOX_LGBORDER + 6;
-	static int BOX_ORIGIN_Y = 425 + BOX_LGBORDER;
-
-	//Inventory border
-	vertices.push_back(sf::Vertex(sf::Vector2f(BOX_ORIGIN_X - BOX_LGBORDER, BOX_ORIGIN_Y - BOX_LGBORDER), sf::Color(255, 216, 0)));
-	vertices.push_back(sf::Vertex(sf::Vector2f(BOX_ORIGIN_X - BOX_LGBORDER, BOX_ORIGIN_Y + BOX_SIZE_WIDTH + BOX_LGBORDER), sf::Color(255, 216, 0)));
-	vertices.push_back(sf::Vertex(sf::Vector2f(BOX_ORIGIN_X + BOX_SIZE_LENGTH + BOX_LGBORDER, BOX_ORIGIN_Y + BOX_SIZE_WIDTH + BOX_LGBORDER), sf::Color(255, 216, 0)));
-	vertices.push_back(sf::Vertex(sf::Vector2f(BOX_ORIGIN_X + BOX_SIZE_LENGTH + BOX_LGBORDER, BOX_ORIGIN_Y - BOX_LGBORDER), sf::Color(255, 216, 0)));
-	//Inventory blocks
-	for (int x = 0; x < BOX_NUM; x++)
-	{
-		vertices.push_back(sf::Vertex(sf::Vector2f(BOX_ORIGIN_X + (x%BOX_PERROW)*BOX_MOVEMENT_X, BOX_ORIGIN_Y + BOX_MOVEMENT_Y*(x / BOX_PERROW)), sf::Color(255, 216, 0)));
-		vertices.push_back(sf::Vertex(sf::Vector2f(BOX_ORIGIN_X + (x%BOX_PERROW)*BOX_MOVEMENT_X, BOX_ORIGIN_Y + BOX_MOVEMENT_Y*(x / BOX_PERROW) + BOX_WIDTH), sf::Color(255, 216, 0)));
-		vertices.push_back(sf::Vertex(sf::Vector2f(BOX_ORIGIN_X + (x%BOX_PERROW)*BOX_MOVEMENT_X + BOX_LENGTH, BOX_ORIGIN_Y + BOX_MOVEMENT_Y*(x / BOX_PERROW) + BOX_WIDTH), sf::Color(255, 216, 0)));
-		vertices.push_back(sf::Vertex(sf::Vector2f(BOX_ORIGIN_X + (x%BOX_PERROW)*BOX_MOVEMENT_X + BOX_LENGTH, BOX_ORIGIN_Y + BOX_MOVEMENT_Y*(x / BOX_PERROW)), sf::Color(255, 216, 0)));
-
-		vertices.push_back(sf::Vertex(sf::Vector2f(BOX_ORIGIN_X + (x%BOX_PERROW)*BOX_MOVEMENT_X + BOX_BORDER, BOX_ORIGIN_Y + BOX_MOVEMENT_Y*(x / BOX_PERROW) + BOX_BORDER), sf::Color(64, 64, 64)));
-		vertices.push_back(sf::Vertex(sf::Vector2f(BOX_ORIGIN_X + (x%BOX_PERROW)*BOX_MOVEMENT_X + BOX_BORDER, BOX_ORIGIN_Y + BOX_MOVEMENT_Y*(x / BOX_PERROW) + BOX_WIDTH - BOX_BORDER), sf::Color(50, 50, 50)));
-		vertices.push_back(sf::Vertex(sf::Vector2f(BOX_ORIGIN_X + (x%BOX_PERROW)*BOX_MOVEMENT_X + BOX_LENGTH - BOX_BORDER, BOX_ORIGIN_Y + BOX_MOVEMENT_Y*(x / BOX_PERROW) + BOX_WIDTH - BOX_BORDER), sf::Color(50, 50, 50)));
-		vertices.push_back(sf::Vertex(sf::Vector2f(BOX_ORIGIN_X + (x%BOX_PERROW)*BOX_MOVEMENT_X + BOX_LENGTH - BOX_BORDER, BOX_ORIGIN_Y + BOX_MOVEMENT_Y*(x / BOX_PERROW) + BOX_BORDER), sf::Color(64, 64, 64)));
-	}
 
 	//HP and MP BAR
 	vertices.push_back(sf::Vertex(sf::Vector2f(HP_ORIGIN_X, HP_ORIGIN_Y), sf::Color(255, 255, 255)));
@@ -95,7 +53,6 @@ void Hud::drawToWindow(sf::RenderWindow& window) {
 	vertices.push_back(sf::Vertex(sf::Vector2f(HP_ORIGIN_X + HP_BORDER, HP_ORIGIN_Y + HP_WIDTH - HP_BORDER), sf::Color(64, 64, 64)));
 	vertices.push_back(sf::Vertex(sf::Vector2f(HP_ORIGIN_X + HP_LENGTH - HP_BORDER, HP_ORIGIN_Y + HP_WIDTH - HP_BORDER), sf::Color(80, 80, 80)));
 	vertices.push_back(sf::Vertex(sf::Vector2f(HP_ORIGIN_X + HP_LENGTH - HP_BORDER, HP_ORIGIN_Y + HP_BORDER), sf::Color(128, 128, 128)));
-
 
 	vertices.push_back(sf::Vertex(sf::Vector2f(HP_ORIGIN_X + HP_BAR_X, HP_ORIGIN_Y + HP_BAR_Y), sf::Color(204, 0, 0)));
 	vertices.push_back(sf::Vertex(sf::Vector2f(HP_ORIGIN_X + HP_BAR_X, HP_ORIGIN_Y + HP_BAR_WIDTH + HP_BAR_Y), sf::Color(100, 0, 0)));
@@ -118,6 +75,7 @@ void Hud::drawToWindow(sf::RenderWindow& window) {
 	vertices.push_back(sf::Vertex(sf::Vector2f(HP_ORIGIN_X + HP_MPBAR_X + HP_BAR_LENGTH*(mp / mpmax), HP_ORIGIN_Y + HP_MPBAR_Y), sf::Color(0, 0, 204)));
 
 	window.draw(&vertices[0], vertices.size(), sf::Quads);
+	inventory.drawToWindow(window);
 
 	sf::Text hpText("HP: " + std::to_string((int)hp) + " / " + std::to_string((int)hpmax), hpFont, 20);
 	hpText.setStyle(sf::Text::Bold);

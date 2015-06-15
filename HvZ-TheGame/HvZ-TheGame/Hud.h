@@ -1,5 +1,5 @@
 #pragma once
-
+#include "Inventory.h"
 class Hud {
 
 private:
@@ -11,10 +11,13 @@ private:
 	float mpmax = 100;
 	sf::CircleShape minimap;
 
+	Inventory inventory;
+
 public:
 	Hud();
 	~Hud();
-
+	void click(int x,int y);
+	void release(int x,int y);
 	void setHP(float newhp);
 	void setMP(float newmp);
 	void drawToWindow(sf::RenderWindow& window);
