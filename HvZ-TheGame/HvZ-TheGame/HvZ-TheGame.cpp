@@ -79,7 +79,18 @@ int main() {
 				}
 				break;
 			}
-
+			case sf::Event::MouseButtonPressed:{
+				if (event.mouseButton.button == sf::Mouse::Left&&event.mouseButton.x>SIDEBAR_ORIGIN_X&&event.mouseButton.y>SIDEBAR_ORIGIN_Y){
+					hud.click(event.mouseButton.x, event.mouseButton.y);
+				}
+				break;
+			}
+			case sf::Event::MouseButtonReleased:{
+				if (event.mouseButton.button == sf::Mouse::Left){
+					hud.release(event.mouseButton.x, event.mouseButton.y);
+				}
+				break;
+			}
 			default:
 				break;
 			}

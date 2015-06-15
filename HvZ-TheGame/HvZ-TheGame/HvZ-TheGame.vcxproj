@@ -99,6 +99,8 @@
     <ClInclude Include="Character.h" />
     <ClInclude Include="Constants.h" />
     <ClInclude Include="Hud.h" />
+    <ClInclude Include="Inventory.h" />
+    <ClInclude Include="Item.h" />
     <ClInclude Include="Point.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="TextureManager.h" />
@@ -111,6 +113,8 @@
     <ClCompile Include="Hud.cpp" />
     <ClCompile Include="Block.cpp" />
     <ClCompile Include="HvZ-TheGame.cpp" />
+    <ClCompile Include="Inventory.cpp" />
+    <ClCompile Include="Item.cpp" />
     <ClCompile Include="Point.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
