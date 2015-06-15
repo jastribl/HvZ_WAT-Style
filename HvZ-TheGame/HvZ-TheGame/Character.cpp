@@ -4,7 +4,7 @@
 #include "World.h"
 
 Character::Character(World& world, const sf::Texture& texture, Point gridLocation, Point pointLocation)
-	:BaseClass(world, texture, gridLocation, pointLocation) {
+	:BaseClass(world, texture, gridLocation, pointLocation, CHARACTER) {
 	sprite.setOrigin(sprite.getLocalBounds().width / 2, sprite.getLocalBounds().height);
 	sprite.scale(CHARACTER_WIDTH / sprite.getLocalBounds().width, CHARACTER_HEIGHT / sprite.getLocalBounds().height);
 }
@@ -17,7 +17,7 @@ void Character::move(int x, int y, int z) {
 	pointDestination.y += y;
 	pointDestination.z += z;
 	Point gridDestination = Point(gridLocation);
-	while (pointDestination.x > HALF_BLOCK_SIZE){
+	while (pointDestination.x >= HALF_BLOCK_SIZE){
 		pointDestination.x -= HALF_BLOCK_SIZE;
 		gridDestination.x++;
 	}
@@ -25,7 +25,7 @@ void Character::move(int x, int y, int z) {
 		pointDestination.x += HALF_BLOCK_SIZE;
 		gridDestination.x--;
 	}
-	while (pointDestination.y > HALF_BLOCK_SIZE){
+	while (pointDestination.y >= HALF_BLOCK_SIZE){
 		pointDestination.y -= HALF_BLOCK_SIZE;
 		gridDestination.y++;
 	}
@@ -33,7 +33,7 @@ void Character::move(int x, int y, int z) {
 		pointDestination.y += HALF_BLOCK_SIZE;
 		gridDestination.y--;
 	}
-	while (pointDestination.z > HALF_BLOCK_SIZE){
+	while (pointDestination.z >= HALF_BLOCK_SIZE){
 		pointDestination.z -= HALF_BLOCK_SIZE;
 		gridDestination.z++;
 	}
@@ -42,8 +42,8 @@ void Character::move(int x, int y, int z) {
 		gridDestination.z--;
 	}
 	if (!gridLocation.equals(gridDestination)){
-		if (!world.existsAt(gridDestination)) {
-			world.removeAt(gridLocation);
+		if (!world.itemsExistAt(gridDestination)) {
+			world.removeFromMap(gridLocation, pointLocation);
 			pointLocation = pointDestination;
 			gridLocation = gridDestination;
 			world.add(this);
@@ -55,9 +55,9 @@ void Character::move(int x, int y, int z) {
 }
 
 void Character::draw(sf::RenderWindow& window) {
-	//system("cls");
-	//Point((gridLocation.x*HALF_BLOCK_SIZE) + pointLocation.x, (gridLocation.y*HALF_BLOCK_SIZE) + pointLocation.y, (gridLocation.z*HALF_BLOCK_SIZE) + pointLocation.z).print();
-
+	system("cls");
+	gridLocation.print();
+	pointLocation.print();
 	Point p = cartesianToIsometric((gridLocation.x * HALF_BLOCK_SIZE) + pointLocation.x, (gridLocation.y * HALF_BLOCK_SIZE) + pointLocation.y, gridLocation.z);
 	sprite.setPosition(p.x, p.y);
 	BaseClass::draw(window);

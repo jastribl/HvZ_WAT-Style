@@ -34,16 +34,16 @@ int main() {
 					window.close();
 				}
 				else if (event.key.code == sf::Keyboard::Up){
-					character->move(-1, -1, 0);
+					character->move(0, -1, 0);
 				}
 				else if (event.key.code == sf::Keyboard::Down){
-					character->move(1, 1, 0);
+					character->move(0, 1, 0);
 				}
 				else if (event.key.code == sf::Keyboard::Left){
-					character->move(-1, 1, 0);
+					character->move(-1, 0, 0);
 				}
 				else if (event.key.code == sf::Keyboard::Right){
-					character->move(1, -1, 0);
+					character->move(1, 0, 0);
 				}
 				else if (event.key.code == sf::Keyboard::PageUp){
 					character->move(0, 0, 1);
@@ -52,19 +52,11 @@ int main() {
 					character->move(0, 0, -1);
 				}
 				else if (event.key.code == sf::Keyboard::W){
+					worldManager.getCurrentWorld()->removeFromMap(character->gridLocation, character->pointLocation);
 					worldManager.nextWorld();
+					worldManager.getCurrentWorld()->add(character);
 				}
 				break;
-
-				//case sf::Event::MouseButtonPressed: {
-				//	Point point = screenToGrid(window.mapPixelToCoords(sf::Mouse::getPosition(window)), 1);
-				//	if (!worldManager.getCurrentWorld()->existsAt(point)) {
-				//		Point p = Point(point.x - character->gridLocation.x, point.y - character->gridLocation.y, 1);
-				//		character->move(p.x, p.y, p.z);
-				//		worldManager.getCurrentWorld()->removeAt(point);
-				//	}
-				//	break;
-				//}
 
 			case sf::Event::Closed:
 				window.close();
@@ -85,12 +77,12 @@ int main() {
 			}
 		}
 
-		Point point = screenToGrid(window.mapPixelToCoords(sf::Mouse::getPosition(window)), 1);
-		if (!worldManager.getCurrentWorld()->existsAt(point)) {
-			Point p = Point(point.x - character->gridLocation.x, point.y - character->gridLocation.y, 0);
-			character->move(p.x, p.y, p.z);
-			//worldManager.getCurrentWorld()->removeAt(point);
-		}
+		//Point point = screenToGrid(window.mapPixelToCoords(sf::Mouse::getPosition(window)), 1);
+		//if (!worldManager.getCurrentWorld()->itemsExistAt(point)) {
+		//	Point p = Point(point.x - character->gridLocation.x, point.y - character->gridLocation.y, 0);
+		//	character->move(p.x, p.y, p.z);
+		//	//worldManager.getCurrentWorld()->removeAt(point);
+		//}
 
 
 

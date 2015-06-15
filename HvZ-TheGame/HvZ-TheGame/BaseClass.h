@@ -6,13 +6,14 @@ class BaseClass {
 
 protected:
 	sf::Sprite sprite;
+	World& world;
 
 public:
-	World& world;
+	int itemGroup;
 	Point gridLocation;
 	Point pointLocation;
 
-	BaseClass(World& world, const sf::Texture& texture, Point gridLocation, Point pointLocation);
+	BaseClass(World& world, const sf::Texture& texture, Point gridLocation, Point pointLocation, int itemGroup);
 	~BaseClass();
 
 	virtual void move(int x, int y, int z);

@@ -12,7 +12,7 @@ static int HALF_BLOCK_SIZE = BLOCK_SIZE / 2;
 
 static int CHARACTER_WIDTH = BLOCK_SIZE, CHARACTER_HEIGHT = BLOCK_SIZE * 2;
 
-enum BLOCK_TYPE{ BLOCK, SPECIAL, CHARACTER };
+enum ITEM_GROUP{ BLOCK, SPECIAL, CHARACTER };
 
 static Point& cartesianToIsometric(const int x, const int y, const int z){
 	return Point(x - y, ((x + y) / 2) - (z * HALF_BLOCK_SIZE), z);
@@ -33,3 +33,10 @@ static Point& screenToPoint(const sf::Vector2f& p, const int z) {
 	float yDiff = (point.y / HALF_BLOCK_SIZE) - point.y;
 	return Point(xDiff, yDiff, point.z);
 }
+
+struct ByLocation {
+	bool operator()(const Point& a, const Point& b) const
+	{
+		return (a.x + a.y == b.x + b.y) ? std::min(a.x, a.y) == std::min(b.x, b.y) ? a.y == b.y ? a.z < b.z : a.y > b.y : std::min(a.x, a.y) < std::min(b.x, b.y) : a.x + a.y < b.x + b.y;
+	}
+};
