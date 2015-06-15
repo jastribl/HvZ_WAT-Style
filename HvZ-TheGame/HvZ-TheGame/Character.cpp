@@ -58,7 +58,7 @@ void Character::draw(sf::RenderWindow& window) {
 	system("cls");
 	gridLocation.print();
 	pointLocation.print();
-	Point p = cartesianToIsometric((gridLocation.x * HALF_BLOCK_SIZE) + pointLocation.x, (gridLocation.y * HALF_BLOCK_SIZE) + pointLocation.y, gridLocation.z);
-	sprite.setPosition(p.x, p.y);
+	Point p = cartesianToIsometric((gridLocation.x * HALF_BLOCK_SIZE) + pointLocation.x, (gridLocation.y * HALF_BLOCK_SIZE) + pointLocation.y, (gridLocation.z * HALF_BLOCK_SIZE) + pointLocation.z);
+	sprite.setPosition(p.x, p.y - HALF_BLOCK_SIZE);
 	BaseClass::draw(window);
 }

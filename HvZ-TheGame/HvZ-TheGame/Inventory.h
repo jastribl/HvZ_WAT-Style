@@ -9,7 +9,6 @@ public:
 	Inventory();
 	~Inventory();
 	void click(int x, int y);
-	void release(int x,int y);
+	void release(int x, int y);
 	void drawToWindow(sf::RenderWindow& window);
 };
-

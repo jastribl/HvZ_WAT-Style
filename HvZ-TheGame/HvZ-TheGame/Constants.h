@@ -52,7 +52,7 @@ static int CHARACTER_WIDTH = BLOCK_SIZE, CHARACTER_HEIGHT = BLOCK_SIZE * 2;
 enum ITEM_GROUP{ BLOCK, SPECIAL, CHARACTER };
 
 static Point& cartesianToIsometric(const int x, const int y, const int z){
-	return Point(x - y, ((x + y) / 2) - (z * HALF_BLOCK_SIZE), z);
+	return Point(x - y, ((x + y) / 2) - z, z);
 }
 
 static Point& isometricToCartesian(const int x, const int y, const int z) {

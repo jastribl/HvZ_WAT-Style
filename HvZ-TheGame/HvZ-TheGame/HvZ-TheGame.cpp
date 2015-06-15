@@ -34,22 +34,22 @@ int main() {
 					window.close();
 				}
 				else if (event.key.code == sf::Keyboard::Up){
-					character->move(0, -1, 0);
+					character->move(0, -4, 0);
 				}
 				else if (event.key.code == sf::Keyboard::Down){
-					character->move(0, 1, 0);
+					character->move(0, 4, 0);
 				}
 				else if (event.key.code == sf::Keyboard::Left){
-					character->move(-1, 0, 0);
+					character->move(-4, 0, 0);
 				}
 				else if (event.key.code == sf::Keyboard::Right){
-					character->move(1, 0, 0);
+					character->move(4, 0, 0);
 				}
 				else if (event.key.code == sf::Keyboard::PageUp){
-					character->move(0, 0, 1);
+					character->move(0, 0, 4);
 				}
 				else if (event.key.code == sf::Keyboard::PageDown){
-					character->move(0, 0, -1);
+					character->move(0, 0, -4);
 				}
 				else if (event.key.code == sf::Keyboard::W){
 					worldManager.getCurrentWorld()->removeFromMap(character->gridLocation, character->pointLocation);
@@ -72,7 +72,7 @@ int main() {
 				break;
 			}
 			case sf::Event::MouseButtonPressed:{
-				if (event.mouseButton.button == sf::Mouse::Left&&event.mouseButton.x>SIDEBAR_ORIGIN_X&&event.mouseButton.y>SIDEBAR_ORIGIN_Y){
+				if (event.mouseButton.button == sf::Mouse::Left&&event.mouseButton.x > SIDEBAR_ORIGIN_X&&event.mouseButton.y > SIDEBAR_ORIGIN_Y){
 					hud.click(event.mouseButton.x, event.mouseButton.y);
 				}
 				break;
@@ -96,15 +96,14 @@ int main() {
 		//}
 
 
-
 		sf::Vector2i mousePositionWindow = sf::Mouse::getPosition(window);
-		if (mousePositionWindow.x > 1366 - 10) {
+		if (mousePositionWindow.x > window.getSize().x - 10) {
 			worldView.move(20, 0);
 		}
 		else if (mousePositionWindow.x < 10) {
 			worldView.move(-20, 0);
 		}
-		else if (mousePositionWindow.y > 768 - 10) {
+		else if (mousePositionWindow.y > window.getSize().y - 10) {
 			worldView.move(0, 20);
 		}
 		else if (mousePositionWindow.y < 10) {
