@@ -43,15 +43,15 @@ void Character::move(int x, int y, int z) {
 		pointDestination.z += BLOCK_SIZE;
 		gridDestination.z--;
 	}
-	for (int x = gridDestination.x - 1; x <= gridDestination.x + 1; x++) {
-		for (int y = gridDestination.y - 1; y <= gridDestination.y + 1; y++) {
+	for (int x = gridDestination.x - 1; x < gridDestination.x + 1; x++) {
+		for (int y = gridDestination.y - 1; y < gridDestination.y + 1; y++) {
 			std::pair <std::multimap<Point, BaseClass*, ByLocation>::iterator, std::multimap<Point, BaseClass*, ByLocation>::iterator> itemsAt = world.getItemsAt(Point(x, y, gridDestination.z));
 			for (auto it = itemsAt.first; it != itemsAt.second; ++it) {
 				hitDetect(*it->second);
 			}
 		}
-
 	}
+
 	if (!gridLocation.equals(gridDestination)) {
 		world.removeFromMap(gridLocation, pointLocation);
 		pointLocation = pointDestination;
@@ -70,14 +70,9 @@ void Character::draw(sf::RenderWindow& window) {
 
 void Character::hitDetect(BaseClass& test) {
 	if (test.itemGroup == BLOCK) {
-		int xDiff = ((test.gridLocation.x * BLOCK_SIZE) + test.pointLocation.x) - ((gridDestination.x * BLOCK_SIZE) + pointDestination.x);
-		int yDiff = ((test.gridLocation.y * BLOCK_SIZE) + test.pointLocation.y) - ((gridDestination.y * BLOCK_SIZE) + pointDestination.y);
-		if (std::abs(xDiff) >= BLOCK_SIZE || std::abs(yDiff) >= BLOCK_SIZE) {
+		if (std::abs((((test.gridLocation.x - gridDestination.x) * BLOCK_SIZE) - pointDestination.x)) <= BLOCK_SIZE || std::abs((((test.gridLocation.y - gridDestination.y) * BLOCK_SIZE) - pointDestination.y)) <= BLOCK_SIZE) {
 			gridDestination = Point(gridLocation);
 			pointDestination = Point(pointLocation);
-			std::cout << "hit" << std::endl;
 		}
-	} else if (test.itemGroup == CHARACTER) {
-		return;
 	}
 }
