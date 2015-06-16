@@ -20,7 +20,7 @@ void World::add(BaseClass* object) {
 	world.insert({object->gridLocation, object});
 }
 
-void World::removeFromMap(const sf::Vector3i& grid, const sf::Vector3i& point) {
+void World::removeFromMap(const sf::Vector3i& grid, const sf::Vector3f& point) {
 	std::pair <std::multimap<sf::Vector3i, BaseClass*, ByLocation>::iterator, std::multimap<sf::Vector3i, BaseClass*, ByLocation>::iterator> items = getItemsAt(grid);
 	for (auto it = items.first; it != items.second; ++it) {
 		if (VectorsAreEqual(it->second->pointLocation, point)) {
@@ -30,7 +30,7 @@ void World::removeFromMap(const sf::Vector3i& grid, const sf::Vector3i& point) {
 	}
 }
 
-void World::deleteItem(const sf::Vector3i& grid, const sf::Vector3i& point) {
+void World::deleteItem(const sf::Vector3i& grid, const sf::Vector3f& point) {
 	std::pair <std::multimap<sf::Vector3i, BaseClass*, ByLocation>::iterator, std::multimap<sf::Vector3i, BaseClass*, ByLocation>::iterator> items = getItemsAt(grid);
 	for (auto it = items.first; it != items.second; ++it) {
 		if (VectorsAreEqual(it->second->pointLocation, point)) {

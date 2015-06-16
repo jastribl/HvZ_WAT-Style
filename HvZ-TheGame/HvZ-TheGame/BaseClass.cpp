@@ -2,7 +2,7 @@
 #include "BaseClass.h"
 #include "World.h"
 
-BaseClass::BaseClass(World& world, const sf::Texture& texture, sf::Vector3i gridLocation, sf::Vector3i pointLocation, int itemGroup)
+BaseClass::BaseClass(World& world, const sf::Texture& texture, sf::Vector3i gridLocation, sf::Vector3f pointLocation, int itemGroup)
 	:world(world), sprite(texture), gridLocation(gridLocation), pointLocation(pointLocation), itemGroup(itemGroup) {
 	world.add(this);
 }

@@ -20,7 +20,7 @@ int main() {
 	Hud hud = Hud();
 	TextureManager textureManager = TextureManager();
 	WorldManager worldManager = WorldManager(textureManager);
-	BaseClass* character = new Character(*worldManager.getCurrentWorld(), textureManager.getTextureFor(CHARACTER, 0), sf::Vector3i(3, 3, 1), sf::Vector3i(0, 0, 0));
+	BaseClass* character = new Character(*worldManager.getCurrentWorld(), textureManager.getTextureFor(CHARACTER, 0), sf::Vector3i(3, 3, 1), sf::Vector3f(0, 0, 0));
 
 	window.setFramerateLimit(60);
 	sf::Clock clock;

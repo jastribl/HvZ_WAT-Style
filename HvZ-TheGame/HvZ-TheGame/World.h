@@ -18,8 +18,8 @@ public:
 	bool itemsExistAt(const sf::Vector3i& point) const;
 	std::pair <std::multimap<sf::Vector3i, BaseClass*, ByLocation>::iterator, std::multimap<sf::Vector3i, BaseClass*, ByLocation>::iterator> getItemsAt(const sf::Vector3i& point);
 	void add(BaseClass* object);
-	void removeFromMap(const sf::Vector3i& grid, const sf::Vector3i& point);
-	void deleteItem(const sf::Vector3i& grid, const sf::Vector3i& point);
+	void removeFromMap(const sf::Vector3i& grid, const sf::Vector3f& point);
+	void deleteItem(const sf::Vector3i& grid, const sf::Vector3f& point);
 	void clearDeletedItems();
 	void draw(sf::RenderWindow& window);
 	int size() const;

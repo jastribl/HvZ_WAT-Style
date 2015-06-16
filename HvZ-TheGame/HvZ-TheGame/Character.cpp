@@ -4,7 +4,7 @@
 #include "World.h"
 #include <iostream>
 
-Character::Character(World& world, const sf::Texture& texture, sf::Vector3i gridLocation, sf::Vector3i pointLocation)
+Character::Character(World& world, const sf::Texture& texture, sf::Vector3i gridLocation, sf::Vector3f pointLocation)
 	:BaseClass(world, texture, gridLocation, pointLocation, CHARACTER), gridDestination(gridLocation), pointDestination(pointLocation) {
 	sprite.setOrigin(sprite.getLocalBounds().width / 2, sprite.getLocalBounds().height);
 	sprite.scale((CHARACTER_WIDTH * 2) / sprite.getLocalBounds().width, (CHARACTER_HEIGHT * 2) / sprite.getLocalBounds().height);
@@ -13,7 +13,7 @@ Character::Character(World& world, const sf::Texture& texture, sf::Vector3i grid
 Character::~Character() {}
 
 void Character::move(int x, int y, int z) {
-	pointDestination = sf::Vector3i(pointLocation);
+	pointDestination = sf::Vector3f(pointLocation);
 	pointDestination.x += ((x > 0) - (x < 0)) * std::min(std::abs(x), HALF_BLOCK_SIZE);
 	pointDestination.y += ((y > 0) - (y < 0)) * std::min(std::abs(y), HALF_BLOCK_SIZE);
 	pointDestination.z += ((z > 0) - (z < 0)) * std::min(std::abs(z), HALF_BLOCK_SIZE);
@@ -70,7 +70,7 @@ void Character::hitDetect(BaseClass& test) {
 	if (test.itemGroup == BLOCK) {
 		if (std::abs((((test.gridLocation.x - gridDestination.x) * BLOCK_SIZE) - pointDestination.x)) <= BLOCK_SIZE || std::abs((((test.gridLocation.y - gridDestination.y) * BLOCK_SIZE) - pointDestination.y)) <= BLOCK_SIZE) {
 			gridDestination = sf::Vector3i(gridLocation);
-			pointDestination = sf::Vector3i(pointLocation);
+			pointDestination = sf::Vector3f(pointLocation);
 		}
 	}
 }
