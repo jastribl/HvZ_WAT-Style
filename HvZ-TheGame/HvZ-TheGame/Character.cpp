@@ -15,9 +15,9 @@ Character::~Character() {}
 
 void Character::move(int x, int y, int z) {
 	pointDestination = Point(pointLocation);
-	pointDestination.x += x;
-	pointDestination.y += y;
-	pointDestination.z += z;
+	pointDestination.x += ((x > 0) - (x < 0)) * std::min(std::abs(x), HALF_BLOCK_SIZE);
+	pointDestination.y += ((y > 0) - (y < 0)) * std::min(std::abs(y), HALF_BLOCK_SIZE);
+	pointDestination.z += ((z > 0) - (z < 0)) * std::min(std::abs(z), HALF_BLOCK_SIZE);
 	gridDestination = Point(gridLocation);
 	while (pointDestination.x >= BLOCK_SIZE) {
 		pointDestination.x -= BLOCK_SIZE;
@@ -51,7 +51,6 @@ void Character::move(int x, int y, int z) {
 			}
 		}
 	}
-
 	if (!gridLocation.equals(gridDestination)) {
 		world.removeFromMap(gridLocation, pointLocation);
 		pointLocation = pointDestination;

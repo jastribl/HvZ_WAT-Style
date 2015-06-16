@@ -59,6 +59,10 @@ static Point& isometricToCartesian(const int x, const int y, const int z) {
 	return Point((2 * y + x) / 2, (2 * y - x) / 2, z);
 }
 
+static Point& isometricToCartesian(const sf::Vector2f& p, const int z) {
+	return isometricToCartesian(p.x, p.y, z);
+}
+
 static Point& screenToGrid(const sf::Vector2f& p, const int z) {
 	Point& point = isometricToCartesian(p.x, p.y, z);
 	return Point(point.x / BLOCK_SIZE, point.y / BLOCK_SIZE, point.z);
@@ -66,6 +70,19 @@ static Point& screenToGrid(const sf::Vector2f& p, const int z) {
 
 struct ByLocation {
 	bool operator()(const Point& a, const Point& b) const {
-		return (a.x + a.y == b.x + b.y) ? std::min(a.x, a.y) == std::min(b.x, b.y) ? a.y == b.y ? a.z < b.z : a.y > b.y : std::min(a.x, a.y) < std::min(b.x, b.y) : a.x + a.y < b.x + b.y;
+		//return (a.x + a.y == b.x + b.y) ? std::min(a.x, a.y) == std::min(b.x, b.y) ? a.y == b.y ? a.z < b.z : a.y > b.y : std::min(a.x, a.y) < std::min(b.x, b.y) : a.x + a.y < b.x + b.y;		
+		if (a.x + a.y == b.x + b.y) {
+			if (std::min(a.x, a.y) == std::min(b.x, b.y)) {
+				if (a.y == b.y) {
+					return (a.z < b.z);
+				} else {
+					return (a.y > b.y);
+				}
+			} else {
+				return (std::min(a.x, a.y) < std::min(b.x, b.y));
+			}
+		} else {
+			return (a.x + a.y < b.x + b.y);
+		}
 	}
 };

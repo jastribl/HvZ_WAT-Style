@@ -80,11 +80,15 @@ int main() {
 			}
 		}
 
-		Point point = screenToGrid(window.mapPixelToCoords(sf::Mouse::getPosition(window)), 1);
-		if (!worldManager.getCurrentWorld()->itemsExistAt(point)) {
-			Point p = Point(point.x - character->gridLocation.x, point.y - character->gridLocation.y, 0);
-			character->move(p.x, p.y, p.z);
-		}
+
+		Point& point = isometricToCartesian(window.mapPixelToCoords(sf::Mouse::getPosition(window)), 0);
+		Point& charPoint = Point(character->gridLocation);
+		charPoint.x *= BLOCK_SIZE;
+		charPoint.y *= BLOCK_SIZE;
+		charPoint.x += character->pointLocation.x - (BLOCK_SIZE * 2);
+		charPoint.y += character->pointLocation.y - (BLOCK_SIZE * 2);
+		Point p = Point(point.x - charPoint.x, point.y - charPoint.y, 0);
+		character->move(p.x / 8, p.y / 8, p.z);
 
 
 		sf::Vector2i mousePositionWindow = sf::Mouse::getPosition(window);
