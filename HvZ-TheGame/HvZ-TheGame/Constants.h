@@ -47,7 +47,7 @@ static const int HALF_BLOCK_SIZE = BLOCK_SIZE / 2;
 static const int CHARACTER_WIDTH = BLOCK_SIZE, CHARACTER_HEIGHT = BLOCK_SIZE * 2;
 
 //movement settings
-static const int MAX_MOVEMENT_CHECK_THRESHOLD = 10;
+static const float MAX_MOVEMENT_CHECK_THRESHOLD = 10;   //must be less than block size
 
 //Item groups
 static const enum ITEM_GROUP { BLOCK, SPECIAL, CHARACTER };

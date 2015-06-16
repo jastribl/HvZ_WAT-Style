@@ -11,7 +11,7 @@ public:
 	Character(World& world, const sf::Texture& texture, sf::Vector3i gridLocation, sf::Vector3f pointLocation);
 	~Character();
 
-	virtual	void move(int x, int y, int z);
+	virtual	void move(float x, float y, float z);
 	virtual void draw(sf::RenderWindow& window);
 	virtual void hitDetect(BaseClass& test);
 };

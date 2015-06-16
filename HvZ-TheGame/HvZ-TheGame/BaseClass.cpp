@@ -9,7 +9,7 @@ BaseClass::BaseClass(World& world, const sf::Texture& texture, sf::Vector3i grid
 
 BaseClass::~BaseClass() {}
 
-void BaseClass::move(int x, int y, int z) {}
+void BaseClass::move(float x, float y, float z) {}
 void BaseClass::hitDetect(BaseClass& test) {}
 void BaseClass::draw(sf::RenderWindow& window) {
 	window.draw(sprite);
