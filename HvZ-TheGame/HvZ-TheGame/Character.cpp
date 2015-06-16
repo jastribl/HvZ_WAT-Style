@@ -6,7 +6,7 @@
 #include <iostream>
 
 Character::Character(World& world, const sf::Texture& texture, Point gridLocation, Point pointLocation)
-	:BaseClass(world, texture, gridLocation, pointLocation, CHARACTER) {
+	:BaseClass(world, texture, gridLocation, pointLocation, CHARACTER), gridDestination(gridLocation), pointDestination(pointLocation) {
 	sprite.setOrigin(sprite.getLocalBounds().width / 2, sprite.getLocalBounds().height);
 	sprite.scale((CHARACTER_WIDTH * 2) / sprite.getLocalBounds().width, (CHARACTER_HEIGHT * 2) / sprite.getLocalBounds().height);
 }
@@ -14,11 +14,11 @@ Character::Character(World& world, const sf::Texture& texture, Point gridLocatio
 Character::~Character() {}
 
 void Character::move(int x, int y, int z) {
-	Point pointDestination = Point(pointLocation);
+	pointDestination = Point(pointLocation);
 	pointDestination.x += x;
 	pointDestination.y += y;
 	pointDestination.z += z;
-	Point gridDestination = Point(gridLocation);
+	gridDestination = Point(gridLocation);
 	while (pointDestination.x >= BLOCK_SIZE) {
 		pointDestination.x -= BLOCK_SIZE;
 		gridDestination.x++;
@@ -52,15 +52,11 @@ void Character::move(int x, int y, int z) {
 		}
 
 	}
-
-
 	if (!gridLocation.equals(gridDestination)) {
-		if (!world.itemsExistAt(gridDestination)) {
-			world.removeFromMap(gridLocation, pointLocation);
-			pointLocation = pointDestination;
-			gridLocation = gridDestination;
-			world.add(this);
-		}
+		world.removeFromMap(gridLocation, pointLocation);
+		pointLocation = pointDestination;
+		gridLocation = gridDestination;
+		world.add(this);
 	} else if (!pointLocation.equals(pointDestination)) {
 		pointLocation = pointDestination;
 	}
@@ -72,4 +68,16 @@ void Character::draw(sf::RenderWindow& window) {
 	BaseClass::draw(window);
 }
 
-void Character::hitDetect(BaseClass& test) {}
+void Character::hitDetect(BaseClass& test) {
+	if (test.itemGroup == BLOCK) {
+		int xDiff = ((test.gridLocation.x * BLOCK_SIZE) + test.pointLocation.x) - ((gridDestination.x * BLOCK_SIZE) + pointDestination.x);
+		int yDiff = ((test.gridLocation.y * BLOCK_SIZE) + test.pointLocation.y) - ((gridDestination.y * BLOCK_SIZE) + pointDestination.y);
+		if (std::abs(xDiff) >= BLOCK_SIZE || std::abs(yDiff) >= BLOCK_SIZE) {
+			gridDestination = Point(gridLocation);
+			pointDestination = Point(pointLocation);
+			std::cout << "hit" << std::endl;
+		}
+	} else if (test.itemGroup == CHARACTER) {
+		return;
+	}
+}

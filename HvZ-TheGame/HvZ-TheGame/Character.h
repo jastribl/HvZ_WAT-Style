@@ -5,6 +5,9 @@ class World;
 class Character :public BaseClass {
 
 public:
+	Point gridDestination;
+	Point pointDestination;
+
 	Character(World& world, const sf::Texture& texture, Point gridLocation, Point pointLocation);
 	~Character();
 
