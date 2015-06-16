@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Point.h"
-
 //File contains only static constant variables and methods
 
 static int SCREEN_SIZE_X = 1920;
@@ -51,25 +49,35 @@ static int CHARACTER_WIDTH = BLOCK_SIZE, CHARACTER_HEIGHT = BLOCK_SIZE * 2;
 
 enum ITEM_GROUP { BLOCK, SPECIAL, CHARACTER };
 
-static Point& cartesianToIsometric(const int x, const int y, const int z) {
-	return Point(x - y, ((x + y) / 2) - z, z);
+static sf::Vector3i& cartesianToIsometric(const int x, const int y, const int z) {
+	return sf::Vector3i(x - y, ((x + y) / 2) - z, z);
 }
 
-static Point& isometricToCartesian(const int x, const int y, const int z) {
-	return Point((2 * y + x) / 2, (2 * y - x) / 2, z);
+static sf::Vector3i& isometricToCartesian(const int x, const int y, const int z) {
+	return sf::Vector3i((2 * y + x) / 2, (2 * y - x) / 2, z);
 }
 
-static Point& isometricToCartesian(const sf::Vector2f& p, const int z) {
+static sf::Vector3i& isometricToCartesian(const sf::Vector2f& p, const int z) {
 	return isometricToCartesian(p.x, p.y, z);
 }
 
-static Point& screenToGrid(const sf::Vector2f& p, const int z) {
-	Point& point = isometricToCartesian(p.x, p.y, z);
-	return Point(point.x / BLOCK_SIZE, point.y / BLOCK_SIZE, point.z);
+static sf::Vector3i& screenToGrid(const sf::Vector2f& p, const int z) {
+	sf::Vector3i& point = isometricToCartesian(p.x, p.y, z);
+	return sf::Vector3i(point.x / BLOCK_SIZE, point.y / BLOCK_SIZE, point.z);
+}
+
+template <typename  T>
+bool VectorsAreEqual(T const& a, T const& b) {
+	return (a.x == b.x && a.y == b.y && a.z == b.z);
+}
+
+template <typename T>
+void PrintVector(T const& v) {
+	std::cout << "(" << v.x << "," << v.y << ","v.z")" << std << enbdl;
 }
 
 struct ByLocation {
-	bool operator()(const Point& a, const Point& b) const {
+	bool operator()(const sf::Vector3i& a, const sf::Vector3i& b) const {
 		//return (a.x + a.y == b.x + b.y) ? std::min(a.x, a.y) == std::min(b.x, b.y) ? a.y == b.y ? a.z < b.z : a.y > b.y : std::min(a.x, a.y) < std::min(b.x, b.y) : a.x + a.y < b.x + b.y;		
 		if (a.x + a.y == b.x + b.y) {
 			if (std::min(a.x, a.y) == std::min(b.x, b.y)) {

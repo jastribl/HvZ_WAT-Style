@@ -1,6 +1,5 @@
 #pragma once
 class World;
-#include "Point.h"
 
 class BaseClass {
 
@@ -10,10 +9,10 @@ protected:
 
 public:
 	int itemGroup;
-	Point gridLocation;
-	Point pointLocation;
+	sf::Vector3i gridLocation;
+	sf::Vector3i pointLocation;
 
-	BaseClass(World& world, const sf::Texture& texture, Point gridLocation, Point pointLocation, int itemGroup);
+	BaseClass(World& world, const sf::Texture& texture, sf::Vector3i gridLocation, sf::Vector3i pointLocation, int itemGroup);
 	~BaseClass();
 
 	virtual void move(int x, int y, int z);

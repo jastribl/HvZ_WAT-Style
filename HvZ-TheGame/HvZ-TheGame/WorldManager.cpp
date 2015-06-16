@@ -19,7 +19,7 @@ WorldManager::WorldManager(TextureManager& textureManager) {
 			for (int j = 0; j < numberOfBlocks; j++) {
 				int group, type, x, y;
 				worldReader >> group >> type >> x >> y;
-				BaseClass* block = new Block(*world, textureManager.getTextureFor(group, type), Point(x, y, z), type);
+				BaseClass* block = new Block(*world, textureManager.getTextureFor(group, type), sf::Vector3i(x, y, z), type);
 			}
 		}
 		worlds[worldName] = world;

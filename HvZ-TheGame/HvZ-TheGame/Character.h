@@ -5,10 +5,10 @@ class World;
 class Character :public BaseClass {
 
 public:
-	Point gridDestination;
-	Point pointDestination;
+	sf::Vector3i gridDestination;
+	sf::Vector3i pointDestination;
 
-	Character(World& world, const sf::Texture& texture, Point gridLocation, Point pointLocation);
+	Character(World& world, const sf::Texture& texture, sf::Vector3i gridLocation, sf::Vector3i pointLocation);
 	~Character();
 
 	virtual	void move(int x, int y, int z);

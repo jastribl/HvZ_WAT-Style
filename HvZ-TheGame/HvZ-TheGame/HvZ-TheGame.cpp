@@ -20,7 +20,7 @@ int main() {
 	Hud hud = Hud();
 	TextureManager textureManager = TextureManager();
 	WorldManager worldManager = WorldManager(textureManager);
-	BaseClass* character = new Character(*worldManager.getCurrentWorld(), textureManager.getTextureFor(CHARACTER, 0), Point(3, 3, 1), Point(0, 0, 0));
+	BaseClass* character = new Character(*worldManager.getCurrentWorld(), textureManager.getTextureFor(CHARACTER, 0), sf::Vector3i(3, 3, 1), sf::Vector3i(0, 0, 0));
 
 	window.setFramerateLimit(60);
 	sf::Clock clock;
@@ -81,13 +81,13 @@ int main() {
 		}
 
 
-		Point& point = isometricToCartesian(window.mapPixelToCoords(sf::Mouse::getPosition(window)), 0);
-		Point& charPoint = Point(character->gridLocation);
+		sf::Vector3i& point = isometricToCartesian(window.mapPixelToCoords(sf::Mouse::getPosition(window)), 0);
+		sf::Vector3i& charPoint = sf::Vector3i(character->gridLocation);
 		charPoint.x *= BLOCK_SIZE;
 		charPoint.y *= BLOCK_SIZE;
 		charPoint.x += character->pointLocation.x - (BLOCK_SIZE * 2);
 		charPoint.y += character->pointLocation.y - (BLOCK_SIZE * 2);
-		Point p = Point(point.x - charPoint.x, point.y - charPoint.y, 0);
+		sf::Vector3i p = sf::Vector3i(point.x - charPoint.x, point.y - charPoint.y, 0);
 		character->move(p.x / 8, p.y / 8, p.z);
 
 

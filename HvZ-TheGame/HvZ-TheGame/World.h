@@ -1,13 +1,12 @@
 #pragma once
 class BaseClass;
 #include "Constants.h"
-#include "Point.h"
 #include <string>
 
 class World {
 
 private:
-	std::multimap<Point, BaseClass*, ByLocation> world;
+	std::multimap<sf::Vector3i, BaseClass*, ByLocation> world;
 	std::vector<BaseClass*> deletedItems;
 
 public:
@@ -16,11 +15,11 @@ public:
 	World();
 	~World();
 
-	bool itemsExistAt(const Point& point) const;
-	std::pair <std::multimap<Point, BaseClass*, ByLocation>::iterator, std::multimap<Point, BaseClass*, ByLocation>::iterator> getItemsAt(const Point& point);
+	bool itemsExistAt(const sf::Vector3i& point) const;
+	std::pair <std::multimap<sf::Vector3i, BaseClass*, ByLocation>::iterator, std::multimap<sf::Vector3i, BaseClass*, ByLocation>::iterator> getItemsAt(const sf::Vector3i& point);
 	void add(BaseClass* object);
-	void removeFromMap(const Point& grid, const Point& point);
-	void deleteItem(const Point& grid, const Point& point);
+	void removeFromMap(const sf::Vector3i& grid, const sf::Vector3i& point);
+	void deleteItem(const sf::Vector3i& grid, const sf::Vector3i& point);
 	void clearDeletedItems();
 	void draw(sf::RenderWindow& window);
 	int size() const;
