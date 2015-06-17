@@ -16,8 +16,8 @@ void Character::move(float x, float y, float z) {
 	if (x == 0 && y == 0 && z == 0) {
 		return;
 	} else if (std::abs(x) > MAX_MOVEMENT_CHECK_THRESHOLD || std::abs(y) > MAX_MOVEMENT_CHECK_THRESHOLD || std::abs(z) > MAX_MOVEMENT_CHECK_THRESHOLD) {
-		this->move(x / 2, y / 2, z / 2);
-		this->move(x / 2, y / 2, z / 2);
+		move(x / 2, y / 2, z / 2);
+		move(x / 2, y / 2, z / 2);
 	} else {
 		pointDestination = sf::Vector3f(pointLocation.x + x, pointLocation.y + y, pointLocation.z + z);
 		gridDestination = sf::Vector3i(gridLocation);
@@ -42,9 +42,9 @@ void Character::move(float x, float y, float z) {
 			pointDestination.z += BLOCK_SIZE;
 			gridDestination.z--;
 		}
-		for (int x = gridDestination.x - 1; x < gridDestination.x + 1; x++) {
-			for (int y = gridDestination.y - 1; y < gridDestination.y + 1; y++) {
-				std::pair <std::multimap<sf::Vector3i, BaseClass*, ByLocation>::iterator, std::multimap<sf::Vector3i, BaseClass*, ByLocation>::iterator> itemsAt = world.getItemsAt(sf::Vector3i(x, y, gridDestination.z));
+		for (int i = gridDestination.x - 1; i < gridDestination.x + 1; i++) {
+			for (int j = gridDestination.y - 1; j < gridDestination.y + 1; j++) {
+				std::pair <std::multimap<sf::Vector3i, BaseClass*, ByLocation>::iterator, std::multimap<sf::Vector3i, BaseClass*, ByLocation>::iterator> itemsAt = world.getItemsAt(sf::Vector3i(i, j, gridDestination.z));
 				for (auto it = itemsAt.first; it != itemsAt.second; ++it) {
 					hitDetect(*it->second);
 				}

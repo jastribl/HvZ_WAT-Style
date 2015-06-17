@@ -53,19 +53,21 @@ static const float MAX_MOVEMENT_CHECK_THRESHOLD = 10;   //must be less than bloc
 static const enum ITEM_GROUP { BLOCK, SPECIAL, CHARACTER };
 
 //common algorithms
-static sf::Vector3i& cartesianToIsometric(const int x, const int y, const int z) {
+static sf::Vector3i cartesianToIsometric(const int x, const int y, const int z) {
 	return sf::Vector3i(x - y, ((x + y) / 2) - z, z);
 }
 
-static sf::Vector3i& isometricToCartesian(const int x, const int y, const int z) {
+static sf::Vector3i isometricToCartesian(const int x, const int y, const int z) {
 	return sf::Vector3i((2 * y + x) / 2, (2 * y - x) / 2, z);
 }
 
-static sf::Vector3i& isometricToCartesian(const sf::Vector2f& p, const int z) {
+template <typename T>
+static sf::Vector3i isometricToCartesian(T const& p, const int z) {
 	return isometricToCartesian(p.x, p.y, z);
 }
 
-static sf::Vector3i& screenToGrid(const sf::Vector2f& p, const int z) {
+template <typename T>
+static sf::Vector3i screenToGrid(T const& p, const int z) {
 	sf::Vector3i& point = isometricToCartesian(p.x, p.y, z);
 	return sf::Vector3i(point.x / BLOCK_SIZE, point.y / BLOCK_SIZE, point.z);
 }
