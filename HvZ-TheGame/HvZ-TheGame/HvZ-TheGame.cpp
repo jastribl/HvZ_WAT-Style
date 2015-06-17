@@ -17,8 +17,8 @@ int main() {
 	sf::View worldView(sf::FloatRect(0, 0, SCREEN_SIZE_X, SCREEN_SIZE_Y));
 
 
-	Hud hud = Hud();
 	TextureManager textureManager = TextureManager();
+	Hud hud = Hud(textureManager);
 	WorldManager worldManager = WorldManager(textureManager);
 	BaseClass* character = new Character(*worldManager.getCurrentWorld(), textureManager.getTextureFor(CHARACTER, 0), sf::Vector3i(3, 3, 1), sf::Vector3f(0, 0, 0));
 

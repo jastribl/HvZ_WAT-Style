@@ -1,4 +1,5 @@
 #pragma once
+class TextureManager;
 #include "Inventory.h"
 
 class Hud {
@@ -15,7 +16,7 @@ private:
 	Inventory inventory;
 
 public:
-	Hud();
+	Hud(TextureManager& textureManager);
 	~Hud();
 	void click(int x, int y);
 	void release(int x, int y);

@@ -1,20 +1,19 @@
 #pragma once
 
-class Item :public sf::Sprite {
+class Item {
 
 private:
-	bool initialized;
 	bool active;
-	sf::Texture texture;
 
 public:
-	Item();
+	sf::Sprite sprite;
+
+	Item(const sf::Texture& texture);
 	~Item();
 
-	void initalize(std::string file);
 	void setActive();
 	void release();
 	bool isActive();
-	bool isInitialized();
+	void draw(sf::RenderWindow& window);
 };
 

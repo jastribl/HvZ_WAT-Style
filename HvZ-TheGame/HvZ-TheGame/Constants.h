@@ -50,7 +50,8 @@ static const int CHARACTER_WIDTH = BLOCK_SIZE, CHARACTER_HEIGHT = BLOCK_SIZE * 2
 static const float MAX_MOVEMENT_CHECK_THRESHOLD = 10;   //must be less than block size
 
 //Item groups
-static const enum ITEM_GROUP { BLOCK, SPECIAL, CHARACTER };
+static const int NUMBER_OF_BLOCK_TYPES = 9, NUMBER_OF_SPECIAL_TYPES = 6, NUMBER_OF_INVENTORY_ITEMS = 7;
+static const enum ITEM_GROUP { BLOCK, SPECIAL, CHARACTER, INVENTORY_ITEM };
 
 //common algorithms
 static sf::Vector3i cartesianToIsometric(const int x, const int y, const int z) {

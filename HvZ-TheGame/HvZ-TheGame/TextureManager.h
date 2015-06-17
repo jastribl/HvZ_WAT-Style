@@ -4,10 +4,7 @@
 class TextureManager {
 
 private:
-	int numberOfBlocks = 9;
-	int numberOfSpecials = 6;
 	std::map<int, std::map<int, sf::Texture>> blockTextures;
-	sf::Texture characterTexture;
 
 public:
 	TextureManager();

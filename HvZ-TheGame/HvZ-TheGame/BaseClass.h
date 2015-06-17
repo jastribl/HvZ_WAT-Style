@@ -7,6 +7,8 @@ protected:
 	sf::Sprite sprite;
 	World& world;
 
+	virtual void hitDetect(BaseClass& test);
+
 public:
 	int itemGroup;
 	sf::Vector3i gridLocation;
@@ -16,6 +18,5 @@ public:
 	~BaseClass();
 
 	virtual void move(float x, float y, float z);
-	virtual void hitDetect(BaseClass& test);
 	virtual void draw(sf::RenderWindow& window);
 };

@@ -1,5 +1,6 @@
 #pragma once
 class Item;
+class TextureManager;
 
 class Inventory {
 
@@ -8,7 +9,7 @@ private:
 	int activeIndex;
 
 public:
-	Inventory();
+	Inventory(TextureManager& textureManager);
 	~Inventory();
 
 	void click(int x, int y);

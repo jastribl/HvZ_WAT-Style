@@ -4,6 +4,9 @@ class World;
 
 class Character :public BaseClass {
 
+private:
+	virtual void hitDetect(BaseClass& test);
+
 public:
 	sf::Vector3i gridDestination;
 	sf::Vector3f pointDestination;
@@ -13,5 +16,4 @@ public:
 
 	virtual	void move(float x, float y, float z);
 	virtual void draw(sf::RenderWindow& window);
-	virtual void hitDetect(BaseClass& test);
 };

@@ -1,11 +1,13 @@
 #include "stdafx.h"
-#include "Inventory.h"
-#include "Constants.h"
 #include "Hud.h"
+#include "Constants.h"
+#include "Inventory.h"
+#include "TextureManager.h"
 #include <ctime>
 #include <iostream>
 
-Hud::Hud() {
+Hud::Hud(TextureManager& textureManager)
+	: inventory(textureManager) {
 	hpFont.loadFromFile("Resources/Fonts/arial.ttf");
 	timeFont.loadFromFile("Resources/Fonts/DS-DIGI.ttf");
 	static int MINIMAP_SIZE = 120;

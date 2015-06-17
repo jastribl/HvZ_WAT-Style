@@ -4,21 +4,33 @@
 #include <string>
 
 TextureManager::TextureManager() {
-	for (int i = 0; i < numberOfBlocks; i++) {
+	for (int i = 0; i < NUMBER_OF_BLOCK_TYPES; i++) {
 		sf::Texture texture;
 		texture.setSmooth(true);
-		texture.loadFromFile(std::string("Resources/Images/block") + std::to_string(i) + std::string(".png"));
+		texture.loadFromFile(std::string("Resources/Images/Blocks/block") + std::to_string(i) + std::string(".png"));
 		addTextureFor(texture, BLOCK, i);
 	}
-	for (int i = 0; i < numberOfSpecials; i++) {
+	for (int i = 0; i < NUMBER_OF_SPECIAL_TYPES; i++) {
 		sf::Texture texture;
 		texture.setSmooth(true);
-		texture.loadFromFile(std::string("Resources/Images/special") + std::to_string(i) + std::string(".png"));
+		texture.loadFromFile(std::string("Resources/Images/Specials/special") + std::to_string(i) + std::string(".png"));
 		addTextureFor(texture, SPECIAL, i);
 	}
-	sf::Texture texture;
-	texture.loadFromFile("Resources/Images/character.png");
-	addTextureFor(texture, CHARACTER, 0);
+	for (int i = 0; i < NUMBER_OF_INVENTORY_ITEMS; i++) {
+		sf::Texture texture;
+		texture.setSmooth(true);
+		texture.loadFromFile(std::string("Resources/Images/Inventory/inventory") + std::to_string(i) + std::string(".png"));
+		addTextureFor(texture, INVENTORY_ITEM, i);
+	}
+	for (int i = NUMBER_OF_INVENTORY_ITEMS; i < BOX_NUM; i++) {
+		sf::Texture texture;
+		texture.setSmooth(true);
+		texture.loadFromFile(std::string("Resources/Images/Inventory/inventory8.png"));
+		addTextureFor(texture, INVENTORY_ITEM, i);
+	}
+	sf::Texture characterTexture;
+	characterTexture.loadFromFile("Resources/Images/Character/character.png");
+	addTextureFor(characterTexture, CHARACTER, 0);
 }
 
 TextureManager::~TextureManager() {}
