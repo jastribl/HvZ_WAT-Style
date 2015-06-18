@@ -2,15 +2,15 @@
 #include "BaseClass.h"
 #include "World.h"
 
-BaseClass::BaseClass(World& world, const sf::Texture& texture, sf::Vector3i gridLocation, sf::Vector3f pointLocation, int itemGroup)
-	:world(world), sprite(texture), gridLocation(gridLocation), pointLocation(pointLocation), itemGroup(itemGroup) {
+BaseClass::BaseClass(World& world, const sf::Texture& texture, const sf::Vector3i& gridLoc, const sf::Vector3f& pointLoc, int itemGroup)
+	:world(world), sprite(texture), gridLoc(gridLoc), pointLoc(pointLoc), itemGroup(itemGroup) {
 	world.add(this);
 }
 
 BaseClass::~BaseClass() {}
 
+void BaseClass::fly() {}
 void BaseClass::move(float x, float y, float z) {}
-void BaseClass::hitDetect(BaseClass& test) {}
 void BaseClass::draw(sf::RenderWindow& window) {
 	window.draw(sprite);
 }

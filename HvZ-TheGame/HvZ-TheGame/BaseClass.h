@@ -7,16 +7,18 @@ protected:
 	sf::Sprite sprite;
 	World& world;
 
-	virtual void hitDetect(BaseClass& test);
+	virtual void move(const float x, const float y, const float z);
 
 public:
 	int itemGroup;
-	sf::Vector3i gridLocation;
-	sf::Vector3f pointLocation;
+	sf::Vector3i gridLoc;
+	sf::Vector3f pointLoc;
+	sf::Vector3i gridTemp = sf::Vector3i();
+	sf::Vector3f pointTemp = sf::Vector3f();
 
-	BaseClass(World& world, const sf::Texture& texture, sf::Vector3i gridLocation, sf::Vector3f pointLocation, int itemGroup);
+	BaseClass(World& world, const sf::Texture& texture, const sf::Vector3i& gridLoc, const sf::Vector3f& pointLoc, int itemGroup);
 	~BaseClass();
 
-	virtual void move(float x, float y, float z);
+	virtual void fly();
 	virtual void draw(sf::RenderWindow& window);
 };

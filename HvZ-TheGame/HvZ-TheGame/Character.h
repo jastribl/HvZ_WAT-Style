@@ -5,15 +5,17 @@ class World;
 class Character :public BaseClass {
 
 private:
-	virtual void hitDetect(BaseClass& test);
+	sf::Vector3f destLoca = sf::Vector3f();
+
+	virtual	void move(const float x, const float y, const float z);
+	bool hitDetect(const BaseClass& test);
+	void stop();
 
 public:
-	sf::Vector3i gridDestination;
-	sf::Vector3f pointDestination;
-
-	Character(World& world, const sf::Texture& texture, sf::Vector3i gridLocation, sf::Vector3f pointLocation);
+	Character(World& world, const sf::Texture& texture, const sf::Vector3i& gridLocation, const sf::Vector3f& pointLocation);
 	~Character();
 
-	virtual	void move(float x, float y, float z);
+	void setDestination(const sf::Vector3f& dest);
+	virtual void fly();
 	virtual void draw(sf::RenderWindow& window);
 };

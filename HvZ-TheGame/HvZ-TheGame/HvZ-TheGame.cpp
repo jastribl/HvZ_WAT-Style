@@ -20,11 +20,11 @@ int main() {
 	TextureManager textureManager = TextureManager();
 	Hud hud = Hud(textureManager);
 	WorldManager worldManager = WorldManager(textureManager);
-	BaseClass* character = new Character(*worldManager.getCurrentWorld(), textureManager.getTextureFor(CHARACTER, 0), sf::Vector3i(3, 3, 1), sf::Vector3f(0, 0, 0));
+	Character* character = new Character(*worldManager.getCurrentWorld(), textureManager.getTextureFor(CHARACTER, 0), sf::Vector3i(3, 3, 1), sf::Vector3f(0, 0, 0));
 
 	window.setFramerateLimit(60);
 	sf::Clock clock;
-	float elapsedTime = 0.0f;
+	//float elapsedTime = 0.0f;
 	while (window.isOpen()) {
 		sf::Event event;
 		while (window.pollEvent(event)) {
@@ -32,20 +32,8 @@ int main() {
 				case sf::Event::KeyPressed:
 					if (event.key.code == sf::Keyboard::Escape) {
 						window.close();
-					} else if (event.key.code == sf::Keyboard::Up) {
-						character->move(0, -4, 0);
-					} else if (event.key.code == sf::Keyboard::Down) {
-						character->move(0, 4, 0);
-					} else if (event.key.code == sf::Keyboard::Left) {
-						character->move(-4, 0, 0);
-					} else if (event.key.code == sf::Keyboard::Right) {
-						character->move(4, 0, 0);
-					} else if (event.key.code == sf::Keyboard::PageUp) {
-						character->move(0, 0, 4);
-					} else if (event.key.code == sf::Keyboard::PageDown) {
-						character->move(0, 0, -4);
 					} else if (event.key.code == sf::Keyboard::W) {
-						worldManager.getCurrentWorld()->removeFromMap(character->gridLocation, character->pointLocation);
+						worldManager.getCurrentWorld()->removeFromMap(character->gridLoc, character->pointLoc);
 						worldManager.nextWorld();
 						worldManager.getCurrentWorld()->add(character);
 					}
@@ -57,15 +45,17 @@ int main() {
 
 				case sf::Event::MouseWheelMoved: {
 					if (event.mouseWheel.delta > 0) {
-						worldView.zoom(0.8);
+						worldView.zoom(0.8f);
 					} else {
 						worldView.zoom(1.25);
 					}
 					break;
 				}
 				case sf::Event::MouseButtonPressed:{
-					if (event.mouseButton.button == sf::Mouse::Left&&event.mouseButton.x > SIDEBAR_ORIGIN_X&&event.mouseButton.y > SIDEBAR_ORIGIN_Y) {
+					if (event.mouseButton.button == sf::Mouse::Left && event.mouseButton.x > SIDEBAR_ORIGIN_X && event.mouseButton.y > SIDEBAR_ORIGIN_Y) {
 						hud.click(event.mouseButton.x, event.mouseButton.y);
+					} else {
+						character->setDestination(sf::Vector3f(isometricToCartesian(window.mapPixelToCoords(sf::Mouse::getPosition(window)), 0)));
 					}
 					break;
 				}
@@ -75,20 +65,8 @@ int main() {
 					}
 					break;
 				}
-				default:
-					break;
 			}
 		}
-
-
-		sf::Vector3i& point = isometricToCartesian(window.mapPixelToCoords(sf::Mouse::getPosition(window)), 0);
-		sf::Vector3i& charPoint = sf::Vector3i(character->gridLocation);
-		charPoint.x *= BLOCK_SIZE;
-		charPoint.y *= BLOCK_SIZE;
-		charPoint.x += character->pointLocation.x - (BLOCK_SIZE * 2);
-		charPoint.y += character->pointLocation.y - (BLOCK_SIZE * 2);
-		sf::Vector3i p = sf::Vector3i(point.x - charPoint.x, point.y - charPoint.y, 0);
-		character->move(p.x / 8, p.y / 8, p.z);
 
 
 		sf::Vector2i mousePositionWindow = sf::Mouse::getPosition(window);
@@ -109,16 +87,16 @@ int main() {
 		window.clear(sf::Color(255, 255, 255));
 
 		window.setView(worldView);
-		worldManager.getCurrentWorld()->draw(window);
+		worldManager.getCurrentWorld()->updateAndDraw(window);
 
 		window.setView(hudView);
-		hud.setHP(rand() % 101);
-		hud.setMP(rand() % 101);
+		//hud.setHP(rand() % 101);
+		//hud.setMP(rand() % 101);
 		hud.drawToWindow(window);
 
 		window.setView(worldView); //view need to be set this way to ensure the hud doesn't move, and the blokcs can move
 		window.display();
-		elapsedTime += clock.restart().asSeconds();
+		//elapsedTime += clock.restart().asSeconds();
 	}
 	return 0;
 }

@@ -11,6 +11,7 @@ private:
 
 public:
 	std::string name;
+	std::vector<BaseClass*> itemsToMove;
 
 	World();
 	~World();
@@ -21,6 +22,6 @@ public:
 	void removeFromMap(const sf::Vector3i& grid, const sf::Vector3f& point);
 	void deleteItem(const sf::Vector3i& grid, const sf::Vector3f& point);
 	void clearDeletedItems();
-	void draw(sf::RenderWindow& window);
+	void updateAndDraw(sf::RenderWindow& window);
 	int size() const;
 };

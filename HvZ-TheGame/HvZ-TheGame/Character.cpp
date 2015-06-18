@@ -4,74 +4,91 @@
 #include "World.h"
 #include <iostream>
 
-Character::Character(World& world, const sf::Texture& texture, sf::Vector3i gridLocation, sf::Vector3f pointLocation)
-	:BaseClass(world, texture, gridLocation, pointLocation, CHARACTER), gridDestination(gridLocation), pointDestination(pointLocation) {
+Character::Character(World& world, const sf::Texture& texture, const sf::Vector3i& gridLocation, const sf::Vector3f& pointLocation)
+	:BaseClass(world, texture, gridLocation, pointLocation, CHARACTER) {
 	sprite.setOrigin(sprite.getLocalBounds().width / 2, sprite.getLocalBounds().height);
 	sprite.scale((CHARACTER_WIDTH * 2) / sprite.getLocalBounds().width, (CHARACTER_HEIGHT * 2) / sprite.getLocalBounds().height);
+	this->stop();
 }
 
 Character::~Character() {}
 
-void Character::move(float x, float y, float z) {
+void Character::setDestination(const sf::Vector3f& dest) {
+	destLoca = sf::Vector3f(dest);
+}
+
+void Character::fly() {
+	sf::Vector3f charPoint = sf::Vector3f(gridLoc * BLOCK_SIZE) + sf::Vector3f(pointLoc.x - (BLOCK_SIZE * 2), pointLoc.y - (BLOCK_SIZE * 2), 0);
+	if (destLoca != charPoint) {
+		sf::Vector3i& p = sf::Vector3i(destLoca.x - charPoint.x, destLoca.y - charPoint.y, 0);
+		this->move(p.x / 8, p.y / 8, p.z);
+	}
+}
+
+void Character::move(const float x, const float y, const float z) {
 	if (x == 0 && y == 0 && z == 0) {
 		return;
-	} else if (std::abs(x) > MAX_MOVEMENT_CHECK_THRESHOLD || std::abs(y) > MAX_MOVEMENT_CHECK_THRESHOLD || std::abs(z) > MAX_MOVEMENT_CHECK_THRESHOLD) {
-		move(x / 2, y / 2, z / 2);
-		move(x / 2, y / 2, z / 2);
+	} else if ((std::pow(std::abs(x), 2) + std::pow(std::abs(y), 2) + std::pow(std::abs(z), 2)) > std::pow(MAX_MOVEMENT_CHECK_THRESHOLD, 2)) {
+		this->move(x / 2, y / 2, z / 2);
+		this->move(x / 2, y / 2, z / 2);
 	} else {
-		pointDestination = sf::Vector3f(pointLocation.x + x, pointLocation.y + y, pointLocation.z + z);
-		gridDestination = sf::Vector3i(gridLocation);
-		if (pointDestination.x >= BLOCK_SIZE) {
-			pointDestination.x -= BLOCK_SIZE;
-			gridDestination.x++;
-		} else if (pointDestination.x < 0) {
-			pointDestination.x += BLOCK_SIZE;
-			gridDestination.x--;
+		pointTemp = sf::Vector3f(pointLoc.x + x, pointLoc.y + y, pointLoc.z + z);
+		gridTemp = sf::Vector3i(gridLoc);
+		if (pointTemp.x >= BLOCK_SIZE) {
+			pointTemp.x -= BLOCK_SIZE;
+			gridTemp.x++;
+		} else if (pointTemp.x < 0) {
+			pointTemp.x += BLOCK_SIZE;
+			gridTemp.x--;
 		}
-		if (pointDestination.y >= BLOCK_SIZE) {
-			pointDestination.y -= BLOCK_SIZE;
-			gridDestination.y++;
-		} else if (pointDestination.y < 0) {
-			pointDestination.y += BLOCK_SIZE;
-			gridDestination.y--;
+		if (pointTemp.y >= BLOCK_SIZE) {
+			pointTemp.y -= BLOCK_SIZE;
+			gridTemp.y++;
+		} else if (pointTemp.y < 0) {
+			pointTemp.y += BLOCK_SIZE;
+			gridTemp.y--;
 		}
-		if (pointDestination.z >= BLOCK_SIZE) {
-			pointDestination.z -= BLOCK_SIZE;
-			gridDestination.z++;
-		} else if (pointDestination.z < 0) {
-			pointDestination.z += BLOCK_SIZE;
-			gridDestination.z--;
+		if (pointTemp.z >= BLOCK_SIZE) {
+			pointTemp.z -= BLOCK_SIZE;
+			gridTemp.z++;
+		} else if (pointTemp.z < 0) {
+			pointTemp.z += BLOCK_SIZE;
+			gridTemp.z--;
 		}
-		for (int i = gridDestination.x - 1; i < gridDestination.x + 1; i++) {
-			for (int j = gridDestination.y - 1; j < gridDestination.y + 1; j++) {
-				std::pair <std::multimap<sf::Vector3i, BaseClass*, ByLocation>::iterator, std::multimap<sf::Vector3i, BaseClass*, ByLocation>::iterator> itemsAt = world.getItemsAt(sf::Vector3i(i, j, gridDestination.z));
+		for (int i = gridTemp.x - 1; i < gridTemp.x + 1; i++) {
+			for (int j = gridTemp.y - 1; j < gridTemp.y + 1; j++) {
+				std::pair <std::multimap<sf::Vector3i, BaseClass*, ByLocation>::iterator, std::multimap<sf::Vector3i, BaseClass*, ByLocation>::iterator> itemsAt = world.getItemsAt(sf::Vector3i(i, j, gridTemp.z));
 				for (auto it = itemsAt.first; it != itemsAt.second; ++it) {
-					hitDetect(*it->second);
+					if (hitDetect(*it->second)) {
+						return;
+					}
 				}
 			}
 		}
-		if (!VectorsAreEqual(gridLocation, gridDestination)) {
-			world.removeFromMap(gridLocation, pointLocation);
-			pointLocation = pointDestination;
-			gridLocation = gridDestination;
-			world.add(this);
-		} else if (!VectorsAreEqual(pointLocation, pointDestination)) {
-			pointLocation = pointDestination;
+		if (gridLoc != gridTemp) {
+			world.itemsToMove.push_back(this);
+		} else if (pointLoc != pointTemp) {
+			pointLoc = pointTemp;
 		}
 	}
+}
+
+bool Character::hitDetect(const BaseClass& test) {
+	if (test.itemGroup == BLOCK) {
+		if (std::abs((((test.gridLoc.x - gridTemp.x) * BLOCK_SIZE) - pointTemp.x)) <= BLOCK_SIZE || std::abs((((test.gridLoc.y - gridTemp.y) * BLOCK_SIZE) - pointTemp.y)) <= BLOCK_SIZE) {
+			return true;
+		}
+	}
+	return false;
+}
+
+void Character::stop() {
+	gridTemp = sf::Vector3i(gridLoc);
+	pointTemp = sf::Vector3f(pointLoc);
 }
 
 void Character::draw(sf::RenderWindow& window) {
-	sf::Vector3i p = cartesianToIsometric((gridLocation.x * BLOCK_SIZE) + pointLocation.x, (gridLocation.y * BLOCK_SIZE) + pointLocation.y, (gridLocation.z * BLOCK_SIZE) + pointLocation.z);
+	sf::Vector3i p = cartesianToIsometric((gridLoc.x * BLOCK_SIZE) + pointLoc.x, (gridLoc.y * BLOCK_SIZE) + pointLoc.y, (gridLoc.z * BLOCK_SIZE) + pointLoc.z);
 	sprite.setPosition(p.x, p.y - BLOCK_SIZE);
 	BaseClass::draw(window);
-}
-
-void Character::hitDetect(BaseClass& test) {
-	if (test.itemGroup == BLOCK) {
-		if (std::abs((((test.gridLocation.x - gridDestination.x) * BLOCK_SIZE) - pointDestination.x)) <= BLOCK_SIZE || std::abs((((test.gridLocation.y - gridDestination.y) * BLOCK_SIZE) - pointDestination.y)) <= BLOCK_SIZE) {
-			gridDestination = sf::Vector3i(gridLocation);
-			pointDestination = sf::Vector3f(pointLocation);
-		}
-	}
 }

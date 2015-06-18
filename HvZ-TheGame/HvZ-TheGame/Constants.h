@@ -63,19 +63,14 @@ static sf::Vector3i isometricToCartesian(const int x, const int y, const int z) 
 }
 
 template <typename T>
-static sf::Vector3i isometricToCartesian(T const& p, const int z) {
+static sf::Vector3i& isometricToCartesian(T const& p, const int z) {
 	return isometricToCartesian(p.x, p.y, z);
 }
 
 template <typename T>
-static sf::Vector3i screenToGrid(T const& p, const int z) {
+static sf::Vector3i& screenToGrid(T const& p, const int z) {
 	sf::Vector3i& point = isometricToCartesian(p.x, p.y, z);
 	return sf::Vector3i(point.x / BLOCK_SIZE, point.y / BLOCK_SIZE, point.z);
-}
-
-template <typename  T>
-static bool VectorsAreEqual(T const& a, T const& b) {
-	return (a.x == b.x && a.y == b.y && a.z == b.z);
 }
 
 template <typename T>
@@ -85,19 +80,19 @@ static void PrintVector(T const& v) {
 
 struct ByLocation {
 	bool operator()(const sf::Vector3i& a, const sf::Vector3i& b) const {
-		//return (a.x + a.y == b.x + b.y) ? std::min(a.x, a.y) == std::min(b.x, b.y) ? a.y == b.y ? a.z < b.z : a.y > b.y : std::min(a.x, a.y) < std::min(b.x, b.y) : a.x + a.y < b.x + b.y;		
-		if (a.x + a.y == b.x + b.y) {
-			if (std::min(a.x, a.y) == std::min(b.x, b.y)) {
-				if (a.y == b.y) {
-					return (a.z < b.z);
-				} else {
-					return (a.y > b.y);
-				}
-			} else {
-				return (std::min(a.x, a.y) < std::min(b.x, b.y));
-			}
-		} else {
-			return (a.x + a.y < b.x + b.y);
-		}
+		return (a.x + a.y == b.x + b.y) ? std::min(a.x, a.y) == std::min(b.x, b.y) ? a.y == b.y ? a.z < b.z : a.y > b.y : std::min(a.x, a.y) < std::min(b.x, b.y) : a.x + a.y < b.x + b.y;
+		//if (a.x + a.y == b.x + b.y) {
+		//	if (std::min(a.x, a.y) == std::min(b.x, b.y)) {
+		//		if (a.y == b.y) {
+		//			return (a.z < b.z);
+		//		} else {
+		//			return (a.y > b.y);
+		//		}
+		//	} else {
+		//		return (std::min(a.x, a.y) < std::min(b.x, b.y));
+		//	}
+		//} else {
+		//	return (a.x + a.y < b.x + b.y);
+		//}
 	}
 };

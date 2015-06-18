@@ -17,13 +17,13 @@ std::pair <std::multimap<sf::Vector3i, BaseClass*, ByLocation>::iterator, std::m
 }
 
 void World::add(BaseClass* object) {
-	world.insert({object->gridLocation, object});
+	world.insert({object->gridLoc, object});
 }
 
 void World::removeFromMap(const sf::Vector3i& grid, const sf::Vector3f& point) {
 	std::pair <std::multimap<sf::Vector3i, BaseClass*, ByLocation>::iterator, std::multimap<sf::Vector3i, BaseClass*, ByLocation>::iterator> items = getItemsAt(grid);
 	for (auto it = items.first; it != items.second; ++it) {
-		if (VectorsAreEqual(it->second->pointLocation, point)) {
+		if (it->second->pointLoc == point) {
 			world.erase(it);
 			return;
 		}
@@ -33,7 +33,7 @@ void World::removeFromMap(const sf::Vector3i& grid, const sf::Vector3f& point) {
 void World::deleteItem(const sf::Vector3i& grid, const sf::Vector3f& point) {
 	std::pair <std::multimap<sf::Vector3i, BaseClass*, ByLocation>::iterator, std::multimap<sf::Vector3i, BaseClass*, ByLocation>::iterator> items = getItemsAt(grid);
 	for (auto it = items.first; it != items.second; ++it) {
-		if (VectorsAreEqual(it->second->pointLocation, point)) {
+		if (it->second->pointLoc == point) {
 			deletedItems.push_back(it->second);
 			world.erase(it);
 			return;
@@ -48,10 +48,18 @@ void World::clearDeletedItems() {
 	deletedItems.clear();
 }
 
-void World::draw(sf::RenderWindow& window) {
+void World::updateAndDraw(sf::RenderWindow& window) {
 	for (auto it = world.begin(); it != world.end(); ++it) {
 		it->second->draw(window);
+		it->second->fly();
 	}
+	for (auto it = itemsToMove.begin(); it != itemsToMove.end(); ++it) {
+		removeFromMap((*it)->gridLoc, (*it)->pointLoc);
+		(*it)->pointLoc = (*it)->pointTemp;
+		(*it)->gridLoc = (*it)->gridTemp;
+		add(*it);
+	}
+	itemsToMove.clear();
 	clearDeletedItems();
 }
 
