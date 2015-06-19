@@ -49,9 +49,15 @@ void World::clearDeletedItems() {
 }
 
 void World::updateAndDraw(sf::RenderWindow& window) {
+	sf::FloatRect windowRec(window.getView().getCenter() - sf::Vector2f(window.getView().getSize().x / 2, window.getView().getSize().y / 2), window.getView().getSize());
 	for (auto it = world.begin(); it != world.end(); ++it) {
-		it->second->draw(window);
-		it->second->fly();
+		BaseClass* item = it->second;
+		if (windowRec.intersects(item->hitBox())) {
+			it->second->draw(window);
+		}
+		if (it->second->itemGroup == CHARACTER /*|| it->second->itemGroup == BULLET...*/) {
+			it->second->fly();
+		}
 	}
 	for (auto it = itemsToMove.begin(); it != itemsToMove.end(); ++it) {
 		removeFromMap((*it)->gridLoc, (*it)->pointLoc);

@@ -19,6 +19,7 @@ public:
 	BaseClass(World& world, const sf::Texture& texture, const sf::Vector3i& gridLoc, const sf::Vector3f& pointLoc, int itemGroup);
 	~BaseClass();
 
+	sf::FloatRect& hitBox();
 	virtual void fly();
 	virtual void draw(sf::RenderWindow& window);
 };

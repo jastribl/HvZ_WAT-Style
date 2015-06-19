@@ -25,6 +25,7 @@ int main() {
 	window.setFramerateLimit(60);
 	sf::Clock clock;
 	//float elapsedTime = 0.0f;
+	int zoomLevel = 0;
 	while (window.isOpen()) {
 		sf::Event event;
 		while (window.pollEvent(event)) {
@@ -45,9 +46,15 @@ int main() {
 
 				case sf::Event::MouseWheelMoved: {
 					if (event.mouseWheel.delta > 0) {
-						worldView.zoom(0.8f);
+						if (zoomLevel > -2) {
+							worldView.zoom(0.9f);
+							zoomLevel--;
+						}
 					} else {
-						worldView.zoom(1.25);
+						if (zoomLevel < 6) {
+							worldView.zoom(1.1f);
+							zoomLevel++;
+						}
 					}
 					break;
 				}
@@ -71,13 +78,13 @@ int main() {
 
 		sf::Vector2i mousePositionWindow = sf::Mouse::getPosition(window);
 		if (mousePositionWindow.x > window.getSize().x - 10) {
-			worldView.move(40, 0);
+			worldView.move(20, 0);
 		} else if (mousePositionWindow.x < 10) {
-			worldView.move(-40, 0);
+			worldView.move(-20, 0);
 		} else if (mousePositionWindow.y > window.getSize().y - 10) {
-			worldView.move(0, 40);
+			worldView.move(0, 20);
 		} else if (mousePositionWindow.y < 10) {
-			worldView.move(0, -40);
+			worldView.move(0, -20);
 		}
 
 		//for (; elapsedTime >= 0.025f; elapsedTime -= 0.025f) {

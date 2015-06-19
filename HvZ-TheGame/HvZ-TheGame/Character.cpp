@@ -21,7 +21,7 @@ void Character::fly() {
 	sf::Vector3f charPoint = sf::Vector3f(gridLoc * BLOCK_SIZE) + sf::Vector3f(pointLoc.x - (BLOCK_SIZE * 2), pointLoc.y - (BLOCK_SIZE * 2), 0);
 	if (destLoca != charPoint) {
 		sf::Vector3i& p = sf::Vector3i(destLoca.x - charPoint.x, destLoca.y - charPoint.y, 0);
-		this->move(p.x / 8, p.y / 8, p.z);
+		this->move(p.x / 8, p.y / 8, p.z / 8);
 	}
 }
 
@@ -70,6 +70,8 @@ void Character::move(const float x, const float y, const float z) {
 		} else if (pointLoc != pointTemp) {
 			pointLoc = pointTemp;
 		}
+		sf::Vector3i p = cartesianToIsometric((gridLoc.x * BLOCK_SIZE) + pointLoc.x, (gridLoc.y * BLOCK_SIZE) + pointLoc.y, (gridLoc.z * BLOCK_SIZE) + pointLoc.z);
+		sprite.setPosition(p.x, p.y - BLOCK_SIZE);
 	}
 }
 
@@ -88,7 +90,5 @@ void Character::stop() {
 }
 
 void Character::draw(sf::RenderWindow& window) {
-	sf::Vector3i p = cartesianToIsometric((gridLoc.x * BLOCK_SIZE) + pointLoc.x, (gridLoc.y * BLOCK_SIZE) + pointLoc.y, (gridLoc.z * BLOCK_SIZE) + pointLoc.z);
-	sprite.setPosition(p.x, p.y - BLOCK_SIZE);
 	BaseClass::draw(window);
 }

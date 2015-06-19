@@ -9,6 +9,9 @@ BaseClass::BaseClass(World& world, const sf::Texture& texture, const sf::Vector3
 
 BaseClass::~BaseClass() {}
 
+sf::FloatRect& BaseClass::hitBox() {
+	return sprite.getGlobalBounds();
+}
 void BaseClass::fly() {}
 void BaseClass::move(float x, float y, float z) {}
 void BaseClass::draw(sf::RenderWindow& window) {
