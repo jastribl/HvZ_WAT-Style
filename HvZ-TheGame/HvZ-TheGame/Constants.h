@@ -45,6 +45,7 @@ static const int HALF_BLOCK_SIZE = BLOCK_SIZE / 2;
 
 //Character
 static const int CHARACTER_WIDTH = BLOCK_SIZE, CHARACTER_HEIGHT = BLOCK_SIZE * 2;
+static const int NUMBER_OF_PLAYER_ROTATIONS = 8;
 
 //movement settings
 static const float MAX_MOVEMENT_CHECK_THRESHOLD = 10;   //must be less than block size

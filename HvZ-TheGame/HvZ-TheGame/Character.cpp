@@ -3,11 +3,14 @@
 #include "Constants.h"
 #include "World.h"
 #include <iostream>
+#define _USE_MATH_DEFINES
+#include <math.h>
 
 Character::Character(World& world, const sf::Texture& texture, const sf::Vector3i& gridLocation, const sf::Vector3f& pointLocation)
 	:BaseClass(world, texture, gridLocation, pointLocation, CHARACTER) {
+	sprite.scale((CHARACTER_WIDTH * 2 * NUMBER_OF_PLAYER_ROTATIONS) / sprite.getLocalBounds().width, (CHARACTER_HEIGHT * 2) / sprite.getLocalBounds().height);
+	sprite.setTextureRect(sf::IntRect(0, 0, CHARACTER_WIDTH, CHARACTER_HEIGHT));
 	sprite.setOrigin(sprite.getLocalBounds().width / 2, sprite.getLocalBounds().height);
-	sprite.scale((CHARACTER_WIDTH * 2) / sprite.getLocalBounds().width, (CHARACTER_HEIGHT * 2) / sprite.getLocalBounds().height);
 	this->stop();
 }
 
@@ -90,5 +93,7 @@ void Character::stop() {
 }
 
 void Character::draw(sf::RenderWindow& window) {
+	sf::Vector3f mousePosition = sf::Vector3f(isometricToCartesian(window.mapPixelToCoords(sf::Mouse::getPosition(window)), 0));
+	sprite.setTextureRect(sf::IntRect((CHARACTER_WIDTH * ((int) std::floor(((std::atan2(gridLoc.y * BLOCK_SIZE - mousePosition.y, gridLoc.x * BLOCK_SIZE - mousePosition.x) * 180 / M_PI + 517.5) / 360) * NUMBER_OF_PLAYER_ROTATIONS) % 8)), 0, CHARACTER_WIDTH, CHARACTER_HEIGHT));
 	BaseClass::draw(window);
 }
