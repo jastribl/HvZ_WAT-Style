@@ -9,7 +9,7 @@ WorldManager::WorldManager(TextureManager& textureManager) {
 	std::ifstream  worldsReader("Resources/Worlds/Worlds.Worlds");
 	std::string worldName;
 	while (worldsReader >> worldName) {
-		World* world = new World();
+		World* world = new World(worldName);
 		std::ifstream  worldReader("Resources/Worlds/" + worldName + ".World");
 		int numberOfLevels;
 		worldReader >> numberOfLevels;
@@ -29,8 +29,8 @@ WorldManager::WorldManager(TextureManager& textureManager) {
 
 WorldManager::~WorldManager() {}
 
-World* WorldManager::getCurrentWorld() {
-	return worlds.find(currentWorld)->second;
+World& WorldManager::getCurrentWorld() {
+	return *(worlds.find(currentWorld)->second);
 }
 
 void WorldManager::nextWorld() {

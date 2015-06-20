@@ -14,6 +14,10 @@ sf::FloatRect& BaseClass::hitBox() {
 }
 void BaseClass::fly() {}
 void BaseClass::move(float x, float y, float z) {}
+void BaseClass::applyMove() {
+	pointLoc = pointTemp;
+	gridLoc = gridTemp;
+}
 void BaseClass::draw(sf::RenderWindow& window) {
 	window.draw(sprite);
 }

@@ -12,7 +12,7 @@
 int main() {
 	sf::ContextSettings settings;
 	settings.antialiasingLevel = 8;
-	sf::RenderWindow window(sf::RenderWindow(sf::VideoMode(SCREEN_SIZE_X, SCREEN_SIZE_Y), "HvZ - The Game", sf::Style::Fullscreen, settings));
+	sf::RenderWindow window(sf::RenderWindow(sf::VideoMode(SCREEN_SIZE_X, SCREEN_SIZE_Y), "HvZ - The Game", sf::Style::Default, settings));
 	sf::View hudView(sf::FloatRect(0, 0, SCREEN_SIZE_X, SCREEN_SIZE_Y));
 	sf::View worldView(sf::FloatRect(0, 0, SCREEN_SIZE_X, SCREEN_SIZE_Y));
 
@@ -20,7 +20,7 @@ int main() {
 	TextureManager textureManager = TextureManager();
 	Hud hud = Hud(textureManager);
 	WorldManager worldManager = WorldManager(textureManager);
-	Character* character = new Character(*worldManager.getCurrentWorld(), textureManager.getTextureFor(CHARACTER, 0), sf::Vector3i(3, 3, 1), sf::Vector3f(0, 0, 0));
+	Character* character = new Character(worldManager.getCurrentWorld(), textureManager.getTextureFor(CHARACTER, 0), sf::Vector3i(3, 3, 1), sf::Vector3f(0, 0, 0));
 
 	window.setFramerateLimit(60);
 	sf::Clock clock;
@@ -34,9 +34,9 @@ int main() {
 					if (event.key.code == sf::Keyboard::Escape) {
 						window.close();
 					} else if (event.key.code == sf::Keyboard::W) {
-						worldManager.getCurrentWorld()->removeFromMap(character->gridLoc, character->pointLoc);
+						worldManager.getCurrentWorld().removeItemFromWorld(character->gridLoc, character->pointLoc);
 						worldManager.nextWorld();
-						worldManager.getCurrentWorld()->add(character);
+						worldManager.getCurrentWorld().add(character);
 					}
 					break;
 
@@ -94,7 +94,7 @@ int main() {
 		window.clear(sf::Color(255, 255, 255));
 
 		window.setView(worldView);
-		worldManager.getCurrentWorld()->updateAndDraw(window);
+		worldManager.getCurrentWorld().updateAndDraw(window);
 
 		window.setView(hudView);
 		//hud.setHP(rand() % 101);

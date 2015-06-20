@@ -4,15 +4,16 @@
 #include "Constants.h"
 #include <iostream>
 
-World::World() {}
+
+World::World(std::string name) :name(name) {}
 
 World::~World() {}
 
-bool World::itemsExistAt(const sf::Vector3i& point) const {
+bool World::itemsExistAtGridLocation(const sf::Vector3i& point) const {
 	return world.count(point) > 0;
 }
 
-std::pair <std::multimap<sf::Vector3i, BaseClass*, ByLocation>::iterator, std::multimap<sf::Vector3i, BaseClass*, ByLocation>::iterator> World::getItemsAt(const sf::Vector3i& point) {
+std::pair <std::multimap<sf::Vector3i, BaseClass*, ByLocation>::iterator, std::multimap<sf::Vector3i, BaseClass*, ByLocation>::iterator> World::getItemsAtGridLocation(const sf::Vector3i& point) {
 	return world.equal_range(point);
 }
 
@@ -20,8 +21,8 @@ void World::add(BaseClass* object) {
 	world.insert({object->gridLoc, object});
 }
 
-void World::removeFromMap(const sf::Vector3i& grid, const sf::Vector3f& point) {
-	std::pair <std::multimap<sf::Vector3i, BaseClass*, ByLocation>::iterator, std::multimap<sf::Vector3i, BaseClass*, ByLocation>::iterator> items = getItemsAt(grid);
+void World::removeItemFromWorld(const sf::Vector3i& grid, const sf::Vector3f& point) {
+	std::pair <std::multimap<sf::Vector3i, BaseClass*, ByLocation>::iterator, std::multimap<sf::Vector3i, BaseClass*, ByLocation>::iterator> items = getItemsAtGridLocation(grid);
 	for (auto it = items.first; it != items.second; ++it) {
 		if (it->second->pointLoc == point) {
 			world.erase(it);
@@ -29,9 +30,8 @@ void World::removeFromMap(const sf::Vector3i& grid, const sf::Vector3f& point) {
 		}
 	}
 }
-
-void World::deleteItem(const sf::Vector3i& grid, const sf::Vector3f& point) {
-	std::pair <std::multimap<sf::Vector3i, BaseClass*, ByLocation>::iterator, std::multimap<sf::Vector3i, BaseClass*, ByLocation>::iterator> items = getItemsAt(grid);
+void World::deleteItemFromWorld(const sf::Vector3i& grid, const sf::Vector3f& point) {
+	std::pair <std::multimap<sf::Vector3i, BaseClass*, ByLocation>::iterator, std::multimap<sf::Vector3i, BaseClass*, ByLocation>::iterator> items = getItemsAtGridLocation(grid);
 	for (auto it = items.first; it != items.second; ++it) {
 		if (it->second->pointLoc == point) {
 			deletedItems.push_back(it->second);
@@ -59,16 +59,11 @@ void World::updateAndDraw(sf::RenderWindow& window) {
 			it->second->fly();
 		}
 	}
-	for (auto it = itemsToMove.begin(); it != itemsToMove.end(); ++it) {
-		removeFromMap((*it)->gridLoc, (*it)->pointLoc);
-		(*it)->pointLoc = (*it)->pointTemp;
-		(*it)->gridLoc = (*it)->gridTemp;
-		add(*it);
+	for (int i = 0; i < itemsToMove.size(); i++) {
+		removeItemFromWorld(itemsToMove[i]->gridLoc, itemsToMove[i]->pointLoc);
+		itemsToMove[i]->applyMove();
+		add(itemsToMove[i]);
 	}
 	itemsToMove.clear();
 	clearDeletedItems();
-}
-
-int World::size() const {
-	return world.size();
 }

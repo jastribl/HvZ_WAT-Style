@@ -60,7 +60,7 @@ void Character::move(const float x, const float y, const float z) {
 		}
 		for (int i = gridTemp.x - 1; i < gridTemp.x + 1; i++) {
 			for (int j = gridTemp.y - 1; j < gridTemp.y + 1; j++) {
-				std::pair <std::multimap<sf::Vector3i, BaseClass*, ByLocation>::iterator, std::multimap<sf::Vector3i, BaseClass*, ByLocation>::iterator> itemsAt = world.getItemsAt(sf::Vector3i(i, j, gridTemp.z));
+				std::pair <std::multimap<sf::Vector3i, BaseClass*, ByLocation>::iterator, std::multimap<sf::Vector3i, BaseClass*, ByLocation>::iterator> itemsAt = world.getItemsAtGridLocation(sf::Vector3i(i, j, gridTemp.z));
 				for (auto it = itemsAt.first; it != itemsAt.second; ++it) {
 					if (hitDetect(*it->second)) {
 						return;
