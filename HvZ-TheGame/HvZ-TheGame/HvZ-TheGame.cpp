@@ -34,7 +34,7 @@ int main() {
 					if (event.key.code == sf::Keyboard::Escape) {
 						window.close();
 					} else if (event.key.code == sf::Keyboard::W) {
-						worldManager.getCurrentWorld().removeItemFromWorld(character->getGridLocation(), character->getPointLocation());
+						worldManager.getCurrentWorld().removeItemFromWorld(character->loc.getGrid(), character->loc.getPoint());
 						worldManager.nextWorld();
 						worldManager.getCurrentWorld().add(character);
 					}

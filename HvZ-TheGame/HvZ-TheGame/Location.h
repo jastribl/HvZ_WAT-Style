@@ -9,8 +9,15 @@ public:
 	Location(sf::Vector3i gridLoc, sf::Vector3f pointLoc);
 	~Location();
 
-	const sf::Vector3i& getGridLocation() const;
-	const sf::Vector3f& getPointLocation() const;
-	void setGridLocation(const sf::Vector3i& grid);
-	void setPointLocaton(const sf::Vector3f& point);
+	const sf::Vector3i& getGrid() const;
+	const sf::Vector3f& getPoint() const;
+	void setGrid(const sf::Vector3i& grid);
+	void setPoint(const sf::Vector3f& point);
+
+	void addGridX(int x);
+	void addGridY(int y);
+	void addGridZ(int z);
+	void addPointX(int x);
+	void addPointY(int y);
+	void addPointZ(int z);
 };
