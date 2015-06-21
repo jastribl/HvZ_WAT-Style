@@ -34,7 +34,7 @@ void Character::move(const float x, const float y, const float z) {
 		this->move(x / 2, y / 2, z / 2);
 		this->move(x / 2, y / 2, z / 2);
 	} else {
-		tempLoc = Location(loc.getGrid(), loc.getPoint());
+		tempLoc = Location(loc);
 		tempLoc.add(x, y, z);
 		for (int i = tempLoc.getGrid().x - 1; i < tempLoc.getGrid().x + 1; i++) {
 			for (int j = tempLoc.getGrid().y - 1; j < tempLoc.getGrid().y + 1; j++) {
@@ -57,7 +57,7 @@ void Character::move(const float x, const float y, const float z) {
 }
 
 bool Character::hitDetect(const BaseClass& test) {
-	if (test.itemGroup == BLOCK) {
+	if (test.itemType == BLOCK) {
 		if (std::abs((((test.loc.getGrid().x - tempLoc.getGrid().x) * BLOCK_SIZE) - tempLoc.getPoint().x)) <= BLOCK_SIZE || std::abs((((test.loc.getGrid().y - tempLoc.getGrid().y) * BLOCK_SIZE) - tempLoc.getPoint().y)) <= BLOCK_SIZE) {
 			return true;
 		}

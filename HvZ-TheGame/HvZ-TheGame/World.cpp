@@ -55,7 +55,7 @@ void World::updateAndDraw(sf::RenderWindow& window) {
 		if (windowRec.intersects(item->hitBox())) {
 			it->second->draw(window);
 		}
-		if (it->second->itemGroup == CHARACTER) {
+		if (it->second->itemType == CHARACTER) {
 			it->second->fly();
 		}
 	}

@@ -11,7 +11,7 @@ protected:
 	virtual void move(const float x, const float y, const float z);
 
 public:
-	int itemGroup;
+	const int itemType;
 	Location loc;
 	Location tempLoc;
 

@@ -4,7 +4,7 @@
 #include "World.h"
 
 BaseClass::BaseClass(World& world, const sf::Texture& texture, const sf::Vector3i& grid, const sf::Vector3f& point, int itemGroup)
-	:world(world), sprite(texture), loc(grid, point), tempLoc(sf::Vector3i(), sf::Vector3f()), itemGroup(itemGroup) {
+	:world(world), sprite(texture), loc(grid, point), tempLoc(loc), itemType(itemGroup) {
 	world.add(this);
 }
 
@@ -19,7 +19,7 @@ void BaseClass::fly() {}
 void BaseClass::move(float x, float y, float z) {}
 
 void BaseClass::applyMove() {
-	loc = Location(tempLoc.getGrid(), tempLoc.getPoint());
+	loc = Location(tempLoc);
 }
 
 void BaseClass::draw(sf::RenderWindow& window) {
