@@ -12,7 +12,7 @@
 int main() {
 	sf::ContextSettings settings;
 	settings.antialiasingLevel = 8;
-	sf::RenderWindow window(sf::RenderWindow(sf::VideoMode(SCREEN_SIZE_X, SCREEN_SIZE_Y), "HvZ - The Game", sf::Style::Default, settings));
+	sf::RenderWindow window(sf::RenderWindow(sf::VideoMode(SCREEN_SIZE_X, SCREEN_SIZE_Y), "HvZ - The Game", sf::Style::Fullscreen, settings));
 	sf::View hudView(sf::FloatRect(0, 0, SCREEN_SIZE_X, SCREEN_SIZE_Y));
 	sf::View worldView(sf::FloatRect(0, 0, SCREEN_SIZE_X, SCREEN_SIZE_Y));
 
@@ -34,7 +34,7 @@ int main() {
 					if (event.key.code == sf::Keyboard::Escape) {
 						window.close();
 					} else if (event.key.code == sf::Keyboard::W) {
-						worldManager.getCurrentWorld().removeItemFromWorld(character->gridLoc, character->pointLoc);
+						worldManager.getCurrentWorld().removeItemFromWorld(character->getGridLocation(), character->getPointLocation());
 						worldManager.nextWorld();
 						worldManager.getCurrentWorld().add(character);
 					}

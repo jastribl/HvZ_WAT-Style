@@ -18,13 +18,13 @@ std::pair <std::multimap<sf::Vector3i, BaseClass*, ByLocation>::iterator, std::m
 }
 
 void World::add(BaseClass* object) {
-	world.insert({object->gridLoc, object});
+	world.insert({object->getGridLocation(), object});
 }
 
 void World::removeItemFromWorld(const sf::Vector3i& grid, const sf::Vector3f& point) {
 	std::pair <std::multimap<sf::Vector3i, BaseClass*, ByLocation>::iterator, std::multimap<sf::Vector3i, BaseClass*, ByLocation>::iterator> items = getItemsAtGridLocation(grid);
 	for (auto it = items.first; it != items.second; ++it) {
-		if (it->second->pointLoc == point) {
+		if (it->second->getPointLocation() == point) {
 			world.erase(it);
 			return;
 		}
@@ -33,7 +33,7 @@ void World::removeItemFromWorld(const sf::Vector3i& grid, const sf::Vector3f& po
 void World::deleteItemFromWorld(const sf::Vector3i& grid, const sf::Vector3f& point) {
 	std::pair <std::multimap<sf::Vector3i, BaseClass*, ByLocation>::iterator, std::multimap<sf::Vector3i, BaseClass*, ByLocation>::iterator> items = getItemsAtGridLocation(grid);
 	for (auto it = items.first; it != items.second; ++it) {
-		if (it->second->pointLoc == point) {
+		if (it->second->getPointLocation() == point) {
 			deletedItems.push_back(it->second);
 			world.erase(it);
 			return;
@@ -60,7 +60,7 @@ void World::updateAndDraw(sf::RenderWindow& window) {
 		}
 	}
 	for (int i = 0; i < itemsToMove.size(); i++) {
-		removeItemFromWorld(itemsToMove[i]->gridLoc, itemsToMove[i]->pointLoc);
+		removeItemFromWorld(itemsToMove[i]->getGridLocation(), itemsToMove[i]->getPointLocation());
 		itemsToMove[i]->applyMove();
 		add(itemsToMove[i]);
 	}

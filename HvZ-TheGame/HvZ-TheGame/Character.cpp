@@ -21,7 +21,7 @@ void Character::setDestination(const sf::Vector3f& dest) {
 }
 
 void Character::fly() {
-	sf::Vector3f charPoint = sf::Vector3f(gridLoc * BLOCK_SIZE) + sf::Vector3f(pointLoc.x - (BLOCK_SIZE * 2), pointLoc.y - (BLOCK_SIZE * 2), 0);
+	sf::Vector3f charPoint = sf::Vector3f(getGridLocation() * BLOCK_SIZE) + sf::Vector3f(getPointLocation().x - (BLOCK_SIZE * 2), getPointLocation().y - (BLOCK_SIZE * 2), 0);
 	if (destLoca != charPoint) {
 		sf::Vector3i& p = sf::Vector3i(destLoca.x - charPoint.x, destLoca.y - charPoint.y, 0);
 		this->move(p.x / 8, p.y / 8, p.z / 8);
@@ -35,8 +35,8 @@ void Character::move(const float x, const float y, const float z) {
 		this->move(x / 2, y / 2, z / 2);
 		this->move(x / 2, y / 2, z / 2);
 	} else {
-		pointTemp = sf::Vector3f(pointLoc.x + x, pointLoc.y + y, pointLoc.z + z);
-		gridTemp = sf::Vector3i(gridLoc);
+		pointTemp = sf::Vector3f(getPointLocation().x + x, getPointLocation().y + y, getPointLocation().z + z);
+		gridTemp = sf::Vector3i(getGridLocation());
 		if (pointTemp.x >= BLOCK_SIZE) {
 			pointTemp.x -= BLOCK_SIZE;
 			gridTemp.x++;
@@ -68,19 +68,19 @@ void Character::move(const float x, const float y, const float z) {
 				}
 			}
 		}
-		if (gridLoc != gridTemp) {
+		if (getGridLocation() != gridTemp) {
 			world.itemsToMove.push_back(this);
-		} else if (pointLoc != pointTemp) {
-			pointLoc = pointTemp;
+		} else if (getPointLocation() != pointTemp) {
+			setPointLocaton(pointTemp);
 		}
-		sf::Vector3i p = cartesianToIsometric((gridLoc.x * BLOCK_SIZE) + pointLoc.x, (gridLoc.y * BLOCK_SIZE) + pointLoc.y, (gridLoc.z * BLOCK_SIZE) + pointLoc.z);
+		sf::Vector3i p = cartesianToIsometric((getGridLocation().x * BLOCK_SIZE) + getPointLocation().x, (getGridLocation().y * BLOCK_SIZE) + getPointLocation().y, (getGridLocation().z * BLOCK_SIZE) + getPointLocation().z);
 		sprite.setPosition(p.x, p.y - BLOCK_SIZE);
 	}
 }
 
 bool Character::hitDetect(const BaseClass& test) {
 	if (test.itemGroup == BLOCK) {
-		if (std::abs((((test.gridLoc.x - gridTemp.x) * BLOCK_SIZE) - pointTemp.x)) <= BLOCK_SIZE || std::abs((((test.gridLoc.y - gridTemp.y) * BLOCK_SIZE) - pointTemp.y)) <= BLOCK_SIZE) {
+		if (std::abs((((test.getGridLocation().x - gridTemp.x) * BLOCK_SIZE) - pointTemp.x)) <= BLOCK_SIZE || std::abs((((test.getGridLocation().y - gridTemp.y) * BLOCK_SIZE) - pointTemp.y)) <= BLOCK_SIZE) {
 			return true;
 		}
 	}
@@ -88,12 +88,12 @@ bool Character::hitDetect(const BaseClass& test) {
 }
 
 void Character::stop() {
-	gridTemp = sf::Vector3i(gridLoc);
-	pointTemp = sf::Vector3f(pointLoc);
+	gridTemp = sf::Vector3i(getGridLocation());
+	pointTemp = sf::Vector3f(getPointLocation());
 }
 
 void Character::draw(sf::RenderWindow& window) {
 	sf::Vector3f mousePosition = sf::Vector3f(isometricToCartesian(window.mapPixelToCoords(sf::Mouse::getPosition(window)), 0));
-	sprite.setTextureRect(sf::IntRect((CHARACTER_WIDTH * ((int) std::floor(((std::atan2(gridLoc.y * BLOCK_SIZE - mousePosition.y, gridLoc.x * BLOCK_SIZE - mousePosition.x) * 180 / M_PI + 517.5) / 360) * NUMBER_OF_PLAYER_ROTATIONS) % 8)), 0, CHARACTER_WIDTH, CHARACTER_HEIGHT));
+	sprite.setTextureRect(sf::IntRect((CHARACTER_WIDTH * ((int) std::floor(((std::atan2(getGridLocation().y * BLOCK_SIZE - mousePosition.y, getGridLocation().x * BLOCK_SIZE - mousePosition.x) * 180 / M_PI + 517.5) / 360) * NUMBER_OF_PLAYER_ROTATIONS) % 8)), 0, CHARACTER_WIDTH, CHARACTER_HEIGHT));
 	BaseClass::draw(window);
 }
