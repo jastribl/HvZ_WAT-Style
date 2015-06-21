@@ -19,8 +19,7 @@ void BaseClass::fly() {}
 void BaseClass::move(float x, float y, float z) {}
 
 void BaseClass::applyMove() {
-	loc.setGrid(tempLoc.getGrid());
-	loc.setPoint(tempLoc.getPoint());
+	loc = Location(tempLoc.getGrid(), tempLoc.getPoint());
 }
 
 void BaseClass::draw(sf::RenderWindow& window) {

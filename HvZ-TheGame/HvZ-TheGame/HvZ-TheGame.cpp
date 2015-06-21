@@ -23,7 +23,7 @@ int main() {
 	Character* character = new Character(worldManager.getCurrentWorld(), textureManager.getTextureFor(CHARACTER, 0), sf::Vector3i(3, 3, 1), sf::Vector3f(0, 0, 0));
 
 	window.setFramerateLimit(60);
-	sf::Clock clock;
+	//sf::Clock clock;
 	//float elapsedTime = 0.0f;
 	int zoomLevel = 0;
 	while (window.isOpen()) {

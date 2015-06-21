@@ -14,6 +14,8 @@ public:
 	void setGrid(const sf::Vector3i& grid);
 	void setPoint(const sf::Vector3f& point);
 
+	void add(float x, float y, float z);
+
 	void addGridX(int x);
 	void addGridY(int y);
 	void addGridZ(int z);

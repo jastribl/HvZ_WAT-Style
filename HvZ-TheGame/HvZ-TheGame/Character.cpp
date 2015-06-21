@@ -8,7 +8,7 @@
 
 Character::Character(World& world, const sf::Texture& texture, const sf::Vector3i& gridLocation, const sf::Vector3f& pointLocation)
 	:BaseClass(world, texture, gridLocation, pointLocation, CHARACTER) {
-	sprite.scale((CHARACTER_WIDTH * 2 * NUMBER_OF_PLAYER_ROTATIONS) / sprite.getLocalBounds().width, (CHARACTER_HEIGHT * 2) / sprite.getLocalBounds().height);
+	sprite.scale((CHARACTER_WIDTH * NUMBER_OF_PLAYER_ROTATIONS * 2) / sprite.getLocalBounds().width, (CHARACTER_HEIGHT * 2) / sprite.getLocalBounds().height);
 	sprite.setTextureRect(sf::IntRect(0, 0, CHARACTER_WIDTH, CHARACTER_HEIGHT));
 	sprite.setOrigin(sprite.getLocalBounds().width / 2, sprite.getLocalBounds().height);
 	this->stop();
@@ -23,8 +23,7 @@ void Character::setDestination(const sf::Vector3f& dest) {
 void Character::fly() {
 	sf::Vector3f charPoint = sf::Vector3f(loc.getGrid() * BLOCK_SIZE) + sf::Vector3f(loc.getPoint().x - (BLOCK_SIZE * 2), loc.getPoint().y - (BLOCK_SIZE * 2), 0);
 	if (destLoca != charPoint) {
-		sf::Vector3i& p = sf::Vector3i(destLoca.x - charPoint.x, destLoca.y - charPoint.y, 0);
-		this->move(p.x / 8, p.y / 8, p.z / 8);
+		this->move((destLoca.x - charPoint.x) / 8, (destLoca.y - charPoint.y) / 8, 0);
 	}
 }
 
@@ -35,29 +34,8 @@ void Character::move(const float x, const float y, const float z) {
 		this->move(x / 2, y / 2, z / 2);
 		this->move(x / 2, y / 2, z / 2);
 	} else {
-		tempLoc.setPoint(sf::Vector3f(loc.getPoint().x + x, loc.getPoint().y + y, loc.getPoint().z + z));
-		tempLoc.setGrid(loc.getGrid());
-		if (tempLoc.getPoint().x >= BLOCK_SIZE) {
-			tempLoc.addPointX(-BLOCK_SIZE);
-			tempLoc.addGridX(1);
-		} else if (tempLoc.getPoint().x < 0) {
-			tempLoc.addPointX(BLOCK_SIZE);
-			tempLoc.addGridX(-1);
-		}
-		if (tempLoc.getPoint().y >= BLOCK_SIZE) {
-			tempLoc.addPointY(-BLOCK_SIZE);
-			tempLoc.addGridY(1);
-		} else if (tempLoc.getPoint().y < 0) {
-			tempLoc.addPointY(BLOCK_SIZE);
-			tempLoc.addGridY(-1);
-		}
-		if (tempLoc.getPoint().z >= BLOCK_SIZE) {
-			tempLoc.addPointZ(-BLOCK_SIZE);
-			tempLoc.addGridZ(1);
-		} else if (tempLoc.getPoint().z < 0) {
-			tempLoc.addPointZ(BLOCK_SIZE);
-			tempLoc.addGridZ(-1);
-		}
+		tempLoc = Location(loc.getGrid(), loc.getPoint());
+		tempLoc.add(x, y, z);
 		for (int i = tempLoc.getGrid().x - 1; i < tempLoc.getGrid().x + 1; i++) {
 			for (int j = tempLoc.getGrid().y - 1; j < tempLoc.getGrid().y + 1; j++) {
 				std::pair <std::multimap<sf::Vector3i, BaseClass*, ByLocation>::iterator, std::multimap<sf::Vector3i, BaseClass*, ByLocation>::iterator> itemsAt = world.getItemsAtGridLocation(sf::Vector3i(i, j, tempLoc.getGrid().z));
