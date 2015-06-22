@@ -10,7 +10,7 @@ BaseClass::BaseClass(World& world, const sf::Texture& texture, const sf::Vector3
 
 BaseClass::~BaseClass() {}
 
-sf::FloatRect& BaseClass::hitBox() {
+sf::FloatRect& BaseClass::screenHitBox() {
 	return sprite.getGlobalBounds();
 }
 

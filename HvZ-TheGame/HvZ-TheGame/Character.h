@@ -8,7 +8,7 @@ private:
 	sf::Vector3f destLoca = sf::Vector3f();
 
 	virtual	void move(const float x, const float y, const float z);
-	bool hitDetect(const BaseClass& test);
+	bool hitDetect(const BaseClass* test);
 	void stop();
 
 public:

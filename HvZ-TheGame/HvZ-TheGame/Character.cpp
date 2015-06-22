@@ -40,7 +40,7 @@ void Character::move(const float x, const float y, const float z) {
 			for (int j = tempLoc.getGrid().y - 1; j < tempLoc.getGrid().y + 1; j++) {
 				std::pair <std::multimap<sf::Vector3i, BaseClass*, ByLocation>::iterator, std::multimap<sf::Vector3i, BaseClass*, ByLocation>::iterator> itemsAt = world.getItemsAtGridLocation(sf::Vector3i(i, j, tempLoc.getGrid().z));
 				for (auto it = itemsAt.first; it != itemsAt.second; ++it) {
-					if (hitDetect(*it->second)) {
+					if (hitDetect(it->second)) {
 						return;
 					}
 				}
@@ -56,9 +56,9 @@ void Character::move(const float x, const float y, const float z) {
 	}
 }
 
-bool Character::hitDetect(const BaseClass& test) {
-	if (test.itemType == BLOCK) {
-		if (std::abs((((test.loc.getGrid().x - tempLoc.getGrid().x) * BLOCK_SIZE) - tempLoc.getPoint().x)) <= BLOCK_SIZE || std::abs((((test.loc.getGrid().y - tempLoc.getGrid().y) * BLOCK_SIZE) - tempLoc.getPoint().y)) <= BLOCK_SIZE) {
+bool Character::hitDetect(const BaseClass* test) {
+	if (test->itemType == BLOCK) {
+		if (std::abs((((test->loc.getGrid().x - tempLoc.getGrid().x) * BLOCK_SIZE) - tempLoc.getPoint().x)) <= BLOCK_SIZE || std::abs((((test->loc.getGrid().y - tempLoc.getGrid().y) * BLOCK_SIZE) - tempLoc.getPoint().y)) <= BLOCK_SIZE) {
 			return true;
 		}
 	}
