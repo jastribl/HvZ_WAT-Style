@@ -7,7 +7,7 @@
 
 Inventory::Inventory(TextureManager& textureManager) {
 	activeIndex = -1;
-	for (int i = 0; i < BOX_NUM; i++) {
+	for (int i = 0; i < BOX_NUM; ++i) {
 		Item* item = new Item(textureManager.getTextureFor(INVENTORY_ITEM, i));
 		item->sprite.setPosition(BOX_ORIGIN_X + (i % BOX_PERROW) * BOX_MOVEMENT_X + BOX_BORDER, BOX_ORIGIN_Y + BOX_MOVEMENT_Y * (i / BOX_PERROW) + BOX_BORDER);
 		inventory.push_back(item);

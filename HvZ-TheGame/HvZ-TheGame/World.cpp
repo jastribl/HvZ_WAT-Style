@@ -34,37 +34,37 @@ void World::removeItemFromWorld(const BaseClass* object) {
 void World::deleteItemFromWorld(const BaseClass* object) {
 	std::pair <std::multimap<sf::Vector3i, BaseClass*, ByLocation>::iterator, std::multimap<sf::Vector3i, BaseClass*, ByLocation>::iterator> items = getItemsAtGridLocation(object->loc.getGrid());
 	for (auto it = items.first; it != items.second; ++it) {
-		if (it->second->loc.getPoint() == object->loc.getPoint()) {
-			deletedItems.push_back(it->second);
-			world.erase(it);
+		if (it->second->loc.getPoint() == object->loc.getPoint() && it->second->itemType == object->itemType) {
+			it->second->needToDelete = true;
 			return;
 		}
 	}
 }
 
-void World::clearDeletedItems() {
-	for (auto it = deletedItems.begin(); it != deletedItems.end(); ++it) {
-		delete *it;
-	}
-	deletedItems.clear();
-}
-
 void World::updateAndDraw(sf::RenderWindow& window) {
 	sf::FloatRect windowRec(window.getView().getCenter() - sf::Vector2f(window.getView().getSize().x / 2, window.getView().getSize().y / 2), window.getView().getSize());
-	for (auto it = world.begin(); it != world.end(); ++it) {
-		BaseClass* item = it->second;
-		if (windowRec.intersects(item->screenHitBox())) {
-			it->second->draw(window);
-		}
-		if (it->second->itemType == CHARACTER) {
-			it->second->fly();
+	for (auto it = world.begin(); it != world.end();) {
+
+		if (it->second->needToDelete) {
+			delete it->second;
+			it = world.erase(it);
+		} else {
+			BaseClass* item = it->second;
+			if (windowRec.intersects(item->screenHitBox())) {
+				item->draw(window);
+			}
+			if (item->itemType == CHARACTER || item->itemType == BULLET) {
+				item->fly();
+			}
+			++it;
 		}
 	}
-	for (int i = 0; i < itemsToMove.size(); i++) {
-		removeItemFromWorld(itemsToMove[i]);
-		itemsToMove[i]->applyMove();
-		add(itemsToMove[i]);
+	for (int i = 0; i < itemsToMove.size(); ++i) {
+		if (itemsToMove[i]) {
+			removeItemFromWorld(itemsToMove[i]);
+			itemsToMove[i]->applyMove();
+			add(itemsToMove[i]);
+		}
 	}
 	itemsToMove.clear();
-	clearDeletedItems();
 }

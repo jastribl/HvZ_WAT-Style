@@ -16,8 +16,6 @@ sf::FloatRect& BaseClass::screenHitBox() {
 
 void BaseClass::fly() {}
 
-void BaseClass::move(float x, float y, float z) {}
-
 void BaseClass::applyMove() {
 	loc = Location(tempLoc);
 }

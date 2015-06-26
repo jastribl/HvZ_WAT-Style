@@ -8,7 +8,6 @@ class World {
 private:
 	std::string name;
 	std::multimap<sf::Vector3i, BaseClass*, ByLocation> world;
-	std::vector<BaseClass*> deletedItems;
 
 public:;
 	   std::vector<BaseClass*> itemsToMove;
@@ -21,6 +20,5 @@ public:;
 	   void add(BaseClass* object);
 	   void removeItemFromWorld(const BaseClass* object);
 	   void deleteItemFromWorld(const BaseClass* object);
-	   void clearDeletedItems();
 	   void updateAndDraw(sf::RenderWindow& window);
 };

@@ -8,9 +8,8 @@ protected:
 	sf::Sprite sprite;
 	World& world;
 
-	virtual void move(const float x, const float y, const float z);
-
 public:
+	bool needToDelete = false;
 	const int itemType;
 	Location loc;
 	Location tempLoc;

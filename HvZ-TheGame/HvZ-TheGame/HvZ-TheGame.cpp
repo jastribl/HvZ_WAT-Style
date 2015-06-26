@@ -5,6 +5,7 @@
 #include "Hud.h"
 #include "World.h"
 #include "Character.h"
+#include "Bullet.h"
 #include <iostream>
 
 //void updateGame() {}
@@ -59,10 +60,14 @@ int main() {
 					break;
 				}
 				case sf::Event::MouseButtonPressed:{
-					if (event.mouseButton.button == sf::Mouse::Left && event.mouseButton.x > SIDEBAR_ORIGIN_X && event.mouseButton.y > SIDEBAR_ORIGIN_Y) {
-						hud.click(event.mouseButton.x, event.mouseButton.y);
-					} else {
-						character->setDestination(sf::Vector3f(isometricToCartesian(window.mapPixelToCoords(sf::Mouse::getPosition(window)), 0)));
+					if (event.mouseButton.button == sf::Mouse::Left) {
+						if (event.mouseButton.x > SIDEBAR_ORIGIN_X && event.mouseButton.y > SIDEBAR_ORIGIN_Y) {
+							hud.click(event.mouseButton.x, event.mouseButton.y);
+						} else {
+							character->setDestination(sf::Vector3f(isometricToCartesian(window.mapPixelToCoords(sf::Mouse::getPosition(window)), 0)));
+						}
+					} else if (event.mouseButton.button == sf::Mouse::Right) {
+						Bullet* bullet = new Bullet(worldManager.getCurrentWorld(), textureManager.getTextureFor(BULLET, 0), character->loc.getGrid(), character->loc.getPoint(), 50, 180);
 					}
 					break;
 				}
@@ -76,14 +81,14 @@ int main() {
 		}
 
 
-		sf::Vector2i mousePositionWindow = sf::Mouse::getPosition(window);
-		if (mousePositionWindow.x > window.getSize().x - 10) {
+		sf::Vector2i mouseWindowPosition = sf::Mouse::getPosition(window);
+		if (mouseWindowPosition.x > window.getSize().x - 10) {
 			worldView.move(20, 0);
-		} else if (mousePositionWindow.x < 10) {
+		} else if (mouseWindowPosition.x < 10) {
 			worldView.move(-20, 0);
-		} else if (mousePositionWindow.y > window.getSize().y - 10) {
+		} else if (mouseWindowPosition.y > window.getSize().y - 10) {
 			worldView.move(0, 20);
-		} else if (mousePositionWindow.y < 10) {
+		} else if (mouseWindowPosition.y < 10) {
 			worldView.move(0, -20);
 		}
 

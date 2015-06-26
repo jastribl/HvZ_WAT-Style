@@ -47,12 +47,15 @@ static const int HALF_BLOCK_SIZE = BLOCK_SIZE / 2;
 static const int CHARACTER_WIDTH = BLOCK_SIZE, CHARACTER_HEIGHT = BLOCK_SIZE * 2;
 static const int NUMBER_OF_PLAYER_ROTATIONS = 8;
 
+//Bullet
+static const int BULLET_SIZE = 10;
+
 //movement settings
 static const float MAX_MOVEMENT_CHECK_THRESHOLD = 10;   //must be less than block size
 
 //Item groups
-static const int NUMBER_OF_BLOCK_TYPES = 9, NUMBER_OF_SPECIAL_TYPES = 6, NUMBER_OF_INVENTORY_ITEMS = 7;
-static const enum ITEM_GROUP { BLOCK, SPECIAL, CHARACTER, INVENTORY_ITEM };
+static const int NUMBER_OF_BLOCK_TYPES = 9, NUMBER_OF_SPECIAL_TYPES = 6, NUMBER_OF_BULLET_TYPES = 1, NUMBER_OF_INVENTORY_ITEMS = 7;
+static const enum ITEM_GROUP { BLOCK, SPECIAL, CHARACTER, BULLET, INVENTORY_ITEM };
 
 //common algorithms
 static sf::Vector3i cartesianToIsometric(const int x, const int y, const int z) {
