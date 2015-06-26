@@ -44,7 +44,6 @@ void World::deleteItemFromWorld(const BaseClass* object) {
 void World::updateAndDraw(sf::RenderWindow& window) {
 	sf::FloatRect windowRec(window.getView().getCenter() - sf::Vector2f(window.getView().getSize().x / 2, window.getView().getSize().y / 2), window.getView().getSize());
 	for (auto it = world.begin(); it != world.end();) {
-
 		if (it->second->needToDelete) {
 			delete it->second;
 			it = world.erase(it);

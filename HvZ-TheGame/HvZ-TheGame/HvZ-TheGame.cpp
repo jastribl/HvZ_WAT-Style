@@ -45,7 +45,7 @@ int main() {
 					window.close();
 					break;
 
-				case sf::Event::MouseWheelMoved: {
+				case sf::Event::MouseWheelMoved:
 					if (event.mouseWheel.delta > 0) {
 						if (zoomLevel > -2) {
 							worldView.zoom(0.9f);
@@ -58,8 +58,8 @@ int main() {
 						}
 					}
 					break;
-				}
-				case sf::Event::MouseButtonPressed:{
+
+				case sf::Event::MouseButtonPressed:
 					if (event.mouseButton.button == sf::Mouse::Left) {
 						if (event.mouseButton.x > SIDEBAR_ORIGIN_X && event.mouseButton.y > SIDEBAR_ORIGIN_Y) {
 							hud.click(event.mouseButton.x, event.mouseButton.y);
@@ -67,16 +67,17 @@ int main() {
 							character->setDestination(sf::Vector3f(isometricToCartesian(window.mapPixelToCoords(sf::Mouse::getPosition(window)), 0)));
 						}
 					} else if (event.mouseButton.button == sf::Mouse::Right) {
-						Bullet* bullet = new Bullet(worldManager.getCurrentWorld(), textureManager.getTextureFor(BULLET, 0), character->loc.getGrid(), character->loc.getPoint(), 50, 180);
+						Location bulletLocation = character->loc;
+						bulletLocation.add(0, 0, HALF_BLOCK_SIZE);
+						Bullet* bullet = new Bullet(worldManager.getCurrentWorld(), textureManager.getTextureFor(BULLET, 0), bulletLocation.getGrid(), bulletLocation.getPoint(), 10, 180);
 					}
 					break;
-				}
-				case sf::Event::MouseButtonReleased:{
+
+				case sf::Event::MouseButtonReleased:
 					if (event.mouseButton.button == sf::Mouse::Left) {
 						hud.release(event.mouseButton.x, event.mouseButton.y);
 					}
 					break;
-				}
 			}
 		}
 

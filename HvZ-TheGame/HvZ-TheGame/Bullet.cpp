@@ -13,6 +13,8 @@ Bullet::Bullet(World& world, const sf::Texture& texture, const sf::Vector3i& gri
 	velocity = sf::Vector2f(speed * std::cos(angle), speed * std::sin(angle));
 	sprite.scale((BULLET_SIZE * 2) / sprite.getLocalBounds().width, (BULLET_SIZE * 2) / sprite.getLocalBounds().height);
 	sprite.setOrigin(sprite.getLocalBounds().width / 2, sprite.getLocalBounds().height);
+	sf::Vector3i p = cartesianToIsometric((loc.getGrid().x * BLOCK_SIZE) + loc.getPoint().x, (loc.getGrid().y * BLOCK_SIZE) + loc.getPoint().y, (loc.getGrid().z * BLOCK_SIZE) + loc.getPoint().z);
+	sprite.setPosition(p.x, p.y - BLOCK_SIZE);
 }
 
 Bullet::~Bullet() {}
@@ -54,8 +56,7 @@ void Bullet::move(const float x, const float y, const float z) {
 bool Bullet::hitDetect(const BaseClass* test) {
 	if (test->itemType == BLOCK) {
 		if (std::abs((((test->loc.getGrid().x - tempLoc.getGrid().x) * BLOCK_SIZE) - tempLoc.getPoint().x)) <= BLOCK_SIZE || std::abs((((test->loc.getGrid().y - tempLoc.getGrid().y) * BLOCK_SIZE) - tempLoc.getPoint().y)) <= BLOCK_SIZE) {
-			BaseClass* thing = this;
-			this->world.deleteItemFromWorld(thing);
+			world.deleteItemFromWorld(this);
 			return true;
 		}
 		//else if (test->itemType == BULLET) {
