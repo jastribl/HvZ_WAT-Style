@@ -3,7 +3,7 @@ class BaseClass;
 #include <string>
 
 typedef std::multimap<sf::Vector3i, BaseClass*, ByLocation> WorldMap;
-typedef std::pair <WorldMap::iterator, WorldMap::iterator> WorldMapRange;
+typedef std::pair<WorldMap::iterator, WorldMap::iterator> WorldMapRange;
 
 class World {
 

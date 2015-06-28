@@ -2,9 +2,6 @@
 #include "BaseClass.h"
 class World;
 
-typedef std::multimap<sf::Vector3i, BaseClass*, ByLocation> WorldMap;
-typedef std::pair <WorldMap::iterator, WorldMap::iterator> WorldMapRange;
-
 class Bullet :public BaseClass {
 
 private:
