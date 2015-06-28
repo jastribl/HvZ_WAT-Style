@@ -1,7 +1,5 @@
 #include "stdafx.h"
 #include "Item.h"
-#include "Constants.h"
-#include <iostream>
 
 Item::Item(const sf::Texture& texture)
 	:sprite(texture) {

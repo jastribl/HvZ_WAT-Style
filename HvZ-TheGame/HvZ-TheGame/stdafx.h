@@ -3,3 +3,5 @@
 
 #include <SFML\Graphics.hpp>
 #include <SFML\Window.hpp>
+#include "Constants.h"
+#include <iostream>

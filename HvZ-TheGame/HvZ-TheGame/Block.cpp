@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "Block.h"
-#include "Constants.h"
 
 Block::Block(World& world, const sf::Texture& texture, const sf::Vector3i& gridLocation, int blockType)
 	:BaseClass(world, texture, gridLocation, sf::Vector3f(0, 0, 0), BLOCK), blockType(blockType) {

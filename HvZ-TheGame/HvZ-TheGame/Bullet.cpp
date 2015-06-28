@@ -1,11 +1,9 @@
 #include "stdafx.h"
 #include "Bullet.h"
 #include "BaseClass.h"
-#include "Constants.h"
 #include "World.h"
 #define _USE_MATH_DEFINES
 #include <math.h>
-#include <iostream>
 
 
 Bullet::Bullet(World& world, const sf::Texture& texture, const sf::Vector3i& gridLocation, const sf::Vector3f& pointLocation, float speed, float angle)

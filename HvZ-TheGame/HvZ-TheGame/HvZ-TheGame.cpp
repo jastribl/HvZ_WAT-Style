@@ -1,12 +1,10 @@
 #include "stdafx.h"
-#include "Constants.h"
 #include "WorldManager.h"
 #include "TextureManager.h"
 #include "Hud.h"
 #include "World.h"
 #include "Character.h"
 #include "Bullet.h"
-#include <iostream>
 #define _USE_MATH_DEFINES
 #include <math.h>
 
@@ -38,7 +36,7 @@ int main() {
 						window.close();
 					} else if (event.key.code == sf::Keyboard::W) {
 						worldManager.getCurrentWorld().removeItemFromWorld(character);
-						worldManager.nextWorld();
+						worldManager.goToNextWorld();
 						worldManager.getCurrentWorld().add(character);
 					}
 					break;
@@ -69,13 +67,6 @@ int main() {
 							character->setDestination(sf::Vector3f(isometricToCartesian(window.mapPixelToCoords(sf::Mouse::getPosition(window)), 0)));
 						}
 					}
-					//else if (event.mouseButton.button == sf::Mouse::Right) {
-					//	Location bulletLocation = character->loc;
-					//	bulletLocation.add(0, 0, HALF_BLOCK_SIZE);
-					//	sf::Vector3f mousePosition = sf::Vector3f(isometricToCartesian(window.mapPixelToCoords(sf::Mouse::getPosition(window)), 0));
-					//	float angle = (std::atan2(((bulletLocation.getGrid().y * -BLOCK_SIZE) - bulletLocation.getPoint().y) + mousePosition.y, (bulletLocation.getGrid().x * -BLOCK_SIZE - bulletLocation.getPoint().x) + mousePosition.x));
-					//	BaseClass* bullet = new Bullet(worldManager.getCurrentWorld(), textureManager.getTextureFor(BULLET, 0), bulletLocation.getGrid(), bulletLocation.getPoint(), 100, angle);
-					//}
 					break;
 
 				case sf::Event::MouseButtonReleased:

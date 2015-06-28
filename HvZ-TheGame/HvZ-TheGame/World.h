@@ -1,12 +1,11 @@
 #pragma once
 class BaseClass;
-#include "Constants.h"
 #include <string>
 
 class World {
 
 private:
-	std::string name;
+	std::string name = "";
 	std::multimap<sf::Vector3i, BaseClass*, ByLocation> world;
 
 public:;

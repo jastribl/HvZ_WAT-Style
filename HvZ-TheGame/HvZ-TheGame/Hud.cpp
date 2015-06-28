@@ -1,10 +1,8 @@
 #include "stdafx.h"
 #include "Hud.h"
-#include "Constants.h"
 #include "Inventory.h"
 #include "TextureManager.h"
 #include <ctime>
-#include <iostream>
 
 Hud::Hud(TextureManager& textureManager)
 	: inventory(textureManager) {

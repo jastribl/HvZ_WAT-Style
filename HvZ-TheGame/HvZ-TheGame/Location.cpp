@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "Location.h"
-#include "Constants.h"
 
 Location::Location() :grid(sf::Vector3i()), point(sf::Vector3f()) {}
 

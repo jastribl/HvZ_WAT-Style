@@ -2,8 +2,6 @@
 #include "Inventory.h"
 #include "Item.h"
 #include "TextureManager.h"
-#include "Constants.h"
-#include <iostream>
 
 Inventory::Inventory(TextureManager& textureManager) {
 	activeIndex = -1;

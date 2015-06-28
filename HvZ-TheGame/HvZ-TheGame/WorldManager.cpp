@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "WorldManager.h"
 #include "TextureManager.h"
-#include "World.h"
 #include "Block.h"
 #include <fstream>
 
@@ -9,7 +8,7 @@ WorldManager::WorldManager(TextureManager& textureManager) {
 	std::ifstream  worldsReader("Resources/Worlds/Worlds.Worlds");
 	std::string worldName;
 	while (worldsReader >> worldName) {
-		World* world = new World(worldName);
+		World world = World(worldName);
 		std::ifstream  worldReader("Resources/Worlds/" + worldName + ".World");
 		int numberOfLevels;
 		worldReader >> numberOfLevels;
@@ -19,10 +18,10 @@ WorldManager::WorldManager(TextureManager& textureManager) {
 			for (int j = 0; j < numberOfBlocks; j++) {
 				int group, type, x, y;
 				worldReader >> group >> type >> x >> y;
-				BaseClass* block = new Block(*world, textureManager.getTextureFor(group, type), sf::Vector3i(x, y, z), type);
+				BaseClass* block = new Block(world, textureManager.getTextureFor(group, type), sf::Vector3i(x, y, z), type);
 			}
 		}
-		worlds[worldName] = world;
+		worlds.insert(std::make_pair(worldName, world));
 	}
 	currentWorld = worlds.begin()->first;
 }
@@ -30,11 +29,11 @@ WorldManager::WorldManager(TextureManager& textureManager) {
 WorldManager::~WorldManager() {}
 
 World& WorldManager::getCurrentWorld() {
-	return *(worlds.find(currentWorld)->second);
+	return worlds.find(currentWorld)->second;
 }
 
-void WorldManager::nextWorld() {
-	std::map < std::string, World* >::iterator it = worlds.find(currentWorld);
+void WorldManager::goToNextWorld() {
+	auto it = worlds.find(currentWorld);
 	if (it == std::prev(worlds.end())) {
 		currentWorld = worlds.begin()->first;
 	} else {

@@ -1,13 +1,13 @@
 #pragma once
-class World;
 class TextureManager;
+#include "World.h"
 #include <map>
 #include <string>
 
 class WorldManager {
 
 private:
-	std::map < std::string, World* > worlds;
+	std::map <std::string, World> worlds;
 	std::string currentWorld;
 
 public:
@@ -15,5 +15,5 @@ public:
 	~WorldManager();
 
 	World& getCurrentWorld();
-	void nextWorld();
+	void goToNextWorld();
 };

@@ -1,8 +1,6 @@
 #include "stdafx.h"
 #include "Character.h"
-#include "Constants.h"
 #include "World.h"
-#include <iostream>
 #define _USE_MATH_DEFINES
 #include <math.h>
 

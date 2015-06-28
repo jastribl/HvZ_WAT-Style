@@ -1,12 +1,8 @@
 #include "stdafx.h"
 #include "World.h"
 #include "BaseClass.h"
-#include "Constants.h"
-#include <iostream>
-#include <vector>
 
-
-World::World(std::string name) :name(name) {}
+World::World(std::string name) : name(name) {}
 
 World::~World() {}
 
