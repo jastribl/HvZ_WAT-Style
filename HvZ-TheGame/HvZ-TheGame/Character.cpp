@@ -42,7 +42,7 @@ void Character::move(const float x, const float y, const float z) {
 		for (int i = tempLoc.getGrid().x - 1; i < tempLoc.getGrid().x + 1; ++i) {
 			for (int j = tempLoc.getGrid().y - 1; j < tempLoc.getGrid().y + 1; j++) {
 				std::pair <std::multimap<sf::Vector3i, BaseClass*, ByLocation>::iterator, std::multimap<sf::Vector3i, BaseClass*, ByLocation>::iterator> itemsAt = world.getItemsAtGridLocation(sf::Vector3i(i, j, tempLoc.getGrid().z));
-				for (auto it = itemsAt.first; it != itemsAt.second; ++it) {
+				for (auto& it = itemsAt.first; it != itemsAt.second; ++it) {
 					if (hitDetect(it->second)) {
 						return;
 					}

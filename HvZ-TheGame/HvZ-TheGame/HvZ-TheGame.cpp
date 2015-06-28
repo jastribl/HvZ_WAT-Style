@@ -83,7 +83,7 @@ int main() {
 			bulletLocation.add(0, 0, HALF_BLOCK_SIZE);
 			sf::Vector3f mousePosition = sf::Vector3f(isometricToCartesian(window.mapPixelToCoords(sf::Mouse::getPosition(window)), 0));
 			float angle = (std::atan2(((bulletLocation.getGrid().y * -BLOCK_SIZE) - bulletLocation.getPoint().y) + mousePosition.y, (bulletLocation.getGrid().x * -BLOCK_SIZE - bulletLocation.getPoint().x) + mousePosition.x));
-			BaseClass* bullet = new Bullet(worldManager.getCurrentWorld(), textureManager.getTextureFor(BULLET, 0), bulletLocation.getGrid(), bulletLocation.getPoint(), 20, angle);
+			BaseClass* bullet = new Bullet(worldManager.getCurrentWorld(), textureManager.getTextureFor(BULLET, 0), bulletLocation.getGrid(), bulletLocation.getPoint(), 100, angle);
 		}
 
 		sf::Vector2i mouseWindowPosition = sf::Mouse::getPosition(window);
@@ -91,7 +91,8 @@ int main() {
 			worldView.move(20, 0);
 		} else if (mouseWindowPosition.x < 10) {
 			worldView.move(-20, 0);
-		} else if (mouseWindowPosition.y > window.getSize().y - 10) {
+		}
+		if (mouseWindowPosition.y > window.getSize().y - 10) {
 			worldView.move(0, 20);
 		} else if (mouseWindowPosition.y < 10) {
 			worldView.move(0, -20);

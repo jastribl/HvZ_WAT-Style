@@ -6,12 +6,12 @@ World::World(std::string name) : name(name) {}
 
 World::~World() {}
 
-bool World::itemsExistAtGridLocation(const sf::Vector3i& point) const {
-	return world.find(point) != world.end();
+bool World::itemsExistAtGridLocation(const sf::Vector3i& grid) const {
+	return world.find(grid) != world.end();
 }
 
-WorldMapRange World::getItemsAtGridLocation(const sf::Vector3i& point) {
-	return world.equal_range(point);
+WorldMapRange World::getItemsAtGridLocation(const sf::Vector3i& grid) {
+	return world.equal_range(grid);
 }
 
 void World::add(BaseClass* object) {

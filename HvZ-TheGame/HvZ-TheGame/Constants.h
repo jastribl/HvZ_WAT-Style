@@ -1,4 +1,5 @@
 #pragma once
+#include "stdafx.h"
 
 static const int SCREEN_SIZE_X = 1920;
 static const int SCREEN_SIZE_Y = 1080;
@@ -105,3 +106,7 @@ struct ByLocation {
 		//}
 	}
 };
+
+static void print(std::string string) {
+	std::cout << string << std::endl;
+}

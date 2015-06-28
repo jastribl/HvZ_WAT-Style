@@ -40,7 +40,7 @@ void Bullet::move(const float x, const float y, const float z) {
 		for (int i = tempLoc.getGrid().x - 1; i < tempLoc.getGrid().x + 1; ++i) {
 			for (int j = tempLoc.getGrid().y - 1; j < tempLoc.getGrid().y + 1; j++) {
 				WorldMapRange itemsAt = world.getItemsAtGridLocation(sf::Vector3i(i, j, tempLoc.getGrid().z));
-				for (auto it = itemsAt.first; it != itemsAt.second; ++it) {
+				for (auto& it = itemsAt.first; it != itemsAt.second; ++it) {
 					if (hitDetect(it->second)) {
 						return;
 					}
@@ -56,12 +56,13 @@ bool Bullet::hitDetect(const BaseClass* test) {
 			needsToBeDeleted = true;
 			return true;
 		}
-		//else if (test->itemType == BULLET) {
-		//not sure, maybe delete both
-		//}
-		//else if (test->itemType == CHARACTER) {
-		//	//maybe nothing? (need to have a bullet owner)
-		//}
-	}
+	} 
+	//else if (test->itemType == BULLET) {
+	//	needsToBeDeleted = true;
+	//	test->needsToBeDeleted = true;
+	//}
+	//else if (test->itemType == CHARACTER) {
+	//	//maybe nothing? (need to have a bullet owner)
+	//}
 	return false;
 }
