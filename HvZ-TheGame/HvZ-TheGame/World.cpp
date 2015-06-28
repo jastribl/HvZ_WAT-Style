@@ -33,7 +33,6 @@ void World::removeItemFromWorld(const BaseClass* object) {
 }
 
 void World::updateAndDraw(sf::RenderWindow& window) {
-	std::vector <BaseClass*> things;
 	sf::FloatRect windowRec(window.getView().getCenter() - sf::Vector2f(window.getView().getSize().x / 2, window.getView().getSize().y / 2), window.getView().getSize());
 	auto& it = world.begin();
 	while (it != world.end()) {
@@ -57,5 +56,4 @@ void World::updateAndDraw(sf::RenderWindow& window) {
 		add(itemsToMove[i]);
 	}
 	itemsToMove.clear();
-	std::cout << things.size() << std::endl;
 }
