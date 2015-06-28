@@ -52,11 +52,11 @@ void Bullet::move(const float x, const float y, const float z) {
 
 bool Bullet::hitDetect(const BaseClass* test) {
 	if (test->itemType == BLOCK) {
-		if (std::abs(test->loc.getAbsoluteLocationX() - tempLoc.getAbsoluteLocationX()) <= BLOCK_SIZE || std::abs(test->loc.getAbsoluteLocationY() - tempLoc.getAbsoluteLocationY()) <= BLOCK_SIZE) {
+		if (std::abs(test->loc.getAbsoluteLocationX() - tempLoc.getAbsoluteLocationX()) <= BLOCK_SIZE && std::abs(test->loc.getAbsoluteLocationY() - tempLoc.getAbsoluteLocationY()) <= BLOCK_SIZE) {
 			needsToBeDeleted = true;
 			return true;
 		}
-	} 
+	}
 	//else if (test->itemType == BULLET) {
 	//	needsToBeDeleted = true;
 	//	test->needsToBeDeleted = true;
