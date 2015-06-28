@@ -38,32 +38,25 @@ void World::updateAndDraw(sf::RenderWindow& window) {
 	auto& it = world.begin();
 	while (it != world.end()) {
 		BaseClass* item = it->second;
-		if (item) {
-			if (item->needsToBeDeleted) {
-				it = world.erase(it);
-				delete item;
-				item = NULL;
-			} else {
-				if (windowRec.intersects(item->screenHitBox())) {
-					item->draw(window);
-				}
-				if (item->itemType == CHARACTER || item->itemType == BULLET) {
-					item->fly();
-				}
-				++it;
-			}
+		if (item->needsToBeDeleted) {
+			it = world.erase(it);
+			things.push_back(item);
+			delete item;
 		} else {
-			std::cout << "bad up" << std::endl;
+			if (windowRec.intersects(item->screenHitBox())) {
+				item->draw(window);
+			}
+			if (item->itemType == CHARACTER || item->itemType == BULLET) {
+				item->fly();
+			}
+			++it;
 		}
 	}
 	for (int i = 0; i < itemsToMove.size(); ++i) {
-		if (itemsToMove[i]) {
-			removeItemFromWorld(itemsToMove[i]);
-			itemsToMove[i]->applyMove();
-			add(itemsToMove[i]);
-		} else {
-			std::cout << "bad down" << std::endl;
-		}
+		removeItemFromWorld(itemsToMove[i]);
+		itemsToMove[i]->applyMove();
+		add(itemsToMove[i]);
 	}
 	itemsToMove.clear();
+	std::cout << things.size() << std::endl;
 }

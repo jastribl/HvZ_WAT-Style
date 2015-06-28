@@ -8,6 +8,7 @@ class World {
 private:
 	std::string name;
 	std::multimap<sf::Vector3i, BaseClass*, ByLocation> world;
+	std::vector < BaseClass*> things;
 
 public:;
 	   std::vector<BaseClass*> itemsToMove;
