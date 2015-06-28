@@ -10,7 +10,7 @@ bool World::itemsExistAtGridLocation(const sf::Vector3i& point) const {
 	return world.find(point) != world.end();
 }
 
-std::pair <std::multimap<sf::Vector3i, BaseClass*, ByLocation>::iterator, std::multimap<sf::Vector3i, BaseClass*, ByLocation>::iterator> World::getItemsAtGridLocation(const sf::Vector3i& point) {
+WorldMapRange World::getItemsAtGridLocation(const sf::Vector3i& point) {
 	return world.equal_range(point);
 }
 
@@ -19,7 +19,7 @@ void World::add(BaseClass* object) {
 }
 
 void World::removeItemFromWorld(const BaseClass* object) {
-	std::pair <std::multimap<sf::Vector3i, BaseClass*, ByLocation>::iterator, std::multimap<sf::Vector3i, BaseClass*, ByLocation>::iterator> items = getItemsAtGridLocation(object->loc.getGrid());
+	WorldMapRange items = getItemsAtGridLocation(object->loc.getGrid());
 	for (auto& it = items.first; it != items.second; ++it) {
 		if (it->second->loc.getPoint() == object->loc.getPoint()) {
 			world.erase(it);
