@@ -49,3 +49,19 @@ void Location::add(const float x, const float y, const float z) {
 		grid.z--;
 	}
 }
+
+int Location::getAbsoluteLocationX() const {
+	return (grid.x * BLOCK_SIZE) + point.x;
+}
+
+int Location::getAbsoluteLocationY() const {
+	return (grid.y * BLOCK_SIZE) + point.y;
+}
+
+int Location::getAbsoluteLocationZ() const {
+	return (grid.z * BLOCK_SIZE) + point.z;
+}
+
+sf::Vector3i& Location::getAbsoluteLocation() const {
+	return sf::Vector3i(getAbsoluteLocationX(), getAbsoluteLocationY(), getAbsoluteLocationZ());
+}

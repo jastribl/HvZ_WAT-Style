@@ -15,4 +15,8 @@ public:
 	void setGrid(const sf::Vector3i& grid);
 	void setPoint(const sf::Vector3f& point);
 	void add(const float x, const float y, const float z);
+	int getAbsoluteLocationX() const;
+	int getAbsoluteLocationY() const;
+	int getAbsoluteLocationZ() const;
+	sf::Vector3i& getAbsoluteLocation() const;
 };

@@ -5,7 +5,7 @@ class World;
 class Character :public BaseClass {
 
 private:
-	sf::Vector3f destination = sf::Vector3f();
+	sf::Vector3i destination = sf::Vector3i();
 
 	void move(const float x, const float y, const float z);
 	bool hitDetect(const BaseClass* test);

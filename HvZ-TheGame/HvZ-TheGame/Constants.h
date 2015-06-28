@@ -62,6 +62,11 @@ static sf::Vector3i cartesianToIsometric(const int x, const int y, const int z) 
 	return sf::Vector3i(x - y, ((x + y) / 2) - z, z);
 }
 
+template <typename T>
+static sf::Vector3i cartesianToIsometric(T const& p) {
+	return cartesianToIsometric(p.x, p.y, p.z);
+}
+
 static sf::Vector3i isometricToCartesian(const int x, const int y, const int z) {
 	return sf::Vector3i((2 * y + x) / 2, (2 * y - x) / 2, z);
 }
