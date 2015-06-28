@@ -21,17 +21,24 @@ Bullet::~Bullet() {}
 
 
 void Bullet::fly() {
-	this->move(velocity.x, velocity.y, 0);
+	stop();
+	move(velocity.x, velocity.y, 0);
+	if (loc.getGrid() != tempLoc.getGrid()) {
+		world.itemsToMove.push_back(this);
+	} else if (loc.getPoint() != tempLoc.getPoint()) {
+		loc.setPoint(tempLoc.getPoint());
+	}
+	sf::Vector3i p = cartesianToIsometric((loc.getGrid().x * BLOCK_SIZE) + loc.getPoint().x, (loc.getGrid().y * BLOCK_SIZE) + loc.getPoint().y, (loc.getGrid().z * BLOCK_SIZE) + loc.getPoint().z);
+	sprite.setPosition(p.x, p.y - BLOCK_SIZE);
 }
 
 void Bullet::move(const float x, const float y, const float z) {
 	if (x == 0 && y == 0 && z == 0) {
 		return;
 	} else if ((std::pow(std::abs(x), 2) + std::pow(std::abs(y), 2) + std::pow(std::abs(z), 2)) > std::pow(MAX_MOVEMENT_CHECK_THRESHOLD, 2)) {
-		this->move(x / 2, y / 2, z / 2);
-		this->move(x / 2, y / 2, z / 2);
+		move(x / 2, y / 2, z / 2);
+		move(x / 2, y / 2, z / 2);
 	} else {
-		tempLoc = Location(loc);
 		tempLoc.add(x, y, z);
 		for (int i = tempLoc.getGrid().x - 1; i < tempLoc.getGrid().x + 1; ++i) {
 			for (int j = tempLoc.getGrid().y - 1; j < tempLoc.getGrid().y + 1; j++) {
@@ -43,13 +50,6 @@ void Bullet::move(const float x, const float y, const float z) {
 				}
 			}
 		}
-		if (loc.getGrid() != tempLoc.getGrid()) {
-			world.itemsToMove.push_back(this);
-		} else if (loc.getPoint() != tempLoc.getPoint()) {
-			loc.setPoint(tempLoc.getPoint());
-		}
-		sf::Vector3i p = cartesianToIsometric((loc.getGrid().x * BLOCK_SIZE) + loc.getPoint().x, (loc.getGrid().y * BLOCK_SIZE) + loc.getPoint().y, (loc.getGrid().z * BLOCK_SIZE) + loc.getPoint().z);
-		sprite.setPosition(p.x, p.y - BLOCK_SIZE);
 	}
 }
 

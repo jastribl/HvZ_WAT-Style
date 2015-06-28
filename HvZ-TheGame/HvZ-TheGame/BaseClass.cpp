@@ -20,6 +20,9 @@ void BaseClass::fly() {}
 void BaseClass::applyMove() {
 	loc = Location(tempLoc);
 }
+void BaseClass::stop() {
+	tempLoc = Location(loc);
+}
 
 void BaseClass::draw(sf::RenderWindow& window) {
 	window.draw(sprite);

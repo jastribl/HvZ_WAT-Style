@@ -20,5 +20,6 @@ public:
 	sf::FloatRect& screenHitBox();
 	virtual void fly();
 	void applyMove();
+	void stop();
 	virtual void draw(sf::RenderWindow& window);
 };
