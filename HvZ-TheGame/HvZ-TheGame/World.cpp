@@ -3,6 +3,7 @@
 #include "BaseClass.h"
 #include "Constants.h"
 #include <iostream>
+#include <vector>
 
 
 World::World(std::string name) :name(name) {}
@@ -23,7 +24,7 @@ void World::add(BaseClass* object) {
 
 void World::removeItemFromWorld(const BaseClass* object) {
 	std::pair <std::multimap<sf::Vector3i, BaseClass*, ByLocation>::iterator, std::multimap<sf::Vector3i, BaseClass*, ByLocation>::iterator> items = getItemsAtGridLocation(object->loc.getGrid());
-	for (auto it = items.first; it != items.second; ++it) {
+	for (auto& it = items.first; it != items.second; ++it) {
 		if (it->second->loc.getPoint() == object->loc.getPoint()) {
 			world.erase(it);
 			return;
@@ -31,31 +32,28 @@ void World::removeItemFromWorld(const BaseClass* object) {
 	}
 }
 
-void World::deleteItemFromWorld(const BaseClass* object) {
-	std::pair <std::multimap<sf::Vector3i, BaseClass*, ByLocation>::iterator, std::multimap<sf::Vector3i, BaseClass*, ByLocation>::iterator> items = getItemsAtGridLocation(object->loc.getGrid());
-	for (auto it = items.first; it != items.second; ++it) {
-		if (it->second->loc.getPoint() == object->loc.getPoint() && it->second->itemType == object->itemType) {
-			it->second->needToDelete = true;
-			return;
-		}
-	}
-}
-
 void World::updateAndDraw(sf::RenderWindow& window) {
+	std::vector <BaseClass*> things;
 	sf::FloatRect windowRec(window.getView().getCenter() - sf::Vector2f(window.getView().getSize().x / 2, window.getView().getSize().y / 2), window.getView().getSize());
-	for (auto it = world.begin(); it != world.end();) {
-		if (it->second->needToDelete) {
-			delete it->second;
-			it = world.erase(it);
+	auto& it = world.begin();
+	while (it != world.end()) {
+		BaseClass* item = it->second;
+		if (item) {
+			if (item->needsToBeDeleted) {
+				it = world.erase(it);
+				delete item;
+				item = NULL;
+			} else {
+				if (windowRec.intersects(item->screenHitBox())) {
+					item->draw(window);
+				}
+				if (item->itemType == CHARACTER || item->itemType == BULLET) {
+					item->fly();
+				}
+				++it;
+			}
 		} else {
-			BaseClass* item = it->second;
-			if (windowRec.intersects(item->screenHitBox())) {
-				item->draw(window);
-			}
-			if (item->itemType == CHARACTER || item->itemType == BULLET) {
-				item->fly();
-			}
-			++it;
+			std::cout << "bad up" << std::endl;
 		}
 	}
 	for (int i = 0; i < itemsToMove.size(); ++i) {
@@ -63,6 +61,8 @@ void World::updateAndDraw(sf::RenderWindow& window) {
 			removeItemFromWorld(itemsToMove[i]);
 			itemsToMove[i]->applyMove();
 			add(itemsToMove[i]);
+		} else {
+			std::cout << "bad down" << std::endl;
 		}
 	}
 	itemsToMove.clear();

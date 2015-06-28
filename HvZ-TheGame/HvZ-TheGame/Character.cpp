@@ -64,10 +64,6 @@ bool Character::hitDetect(const BaseClass* test) {
 	return false;
 }
 
-void Character::fireBullet() {
-	//implement
-}
-
 void Character::draw(sf::RenderWindow& window) {
 	sf::Vector3f mousePosition = sf::Vector3f(isometricToCartesian(window.mapPixelToCoords(sf::Mouse::getPosition(window)), 0));
 	sprite.setTextureRect(sf::IntRect((CHARACTER_WIDTH * ((int) std::floor(((std::atan2(loc.getGrid().y * BLOCK_SIZE - mousePosition.y, loc.getGrid().x * BLOCK_SIZE - mousePosition.x) * 180 / M_PI + 517.5) / 360) * NUMBER_OF_PLAYER_ROTATIONS) % 8)), 0, CHARACTER_WIDTH, CHARACTER_HEIGHT));

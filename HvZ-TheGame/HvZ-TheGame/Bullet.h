@@ -13,7 +13,7 @@ private:
 
 public:
 	Bullet(World& world, const sf::Texture& texture, const sf::Vector3i& gridLocation, const sf::Vector3f& pointLocation, float speed, float angle);
-	~Bullet();
+	virtual ~Bullet();
 
 	virtual void fly();
 };

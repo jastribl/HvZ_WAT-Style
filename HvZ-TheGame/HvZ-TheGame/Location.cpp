@@ -24,7 +24,7 @@ void Location::setPoint(const sf::Vector3f& point) {
 	this->point = sf::Vector3f(point);
 }
 
-void Location::add(float x, float y, float z) {
+void Location::add(const float x, const float y, const float z) {
 	point.x += x;
 	point.y += y;
 	point.z += z;

@@ -12,10 +12,9 @@ private:
 
 public:
 	Character(World& world, const sf::Texture& texture, const sf::Vector3i& grid, const sf::Vector3f& point);
-	~Character();
+	virtual ~Character();
 
 	void setDestination(const sf::Vector3f& dest);
 	virtual void fly();
-	void fireBullet();
 	virtual void draw(sf::RenderWindow& window);
 };

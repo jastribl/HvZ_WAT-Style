@@ -8,5 +8,5 @@ public:
 	const int blockType;
 
 	Block(World& world, const sf::Texture& texture, const sf::Vector3i& gridLocation, int blockType);
-	~Block();
+	virtual ~Block();
 };

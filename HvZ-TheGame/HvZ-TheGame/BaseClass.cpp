@@ -2,6 +2,7 @@
 #include "BaseClass.h"
 #include "Location.h"
 #include "World.h"
+#include <iostream>
 
 BaseClass::BaseClass(World& world, const sf::Texture& texture, const sf::Vector3i& grid, const sf::Vector3f& point, int itemGroup)
 	:world(world), sprite(texture), loc(grid, point), tempLoc(loc), itemType(itemGroup) {

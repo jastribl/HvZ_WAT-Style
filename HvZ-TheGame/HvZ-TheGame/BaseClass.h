@@ -9,13 +9,13 @@ protected:
 	World& world;
 
 public:
-	bool needToDelete = false;
+	bool needsToBeDeleted = false;
 	const int itemType;
 	Location loc;
 	Location tempLoc;
 
 	BaseClass(World& world, const sf::Texture& texture, const sf::Vector3i& grid, const sf::Vector3f& point, int itemGroup);
-	~BaseClass();
+	virtual ~BaseClass();
 
 	sf::FloatRect& screenHitBox();
 	virtual void fly();

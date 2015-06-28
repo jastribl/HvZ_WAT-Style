@@ -7,6 +7,8 @@
 #include "Character.h"
 #include "Bullet.h"
 #include <iostream>
+#define _USE_MATH_DEFINES
+#include <math.h>
 
 //void updateGame() {}
 
@@ -66,11 +68,14 @@ int main() {
 						} else {
 							character->setDestination(sf::Vector3f(isometricToCartesian(window.mapPixelToCoords(sf::Mouse::getPosition(window)), 0)));
 						}
-					} else if (event.mouseButton.button == sf::Mouse::Right) {
-						Location bulletLocation = character->loc;
-						bulletLocation.add(0, 0, HALF_BLOCK_SIZE);
-						Bullet* bullet = new Bullet(worldManager.getCurrentWorld(), textureManager.getTextureFor(BULLET, 0), bulletLocation.getGrid(), bulletLocation.getPoint(), 10, 180);
 					}
+					//else if (event.mouseButton.button == sf::Mouse::Right) {
+					//	Location bulletLocation = character->loc;
+					//	bulletLocation.add(0, 0, HALF_BLOCK_SIZE);
+					//	sf::Vector3f mousePosition = sf::Vector3f(isometricToCartesian(window.mapPixelToCoords(sf::Mouse::getPosition(window)), 0));
+					//	float angle = (std::atan2(((bulletLocation.getGrid().y * -BLOCK_SIZE) - bulletLocation.getPoint().y) + mousePosition.y, (bulletLocation.getGrid().x * -BLOCK_SIZE - bulletLocation.getPoint().x) + mousePosition.x));
+					//	BaseClass* bullet = new Bullet(worldManager.getCurrentWorld(), textureManager.getTextureFor(BULLET, 0), bulletLocation.getGrid(), bulletLocation.getPoint(), 100, angle);
+					//}
 					break;
 
 				case sf::Event::MouseButtonReleased:
@@ -81,6 +86,14 @@ int main() {
 			}
 		}
 
+
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
+			Location bulletLocation = character->loc;
+			bulletLocation.add(0, 0, HALF_BLOCK_SIZE);
+			sf::Vector3f mousePosition = sf::Vector3f(isometricToCartesian(window.mapPixelToCoords(sf::Mouse::getPosition(window)), 0));
+			float angle = (std::atan2(((bulletLocation.getGrid().y * -BLOCK_SIZE) - bulletLocation.getPoint().y) + mousePosition.y, (bulletLocation.getGrid().x * -BLOCK_SIZE - bulletLocation.getPoint().x) + mousePosition.x));
+			BaseClass* bullet = new Bullet(worldManager.getCurrentWorld(), textureManager.getTextureFor(BULLET, 0), bulletLocation.getGrid(), bulletLocation.getPoint(), 20, angle);
+		}
 
 		sf::Vector2i mouseWindowPosition = sf::Mouse::getPosition(window);
 		if (mouseWindowPosition.x > window.getSize().x - 10) {

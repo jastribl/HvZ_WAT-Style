@@ -56,12 +56,13 @@ void Bullet::move(const float x, const float y, const float z) {
 bool Bullet::hitDetect(const BaseClass* test) {
 	if (test->itemType == BLOCK) {
 		if (std::abs((((test->loc.getGrid().x - tempLoc.getGrid().x) * BLOCK_SIZE) - tempLoc.getPoint().x)) <= BLOCK_SIZE || std::abs((((test->loc.getGrid().y - tempLoc.getGrid().y) * BLOCK_SIZE) - tempLoc.getPoint().y)) <= BLOCK_SIZE) {
-			world.deleteItemFromWorld(this);
+			needsToBeDeleted = true;
 			return true;
 		}
 		//else if (test->itemType == BULLET) {
-		//	//not sure, kill both?
-		//} else if (test->itemType == CHARACTER) {
+		//not sure, maybe delete both
+		//}
+		//else if (test->itemType == CHARACTER) {
 		//	//maybe nothing? (need to have a bullet owner)
 		//}
 	}
