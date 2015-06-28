@@ -19,7 +19,7 @@ std::pair <std::multimap<sf::Vector3i, BaseClass*, ByLocation>::iterator, std::m
 }
 
 void World::add(BaseClass* object) {
-	world.insert({object->loc.getGrid(), object});
+	world.insert(std::make_pair(object->loc.getGrid(), object));
 }
 
 void World::removeItemFromWorld(const BaseClass* object) {
