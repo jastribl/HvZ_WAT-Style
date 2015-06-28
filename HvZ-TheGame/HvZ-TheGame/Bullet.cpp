@@ -11,12 +11,15 @@ Bullet::Bullet(World& world, const sf::Texture& texture, const sf::Vector3i& gri
 	velocity = sf::Vector2f(speed * std::cos(angle), speed * std::sin(angle));
 	sprite.scale((BULLET_SIZE * 2) / sprite.getLocalBounds().width, (BULLET_SIZE * 2) / sprite.getLocalBounds().height);
 	sprite.setOrigin(sprite.getLocalBounds().width / 2, sprite.getLocalBounds().height);
-	sf::Vector3i p = cartesianToIsometric(loc.getAbsoluteLocation());
-	sprite.setPosition(p.x, p.y - BLOCK_SIZE);
+	updateSprite();
 }
 
 Bullet::~Bullet() {}
 
+void Bullet::updateSprite() {
+	sf::Vector3i p = cartesianToIsometric(loc.getAbsoluteLocation());
+	sprite.setPosition(p.x, p.y - BLOCK_SIZE);
+}
 
 void Bullet::fly() {
 	move(velocity.x, velocity.y, 0);
@@ -25,8 +28,7 @@ void Bullet::fly() {
 	} else if (loc.getPoint() != tempLoc.getPoint()) {
 		loc.setPoint(tempLoc.getPoint());
 	}
-	sf::Vector3i p = cartesianToIsometric(loc.getAbsoluteLocation());
-	sprite.setPosition(p.x, p.y - BLOCK_SIZE);
+	updateSprite();
 }
 
 void Bullet::move(const float x, const float y, const float z) {
@@ -48,6 +50,11 @@ void Bullet::move(const float x, const float y, const float z) {
 			}
 		}
 	}
+}
+
+void Bullet::applyMove() {
+	BaseClass::applyMove();
+	updateSprite();
 }
 
 bool Bullet::hitDetect(const BaseClass* test) {

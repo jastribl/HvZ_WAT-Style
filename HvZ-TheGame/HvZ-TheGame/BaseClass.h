@@ -7,6 +7,7 @@ class BaseClass {
 protected:
 	sf::Sprite sprite;
 	World& world;
+	virtual void updateSprite();
 
 public:
 	bool needsToBeDeleted = false;
@@ -19,7 +20,7 @@ public:
 
 	sf::FloatRect& screenHitBox();
 	virtual void fly();
-	void applyMove();
+	virtual void applyMove();
 	void stop();
 	virtual void draw(sf::RenderWindow& window);
 };

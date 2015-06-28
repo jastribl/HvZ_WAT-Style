@@ -107,6 +107,7 @@ struct ByLocation {
 	}
 };
 
-static void print(std::string string) {
+template <typename T>
+static void print(T string) {
 	std::cout << string << std::endl;
 }

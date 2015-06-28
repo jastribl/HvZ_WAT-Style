@@ -14,11 +14,14 @@ sf::FloatRect& BaseClass::screenHitBox() {
 	return sprite.getGlobalBounds();
 }
 
+void BaseClass::updateSprite() {}
+
 void BaseClass::fly() {}
 
 void BaseClass::applyMove() {
 	loc = Location(tempLoc);
 }
+
 void BaseClass::stop() {
 	tempLoc = Location(loc);
 }

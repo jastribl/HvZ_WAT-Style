@@ -8,6 +8,7 @@ private:
 	int count = 0;
 	sf::Vector2f velocity;
 
+	virtual void updateSprite();
 	void move(const float x, const float y, const float z);
 	bool hitDetect(const BaseClass* test);
 
@@ -16,4 +17,5 @@ public:
 	virtual ~Bullet();
 
 	virtual void fly();
+	virtual void applyMove();
 };

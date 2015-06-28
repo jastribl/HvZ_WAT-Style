@@ -13,6 +13,11 @@ Character::Character(World& world, const sf::Texture& texture, const sf::Vector3
 
 Character::~Character() {}
 
+void Character::updateSprite() {
+	sf::Vector3i p = cartesianToIsometric(loc.getAbsoluteLocation());
+	sprite.setPosition(p.x, p.y - BLOCK_SIZE);
+}
+
 void Character::setDestination(const sf::Vector3f& dest) {
 	destination = sf::Vector3i(dest);
 }
@@ -26,8 +31,7 @@ void Character::fly() {
 		} else if (loc.getPoint() != tempLoc.getPoint()) {
 			loc.setPoint(tempLoc.getPoint());
 		}
-		sf::Vector3i p = cartesianToIsometric(loc.getAbsoluteLocation());
-		sprite.setPosition(p.x, p.y - BLOCK_SIZE);
+		updateSprite();
 	}
 }
 
@@ -50,6 +54,11 @@ void Character::move(const float x, const float y, const float z) {
 			}
 		}
 	}
+}
+
+void Character::applyMove() {
+	BaseClass::applyMove();
+	updateSprite();
 }
 
 bool Character::hitDetect(const BaseClass* test) {
