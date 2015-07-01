@@ -16,6 +16,6 @@ public:
 	Bullet(World& world, const sf::Texture& texture, const sf::Vector3i& gridLocation, const sf::Vector3f& pointLocation, float speed, float angle);
 	virtual ~Bullet();
 
-	virtual void fly();
+	virtual bool fly();
 	virtual void applyMove();
 };

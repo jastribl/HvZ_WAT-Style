@@ -22,17 +22,19 @@ void Character::setDestination(const sf::Vector3f& dest) {
 	destination = sf::Vector3i(dest);
 }
 
-void Character::fly() {
+bool Character::fly() {
+	bool needsToBeMoved = false;
 	sf::Vector3i charPoint = loc.getAbsoluteLocation() - sf::Vector3i(BLOCK_SIZE * 2, BLOCK_SIZE * 2, 0);
 	if (destination != charPoint) {
 		move((destination.x - charPoint.x) / 8, (destination.y - charPoint.y) / 8, 0);
 		if (loc.getGrid() != tempLoc.getGrid()) {
-			world.itemsToMove.push_back(this);
+			needsToBeMoved = true;
 		} else if (loc.getPoint() != tempLoc.getPoint()) {
 			loc.setPoint(tempLoc.getPoint());
 		}
 		updateSprite();
 	}
+	return needsToBeMoved;
 }
 
 void Character::move(const float x, const float y, const float z) {

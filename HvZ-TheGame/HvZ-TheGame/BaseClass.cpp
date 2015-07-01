@@ -16,7 +16,7 @@ sf::FloatRect& BaseClass::screenHitBox() {
 
 void BaseClass::updateSprite() {}
 
-void BaseClass::fly() {}
+bool BaseClass::fly() { return false; }
 
 void BaseClass::applyMove() {
 	loc = Location(tempLoc);

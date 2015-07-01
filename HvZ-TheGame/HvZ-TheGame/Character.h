@@ -16,7 +16,7 @@ public:
 	virtual ~Character();
 
 	void setDestination(const sf::Vector3f& dest);
-	virtual void fly();
+	virtual bool fly();
 	virtual void applyMove();
 	virtual void draw(sf::RenderWindow& window);
 };

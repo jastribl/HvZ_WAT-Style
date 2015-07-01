@@ -18,20 +18,13 @@ void World::add(BaseClass* object) {
 	world.insert(std::make_pair(object->loc.getGrid(), object));
 }
 
-void World::removeItemFromWorld(const BaseClass* object) {
-	WorldMapRange items = getItemsAtGridLocation(object->loc.getGrid());
-	for (auto& it = items.first; it != items.second; ++it) {
-		if (it->second->loc.getPoint() == object->loc.getPoint()) {
-			world.erase(it);
-			return;
-		}
-	}
+void World::removeItemFromWorld(const WorldMapIterator& object) {
+	world.erase(object);
 }
 
 void World::updateAndDraw(sf::RenderWindow& window) {
 	sf::FloatRect windowRec(window.getView().getCenter() - sf::Vector2f(window.getView().getSize().x / 2, window.getView().getSize().y / 2), window.getView().getSize());
-	auto& it = world.begin();
-	while (it != world.end()) {
+	for (auto& it = world.begin(); it != world.end();) {
 		BaseClass* item = it->second;
 		if (item->needsToBeDeleted) {
 			it = world.erase(it);
@@ -41,15 +34,18 @@ void World::updateAndDraw(sf::RenderWindow& window) {
 				item->draw(window);
 			}
 			if (item->itemType == CHARACTER || item->itemType == BULLET) {
-				item->fly();
+				if (item->fly()) {
+					itemsToMove.push_back(it);
+				}
 			}
 			++it;
 		}
 	}
 	for (int i = 0; i < itemsToMove.size(); ++i) {
+		BaseClass* itemTomove = itemsToMove[i]->second;
 		removeItemFromWorld(itemsToMove[i]);
-		itemsToMove[i]->applyMove();
-		add(itemsToMove[i]);
+		itemTomove->applyMove();
+		add(itemTomove);
 	}
 	itemsToMove.clear();
 }

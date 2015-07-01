@@ -21,14 +21,16 @@ void Bullet::updateSprite() {
 	sprite.setPosition(p.x, p.y - BLOCK_SIZE);
 }
 
-void Bullet::fly() {
+bool Bullet::fly() {
+	bool needsToBeMoved = false;
 	move(velocity.x, velocity.y, 0);
 	if (loc.getGrid() != tempLoc.getGrid()) {
-		world.itemsToMove.push_back(this);
+		needsToBeMoved = true;
 	} else if (loc.getPoint() != tempLoc.getPoint()) {
 		loc.setPoint(tempLoc.getPoint());
 	}
 	updateSprite();
+	return needsToBeMoved;
 }
 
 void Bullet::move(const float x, const float y, const float z) {

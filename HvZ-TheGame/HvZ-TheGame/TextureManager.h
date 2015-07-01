@@ -1,10 +1,12 @@
 #pragma once
 #include <map>
 
+typedef std::map<int, std::map<int, sf::Texture>> TextureMap;
+
 class TextureManager {
 
 private:
-	std::map<int, std::map<int, sf::Texture>> blockTextures;
+	TextureMap blockTextures;
 
 public:
 	TextureManager();

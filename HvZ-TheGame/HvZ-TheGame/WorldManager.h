@@ -4,10 +4,12 @@ class TextureManager;
 #include <map>
 #include <string>
 
+typedef std::map <std::string, World> Worlds;
+
 class WorldManager {
 
 private:
-	std::map <std::string, World> worlds;
+	Worlds worlds;
 	std::string currentWorld;
 
 public:

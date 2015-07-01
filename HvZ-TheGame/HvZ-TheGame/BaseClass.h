@@ -19,7 +19,7 @@ public:
 	virtual ~BaseClass();
 
 	sf::FloatRect& screenHitBox();
-	virtual void fly();
+	virtual bool fly();
 	virtual void applyMove();
 	void stop();
 	virtual void draw(sf::RenderWindow& window);

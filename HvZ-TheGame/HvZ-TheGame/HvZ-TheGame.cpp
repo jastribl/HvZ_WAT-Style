@@ -34,11 +34,12 @@ int main() {
 				case sf::Event::KeyPressed:
 					if (event.key.code == sf::Keyboard::Escape) {
 						window.close();
-					} else if (event.key.code == sf::Keyboard::W) {
-						worldManager.getCurrentWorld().removeItemFromWorld(character);
-						worldManager.goToNextWorld();
-						worldManager.getCurrentWorld().add(character);
-					}
+					} 
+					//else if (event.key.code == sf::Keyboard::W) {
+					//	worldManager.getCurrentWorld().removeItemFromWorld(character);
+					//	worldManager.goToNextWorld();
+					//	worldManager.getCurrentWorld().add(character);
+					//}
 					break;
 
 				case sf::Event::Closed:
