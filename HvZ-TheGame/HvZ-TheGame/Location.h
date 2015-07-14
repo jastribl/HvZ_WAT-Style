@@ -19,6 +19,4 @@ public:
 	int getAbsoluteLocationY() const;
 	int getAbsoluteLocationZ() const;
 	sf::Vector3i& getAbsoluteLocation() const;
-	void print() const;
-	std::string toString() const;
 };

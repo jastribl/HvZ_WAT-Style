@@ -34,7 +34,7 @@ int main() {
 				case sf::Event::KeyPressed:
 					if (event.key.code == sf::Keyboard::Escape) {
 						window.close();
-					}
+					} 
 					//else if (event.key.code == sf::Keyboard::W) {
 					//	worldManager.getCurrentWorld().removeItemFromWorld(character);
 					//	worldManager.goToNextWorld();
@@ -65,7 +65,7 @@ int main() {
 						if (event.mouseButton.x > SIDEBAR_ORIGIN_X && event.mouseButton.y > SIDEBAR_ORIGIN_Y) {
 							hud.click(event.mouseButton.x, event.mouseButton.y);
 						} else {
-							character->setDestination(sf::Vector3i(isometricToCartesian(window.mapPixelToCoords(sf::Mouse::getPosition(window)), 0)));
+							character->setDestination(sf::Vector3f(isometricToCartesian(window.mapPixelToCoords(sf::Mouse::getPosition(window)), 0)));
 						}
 					}
 					break;
@@ -82,7 +82,7 @@ int main() {
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
 			Location bulletLocation = character->loc;
 			bulletLocation.add(0, 0, HALF_BLOCK_SIZE);
-			sf::Vector3f mousePosition = sf::Vector3f(isometricToCartesian(window.mapPixelToCoords(sf::Mouse::getPosition(window)), 0)) + sf::Vector3f(HALF_BLOCK_SIZE + BLOCK_SIZE * 2, HALF_BLOCK_SIZE + BLOCK_SIZE * 2, 0);
+			sf::Vector3f mousePosition = sf::Vector3f(isometricToCartesian(window.mapPixelToCoords(sf::Mouse::getPosition(window)), 0));
 			float angle = (std::atan2(((bulletLocation.getGrid().y * -BLOCK_SIZE) - bulletLocation.getPoint().y) + mousePosition.y, (bulletLocation.getGrid().x * -BLOCK_SIZE - bulletLocation.getPoint().x) + mousePosition.x));
 			BaseClass* bullet = new Bullet(worldManager.getCurrentWorld(), textureManager.getTextureFor(BULLET, 0), bulletLocation.getGrid(), bulletLocation.getPoint(), 50, angle);
 		}

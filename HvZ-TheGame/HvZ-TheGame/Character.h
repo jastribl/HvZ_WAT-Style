@@ -1,12 +1,11 @@
 #pragma once
 #include "BaseClass.h"
 class World;
-#include <queue>
 
 class Character :public BaseClass {
 
 private:
-	std::queue<Location> destinationList;
+	sf::Vector3i destination = sf::Vector3i();
 
 	void move(const float x, const float y, const float z);
 	bool hitDetect(const BaseClass* test);
@@ -16,12 +15,8 @@ public:
 	Character(World& world, const sf::Texture& texture, const sf::Vector3i& grid, const sf::Vector3f& point);
 	virtual ~Character();
 
-	void setDestination(sf::Vector3i& location);
+	void setDestination(const sf::Vector3f& dest);
 	virtual bool fly();
 	virtual void applyMove();
-	virtual void stop();
 	virtual void draw(sf::RenderWindow& window);
-
-	std::vector<Location> getNeighbors(Location me);
-	std::vector<Location> pathTo(Location start, Location end);
 };
