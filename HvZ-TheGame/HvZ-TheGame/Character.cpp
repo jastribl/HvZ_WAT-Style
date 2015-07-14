@@ -3,6 +3,9 @@
 #include "World.h"
 #define _USE_MATH_DEFINES
 #include <math.h>
+#include <queue>
+#include <set>
+#include <vector>
 
 Character::Character(World& world, const sf::Texture& texture, const sf::Vector3i& grid, const sf::Vector3f& point)
 	:BaseClass(world, texture, grid, point, CHARACTER) {
@@ -18,21 +21,85 @@ void Character::updateSprite() {
 	sprite.setPosition(p.x, p.y - BLOCK_SIZE);
 }
 
-void Character::setDestination(const sf::Vector3f& dest) {
-	destination = sf::Vector3i(dest);
+std::vector<Location> Character::getNeighbors(Location me) {
+	std::vector<Location> locations;
+	for (int i = -1; i <= 1; ++i) {
+		for (int j = -1; j <= 1; j++) {
+			if (std::abs(i + j) == 1) {
+				if (!world.itemsExistAtGridLocation(me.getGrid())) {
+					locations.push_back(Location(sf::Vector3i(me.getGrid().x + i, me.getGrid().y + j, me.getGrid().z), me.getPoint()));
+				}
+			}
+		}
+	}
+	return locations;
+}
+
+
+struct ByLocation2 {
+	bool operator()(const Location& a, const Location& b) const {
+		return (a.getGrid().y > b.getGrid().y) ? true : a.getGrid().x > b.getGrid().x;
+	}
+};
+
+std::vector<Location> Character::pathTo(Location start, Location end) {
+	print(start.toString());
+	start = Location(sf::Vector3i(0, 0, 1), sf::Vector3f(0, 0, 0));
+	end = Location(sf::Vector3i(25, 36, 1), sf::Vector3f(0, 0, 0));
+	std::queue<Location> frontier;
+	frontier.push(start);
+	std::map<Location, Location, ByLocation2> came_from;
+	came_from.insert(std::make_pair(start, start));
+	while (!frontier.empty()) {
+		Location current = frontier.front();
+		frontier.pop();
+		if (current.getGrid() == end.getGrid()) {
+			break;
+		}
+		for (Location next : getNeighbors(current)) {
+			if (came_from.find(next) == came_from.end()) {
+				frontier.push(next);
+				came_from[next] = current;
+			}
+		}
+	}
+	Location current = end;
+	std::vector<Location> path;
+	while (current.getGrid() != start.getGrid()) {
+		current = came_from[current];
+		path.push_back(current);
+	}
+	return path;
+}
+
+void Character::setDestination(sf::Vector3i& location) {
+	stop();
+	std::vector<Location> things = pathTo(loc, loc);
+	for (int i = 0; i < things.size(); ++i) {
+		print(things[i].toString());
+		destinationList.push(things[i]);
+	}
+	//destinationList.push(location);
 }
 
 bool Character::fly() {
 	bool needsToBeMoved = false;
-	sf::Vector3i charPoint = loc.getAbsoluteLocation() - sf::Vector3i(BLOCK_SIZE * 2, BLOCK_SIZE * 2, 0);
-	if (destination != charPoint) {
-		move((destination.x - charPoint.x) / 8, (destination.y - charPoint.y) / 8, 0);
-		if (loc.getGrid() != tempLoc.getGrid()) {
-			needsToBeMoved = true;
-		} else if (loc.getPoint() != tempLoc.getPoint()) {
-			loc.setPoint(tempLoc.getPoint());
+	if (destinationList.size() > 0) {
+		sf::Vector3i charPoint = loc.getAbsoluteLocation() - sf::Vector3i(BLOCK_SIZE * 2, BLOCK_SIZE * 2, 64);
+		sf::Vector3i destinationLocation = destinationList.front().getAbsoluteLocation();
+		if (destinationList.size() >= 2 && (std::abs(charPoint.x - destinationLocation.x) < 8) && (std::abs(charPoint.y - destinationLocation.y) < 8) && (std::abs(charPoint.z - destinationLocation.z) < 8)) {
+			destinationList.pop();
+			destinationLocation = destinationList.front().getAbsoluteLocation();
 		}
-		updateSprite();
+		if ((std::abs(charPoint.x - destinationLocation.x) >= 8) || (std::abs(charPoint.y - destinationLocation.y) >= 8) || (std::abs(charPoint.z - destinationLocation.z) >= 8)) {
+			move((destinationLocation.x - charPoint.x) / 8, (destinationLocation.y - charPoint.y) / 8, 0);
+			if (loc.getGrid() != tempLoc.getGrid()) {
+				needsToBeMoved = true;
+			} else if (loc.getPoint() != tempLoc.getPoint()) {
+				loc.setPoint(tempLoc.getPoint());
+				updateSprite();
+			}
+		}
 	}
 	return needsToBeMoved;
 }
@@ -47,8 +114,8 @@ void Character::move(const float x, const float y, const float z) {
 		tempLoc.add(x, y, z);
 		for (int i = tempLoc.getGrid().x - 1; i < tempLoc.getGrid().x + 1; ++i) {
 			for (int j = tempLoc.getGrid().y - 1; j < tempLoc.getGrid().y + 1; j++) {
-				WorldMapRange itemsAt = world.getItemsAtGridLocation(sf::Vector3i(i, j, tempLoc.getGrid().z));
-				for (auto& it = itemsAt.first; it != itemsAt.second; ++it) {
+				WorldMapRange items = world.getItemsAtGridLocation(sf::Vector3i(i, j, tempLoc.getGrid().z));
+				for (auto& it = items.first; it != items.second; ++it) {
 					if (hitDetect(it->second)) {
 						return;
 					}
@@ -61,6 +128,15 @@ void Character::move(const float x, const float y, const float z) {
 void Character::applyMove() {
 	BaseClass::applyMove();
 	updateSprite();
+}
+
+void Character::stop() {
+	print("stoping");
+	BaseClass::stop();
+	while (destinationList.size() != 0) {
+		destinationList.pop();
+	}
+	print("character stoped");
 }
 
 bool Character::hitDetect(const BaseClass* test) {

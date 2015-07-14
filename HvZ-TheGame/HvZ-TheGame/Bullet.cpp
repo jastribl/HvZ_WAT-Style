@@ -28,8 +28,8 @@ bool Bullet::fly() {
 		needsToBeMoved = true;
 	} else if (loc.getPoint() != tempLoc.getPoint()) {
 		loc.setPoint(tempLoc.getPoint());
+		updateSprite();
 	}
-	updateSprite();
 	return needsToBeMoved;
 }
 

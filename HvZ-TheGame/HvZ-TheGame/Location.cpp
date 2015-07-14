@@ -65,3 +65,11 @@ int Location::getAbsoluteLocationZ() const {
 sf::Vector3i& Location::getAbsoluteLocation() const {
 	return sf::Vector3i(getAbsoluteLocationX(), getAbsoluteLocationY(), getAbsoluteLocationZ());
 }
+
+std::string Location::toString() const {
+	return ("grid: (" + std::to_string(grid.x) + ", " + std::to_string(grid.y) + ", " + std::to_string(grid.z) + ")  point: (" + std::to_string(point.x) + "," + std::to_string(point.y) + "," + std::to_string(point.z) + ")");
+}
+
+void Location::print() const {
+	std::cout << toString() << std::endl;
+}
