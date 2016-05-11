@@ -24,3 +24,16 @@ ExportedObj/
 
 # Unity3D Generated File On Crash Reports
 sysinfo.txt
+
+# Builds
+*.apk
+*.unitypackage
+
+
+
+# UofZombies git ignores
+
+/UofZombies_Data/
+UofZombies.exe
+player_win_x86_s.pdb
+player_win_x86.pdb
